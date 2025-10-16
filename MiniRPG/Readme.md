@@ -654,3 +654,16 @@
   - Added TODO comments for future equipment UI grid, sprites, unequip functionality, and stat comparison features.
 
 ---
+
+## BattleViewModel: Stat-Based Damage System Added
+
+- Updated BattleViewModel.cs in ViewModels folder:
+  - Modified Attack() method to calculate playerDamage = GameService.CalculateDamage() + Player.Attack.
+  - Updated combat log to display: "You strike {CurrentEnemy} for {playerDamage} damage!"
+  - Modified EnemyAttack() method to calculate enemyDamage = Math.Max(1, GameService.CalculateDamage() - Player.Defense).
+  - Enemy damage is now reduced by player's Defense stat but always deals at least 1 damage.
+  - Defend functionality continues to reduce incoming damage by 50% after defense calculation.
+  - Updated combat log messages to reflect actual damage values including stat modifiers.
+  - Added TODO comment: "Add enemy defense and attack scaling next" for future enemy stat implementation.
+
+---

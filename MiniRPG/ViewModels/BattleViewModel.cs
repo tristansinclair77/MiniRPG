@@ -74,9 +74,9 @@ namespace MiniRPG.ViewModels
 
         private void Attack()
         {
-            int dmg = GameService.CalculateDamage();
-            EnemyHP -= dmg;
-            var msg = $"You strike {CurrentEnemy} for {dmg} damage! (Enemy HP: {EnemyHP})";
+            int playerDamage = GameService.CalculateDamage() + Player.Attack;
+            EnemyHP -= playerDamage;
+            var msg = $"You strike {CurrentEnemy} for {playerDamage} damage! (Enemy HP: {EnemyHP})";
             CombatLog.Add(msg);
             _globalLog.Add(msg);
             if (EnemyHP <= 0)
@@ -147,14 +147,17 @@ namespace MiniRPG.ViewModels
 
         private void EnemyAttack()
         {
-            int dmg = GameService.CalculateDamage() / 2;
+            int baseDamage = GameService.CalculateDamage();
+            int enemyDamage = Math.Max(1, baseDamage - Player.Defense);
+            
             if (_defendNext)
             {
-                dmg /= 2;
+                enemyDamage /= 2;
                 _defendNext = false;
             }
-            Player.HP -= dmg;
-            var msg = $"{CurrentEnemy} attacks you for {dmg} damage! (Your HP: {Player.HP})";
+            
+            Player.HP -= enemyDamage;
+            var msg = $"{CurrentEnemy} attacks you for {enemyDamage} damage! (Your HP: {Player.HP})";
             CombatLog.Add(msg);
             _globalLog.Add(msg);
             if (Player.HP <= 0)
@@ -167,6 +170,7 @@ namespace MiniRPG.ViewModels
                 UpdateCommands();
                 BattleEnded?.Invoke("Defeat");
             }
+            // TODO: Add enemy defense and attack scaling next
         }
 
         private void OnReturnToMap()

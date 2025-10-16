@@ -1,17 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit MapView.xaml.
+Update BattleViewModel.cs.
 
 Requirements:
-• Under the "Use Item" button, add another Button labeled "Equip Item".
-• Bind Command to EquipItemCommand.
-• Bind CommandParameter to SelectedItem of the Inventory ListBox.
-• Add TextBlock area below listing equipped gear:
-   "Weapon: {Binding Player.EquippedWeapon.Name}"
-   "Armor: {Binding Player.EquippedArmor.Name}"
-• Add TODO:
-   <!-- TODO: Replace with equipment UI grid and sprites -->
-   <!-- TODO: Add unequip and compare stats feature -->
+• Modify damage calculation to factor in Player’s Attack and Defense.
+• Example:
+   int playerDamage = GameService.CalculateDamage() + Player.Attack;
+   int enemyDamage = Math.Max(1, GameService.CalculateDamage() - Player.Defense);
+• Apply these values when attacking and defending.
+• Update log lines accordingly:
+   $"You strike {CurrentEnemy} for {playerDamage} damage!"
+• Add TODO: // Add enemy defense and attack scaling next
 
 ---
 
