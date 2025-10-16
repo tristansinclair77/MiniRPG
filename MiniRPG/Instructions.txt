@@ -1,11 +1,14 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify SaveLoadService.cs.
+Edit GameService.cs.
 
 Requirements:
-• Ensure equipped items (EquippedWeapon, EquippedArmor, EquippedAccessory) are serialized/deserialized correctly with Player.
-• Test by equipping an item, saving, closing, and reloading.
-• Add TODO: // Add save versioning and item ID mapping later
+• Update GetSampleItems() or GetRandomLoot() to sometimes drop equipment:
+   - 20% chance: Weapon (Wooden Sword)
+   - 20% chance: Armor (Leather Armor)
+   - 60% chance: Consumable or Material
+• Adjust flavor text accordingly.
+• Add TODO: // Later - tie loot tables to enemy type and area difficulty
 
 ---
 

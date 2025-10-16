@@ -30,15 +30,49 @@ namespace MiniRPG.Services
         }
 
         /// <summary>
-        /// Returns a random loot item or null (50% chance).
+        /// Returns a random loot item based on drop rates:
+        /// 20% chance: Weapon (Wooden Sword)
+        /// 20% chance: Armor (Leather Armor)
+        /// 60% chance: Consumable or Material (Potion, Slime Goo)
         /// </summary>
         public static Item? GetRandomLoot()
         {
-            var items = Item.GetSampleItems();
-            if (_random.NextDouble() > 0.5)
-                return items[_random.Next(items.Count)];
+            double roll = _random.NextDouble();
+            
+            if (roll < 0.2) // 20% chance for weapon
+            {
+                return new Item("Wooden Sword", "A basic starter weapon.", "Weapon", 0)
+                {
+                    IsEquippable = true,
+                    SlotType = "Weapon",
+                    AttackBonus = 2
+                };
+            }
+            else if (roll < 0.4) // 20% chance for armor (0.2 to 0.4)
+            {
+                return new Item("Leather Armor", "Simple protection made of hide.", "Armor", 0)
+                {
+                    IsEquippable = true,
+                    SlotType = "Armor",
+                    DefenseBonus = 1
+                };
+            }
+            else if (roll < 1.0) // 60% chance for consumable/material (0.4 to 1.0)
+            {
+                // Randomly choose between consumable and material
+                if (_random.NextDouble() < 0.7) // 70% of the 60% = ~42% overall chance for potion
+                {
+                    return new Item("Potion", "Restores 10 HP", "Consumable", 25);
+                }
+                else // 30% of the 60% = ~18% overall chance for slime goo
+                {
+                    return new Item("Slime Goo", "Sticky residue from a defeated slime.", "Material", 5);
+                }
+            }
+            
+            // This should never happen with the current logic, but return null as fallback
             return null;
-            // TODO: Add rarity tiers and loot tables later
+            // TODO: Later - tie loot tables to enemy type and area difficulty
         }
 
         // TODO: Expand with enemy stats, player stats, battle rewards

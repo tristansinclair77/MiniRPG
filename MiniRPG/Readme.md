@@ -698,3 +698,19 @@
   - Equipment persistence testing workflow: equip item → save → close app → reload → verify equipped items restored.
 
 ---
+
+## GameService: Equipment Loot Drops Enhanced
+
+- Updated GameService.cs in Services folder to implement specific equipment drop rates:
+  - Modified GetRandomLoot() method with precise probability distribution:
+    - 20% chance: Weapon drop (Wooden Sword with +2 Attack bonus)
+    - 20% chance: Armor drop (Leather Armor with +1 Defense bonus) 
+    - 60% chance: Consumable/Material drop (70% Potion for healing, 30% Slime Goo crafting material)
+  - Replaced previous 50% random selection with controlled loot table system.
+  - Each equipment drop creates a new Item instance with proper IsEquippable, SlotType, and stat bonus properties.
+  - Consumable/Material drops maintain original functionality for potions and crafting materials.
+  - Enhanced method documentation to clearly explain drop rates and item types.
+  - Added TODO comment: "Later - tie loot tables to enemy type and area difficulty" for future area-specific loot systems.
+  - Equipment drops now provide meaningful progression through stat bonuses that integrate with the combat system.
+
+---
