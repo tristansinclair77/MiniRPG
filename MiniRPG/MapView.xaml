@@ -39,7 +39,7 @@
             <Button Content="Rest" Command="{Binding RestCommand}" Margin="16,0,0,0" Foreground="#F9E97A" Background="#222233" FontWeight="Bold">
                 <!-- TODO: Replace with inn scene and cost-based healing later -->
             </Button>
-            <Button Content="Save Game" Command="{Binding DataContext.SaveCommand, RelativeSource={RelativeSource AncestorType=Window}}" Margin="8,0,0,0" Foreground="#F9E97A" Background="#222233" FontWeight="Bold">
+            <Button Content="Save Game" Command="{Binding SaveCommand}" Margin="8,0,0,0" Foreground="#F9E97A" Background="#222233" FontWeight="Bold">
                 <!-- TODO: Replace with auto-save indicator and custom UI slot menu -->
             </Button>
         </StackPanel>

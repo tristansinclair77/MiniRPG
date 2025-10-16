@@ -730,3 +730,14 @@
 - Testing workflow validates complete equipment lifecycle: loot → inventory → equip → stat boost → combat effectiveness → persistence → reload verification.
 
 ---
+
+## Bug Fix: Save Game Button Confirmation Message
+
+- Fixed Save Game button binding issue in MapView.xaml:
+  - Changed Save Game button Command from `{Binding DataContext.SaveCommand, RelativeSource={RelativeSource AncestorType=Window}}` to `{Binding SaveCommand}`.
+  - Previously, the button was calling MainViewModel.SaveCommand while the save confirmation message was bound to MapViewModel.IsSaveConfirmed.
+  - Now the button correctly calls MapViewModel.SaveCommand, which properly sets IsSaveConfirmed = true and displays the "Game Saved!" message.
+  - Save confirmation message now appears for 2 seconds when manually clicking the Save Game button.
+  - Maintains consistent behavior with other MapView actions like Rest and Use Item that also show save confirmations.
+
+---
