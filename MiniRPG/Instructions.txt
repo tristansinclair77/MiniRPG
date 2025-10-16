@@ -1,18 +1,25 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify Item.cs.
+Modify Player.cs.
 
 Requirements:
-• Add bool IsEquippable property (default false).
-• Add string SlotType property (values: "Weapon", "Armor", "Accessory").
-• Add int AttackBonus and int DefenseBonus properties (default 0).
-• Update GetSampleItems() to include at least:
-   new Item("Wooden Sword", "A basic starter weapon.", "Weapon", 0)
-      { IsEquippable = true, SlotType = "Weapon", AttackBonus = 2 },
-   new Item("Leather Armor", "Simple protection made of hide.", "Armor", 0)
-      { IsEquippable = true, SlotType = "Armor", DefenseBonus = 1 }
-• Add TODO: // Add rarity, weight, and elemental affinity later
-
+• Add nullable Item properties:
+   - Item? EquippedWeapon
+   - Item? EquippedArmor
+   - Item? EquippedAccessory
+• Add method EquipItem(Item item):
+   - If !item.IsEquippable → return false
+   - Switch(item.SlotType):
+       * "Weapon": EquippedWeapon = item
+       * "Armor": EquippedArmor = item
+       * "Accessory": EquippedAccessory = item
+   - Recalculate effective stats:
+       Attack = BaseAttack + (EquippedWeapon?.AttackBonus ?? 0)
+       Defense = BaseDefense + (EquippedArmor?.DefenseBonus ?? 0)
+   - Return true
+• Add BaseAttack and BaseDefense fields to track original stat values separately.
+• Update constructor to set BaseAttack = Attack, BaseDefense = Defense.
+• Add TODO: // Add unequip logic and visual equipment preview later
 
 ---
 

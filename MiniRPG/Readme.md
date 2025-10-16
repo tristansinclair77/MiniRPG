@@ -609,3 +609,20 @@
   - Added TODO comment for future rarity, weight, and elemental affinity expansion.
 
 ---
+
+## Player Equipment System Added
+
+- Updated Player.cs in Models folder:
+  - Added nullable Item properties: EquippedWeapon, EquippedArmor, EquippedAccessory for equipment slots.
+  - Added BaseAttack and BaseDefense fields to track original stat values separately from equipment bonuses.
+  - Modified Attack and Defense properties to use INotifyPropertyChanged for UI binding.
+  - Updated constructor to set BaseAttack = 5, BaseDefense = 2, and initialize calculated stats.
+  - Added EquipItem(Item item) method:
+    - Validates item.IsEquippable before equipping.
+    - Uses switch statement on item.SlotType to assign to correct equipment slot.
+    - Recalculates effective stats: Attack = BaseAttack + weapon bonus, Defense = BaseDefense + armor bonus.
+    - Returns true on success, false if item cannot be equipped.
+  - Updated GainExperience method to recalculate effective stats after leveling up base stats.
+  - Added TODO comment for unequip logic and visual equipment preview.
+
+---
