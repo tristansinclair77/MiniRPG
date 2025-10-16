@@ -1,14 +1,15 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create ShopItem.cs in the Models folder.
+Create a new UserControl named ShopView.
 
-Requirements:
-• public class ShopItem
-   - public Item Item { get; set; }
-   - public int BuyPrice { get; set; }
-   - public int SellPrice { get; set; }
-• Constructor: (Item item, int buyPrice, int sellPrice)
-• Add TODO: // Add stock quantity and restock timers later
+XAML layout:
+• Grid with two sections:
+   - Left: ListBox of available shop items (binding: ShopInventory)
+   - Right: Buttons "Buy" and "Sell", and a TextBlock showing "Gold: {Binding Player.Gold}"
+• Underneath, display SelectedItem details (Name, Description, Price).
+• Add TODO comments:
+   <!-- TODO: Add shopkeeper portrait and themed background -->
+   <!-- TODO: Replace with pixel UI and sound effects -->
 
 ---
 

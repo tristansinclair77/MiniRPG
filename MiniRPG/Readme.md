@@ -785,3 +785,18 @@
 - Foundation ready for shop system integration with player currency and inventory.
 
 ---
+
+## ShopView UserControl Added
+
+- Created ShopView.xaml and ShopView.xaml.cs as a new UserControl.
+- XAML layout uses Grid with two main sections:
+  - Left: ListBox of available shop items bound to ShopInventory collection, displaying item name and buy price.
+  - Right: Buy and Sell buttons, plus TextBlock showing player's current Gold amount.
+- Bottom section displays selected item details (Name, Description, Buy Price, Sell Price).
+- Follows game's visual theme with #222233 background, #292944 borders, and #F9E97A accent colors.
+- Added TODO comments:
+  - `<!-- TODO: Add shopkeeper portrait and themed background -->`
+  - `<!-- TODO: Replace with pixel UI and sound effects -->`
+- Foundation ready for shop functionality with buy/sell operations and currency integration.
+
+---
