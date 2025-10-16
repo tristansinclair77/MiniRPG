@@ -594,3 +594,18 @@
 - Updated MainViewModel.cs:
   - Subscribed to MapViewModel.OnStartBattle in both New and Continue game flows.
   - Clicking Fight now properly switches to BattleView and starts a battle.
+
+---
+
+## Item Equipment System Added
+
+- Updated Item.cs in Models folder:
+  - Added bool IsEquippable property (default false) to identify equipable items.
+  - Added string SlotType property for equipment slots ("Weapon", "Armor", "Accessory").
+  - Added int AttackBonus and int DefenseBonus properties (default 0) for stat modifiers.
+  - Updated GetSampleItems() to include equippable items:
+    - "Wooden Sword": Basic starter weapon with +2 Attack bonus.
+    - "Leather Armor": Simple protection with +1 Defense bonus.
+  - Added TODO comment for future rarity, weight, and elemental affinity expansion.
+
+---

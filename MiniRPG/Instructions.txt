@@ -1,4 +1,18 @@
-﻿
+﻿You are GitHub Copilot inside Visual Studio 2022.
+
+Modify Item.cs.
+
+Requirements:
+• Add bool IsEquippable property (default false).
+• Add string SlotType property (values: "Weapon", "Armor", "Accessory").
+• Add int AttackBonus and int DefenseBonus properties (default 0).
+• Update GetSampleItems() to include at least:
+   new Item("Wooden Sword", "A basic starter weapon.", "Weapon", 0)
+      { IsEquippable = true, SlotType = "Weapon", AttackBonus = 2 },
+   new Item("Leather Armor", "Simple protection made of hide.", "Armor", 0)
+      { IsEquippable = true, SlotType = "Armor", DefenseBonus = 1 }
+• Add TODO: // Add rarity, weight, and elemental affinity later
+
 
 ---
 
