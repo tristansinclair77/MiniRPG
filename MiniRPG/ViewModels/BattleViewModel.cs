@@ -106,6 +106,11 @@ namespace MiniRPG.ViewModels
                     CombatLog.Add("No items found this time.");
                     _globalLog.Add("No items found this time.");
                 }
+                // Gold reward logic
+                int gold = new Random().Next(5, 20);
+                Player.AddGold(gold);
+                CombatLog.Add($"You earned {gold} gold!");
+                _globalLog.Add($"You earned {gold} gold!");
                 SaveLoadService.SavePlayer(Player);
                 CombatLog.Add("Progress saved!");
                 _globalLog.Add("Progress saved!");

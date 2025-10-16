@@ -757,3 +757,18 @@
   - Foundation ready for shop systems, item purchasing, service costs, and economic gameplay mechanics.
 
 ---
+
+## BattleViewModel: Gold Rewards System Added
+
+- Updated BattleViewModel.cs in ViewModels folder to implement gold rewards after victory:
+  - Added gold reward logic in Attack() method after loot distribution when enemy is defeated.
+  - Uses `int gold = new Random().Next(5, 20);` to generate random gold amounts between 5-20.
+  - Calls `Player.AddGold(gold);` to add earned gold to player's currency.
+  - Logs `$"You earned {gold} gold!"` to both CombatLog and GlobalLog for player feedback.
+  - Gold reward occurs after experience gain and loot drops, before saving player data.
+  - SaveLoadService.SavePlayer(Player) called after all rewards (experience, loot, gold) are awarded.
+  - Added TODO comment: "Add scaling rewards per enemy type later" for future enemy-specific reward systems.
+  - Gold rewards integrate seamlessly with existing currency system and save/load functionality.
+  - Players now receive meaningful economic progression alongside experience and equipment rewards.
+
+---

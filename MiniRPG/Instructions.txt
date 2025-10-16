@@ -1,14 +1,14 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify Player.cs.
+Modify BattleViewModel.cs.
 
 Requirements:
-• Add property int Gold { get; set; } = 100;
-• Add method AddGold(int amount) => Gold += amount;
-• Add method SpendGold(int amount):
-   - If Gold >= amount: Gold -= amount; return true;
-   - Else return false;
-• Add TODO: // Add currency icons and multi-currency support later
+• After victory and loot:
+   - int gold = new Random().Next(5, 20);
+   - Player.AddGold(gold);
+   - Append $"You earned {gold} gold!"
+• Save after awarding gold.
+• Add TODO: // Add scaling rewards per enemy type later
 
 ---
 
