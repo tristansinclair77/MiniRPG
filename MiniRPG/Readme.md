@@ -714,3 +714,19 @@
   - Equipment drops now provide meaningful progression through stat bonuses that integrate with the combat system.
 
 ---
+
+## Equipment Testing Checklist & Advanced TODO Placeholders Added
+
+- Equipment System Testing Checklist implemented and documented:
+  1. **Defeat enemies until equipment drops** - GameService provides 20% weapon, 20% armor drop rates
+  2. **Equip weapon or armor → verify stat increase** - Equipment Display shows real-time Attack/Defense changes
+  3. **Fight again → confirm higher damage or defense values** - BattleViewModel uses Player.Attack and Player.Defense in damage calculations
+  4. **Save and restart game → ensure equipment persists** - SaveLoadService handles equipment serialization and recalculates stats on load
+  5. **Unequipped items remain in inventory** - Items stay in Player.Inventory collection until equipped, providing upgrade choices
+- Added advanced feature TODO placeholders to MapView.xaml:
+  - `<!-- TODO: Add equipment comparison screen -->` - For future side-by-side stat comparison UI
+  - `<!-- TODO: Add accessory slot effects -->` - For third equipment slot with special abilities
+  - `<!-- TODO: Add enchantments and rarity colors -->` - For item enhancement system and visual quality indicators
+- Testing workflow validates complete equipment lifecycle: loot → inventory → equip → stat boost → combat effectiveness → persistence → reload verification.
+
+---

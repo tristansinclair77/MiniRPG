@@ -1,14 +1,15 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit GameService.cs.
-
-Requirements:
-• Update GetSampleItems() or GetRandomLoot() to sometimes drop equipment:
-   - 20% chance: Weapon (Wooden Sword)
-   - 20% chance: Armor (Leather Armor)
-   - 60% chance: Consumable or Material
-• Adjust flavor text accordingly.
-• Add TODO: // Later - tie loot tables to enemy type and area difficulty
+Testing checklist:
+1. Defeat enemies until equipment drops.
+2. Equip weapon or armor → verify stat increase.
+3. Fight again → confirm higher damage or defense values.
+4. Save and restart game → ensure equipment persists.
+5. Unequipped items remain in inventory.
+6. Add TODO placeholders:
+   <!-- TODO: Add equipment comparison screen -->
+   <!-- TODO: Add accessory slot effects -->
+   <!-- TODO: Add enchantments and rarity colors -->
 
 ---
 
