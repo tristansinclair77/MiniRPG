@@ -85,6 +85,19 @@
                     <Run Text="Armor: " />
                     <Run Text="{Binding Player.EquippedArmor.Name}" />
                 </TextBlock>
+                
+                <!-- Player Stats Display -->
+                <TextBlock Text="Stats:" Foreground="#F9E97A" FontWeight="Bold" FontSize="14" Margin="0,8,0,5" />
+                <TextBlock Foreground="White">
+                    <Run Text="Attack: " />
+                    <Run Text="{Binding Player.Attack}" />
+                </TextBlock>
+                <TextBlock Foreground="White">
+                    <Run Text="Defense: " />
+                    <Run Text="{Binding Player.Defense}" />
+                </TextBlock>
+                <TextBlock Text="(Includes equipment bonuses)" Foreground="#CCCCCC" FontSize="10" FontStyle="Italic" Margin="0,2,0,0" />
+                
                 <!-- TODO: Replace with equipment UI grid and sprites -->
                 <!-- TODO: Add unequip and compare stats feature -->
             </StackPanel>

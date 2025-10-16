@@ -1,16 +1,15 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Update BattleViewModel.cs.
+Enhance MapView.xaml.
 
 Requirements:
-• Modify damage calculation to factor in Player’s Attack and Defense.
-• Example:
-   int playerDamage = GameService.CalculateDamage() + Player.Attack;
-   int enemyDamage = Math.Max(1, GameService.CalculateDamage() - Player.Defense);
-• Apply these values when attacking and defending.
-• Update log lines accordingly:
-   $"You strike {CurrentEnemy} for {playerDamage} damage!"
-• Add TODO: // Add enemy defense and attack scaling next
+• Below equipment names, add TextBlocks displaying:
+   "Attack: {Binding Player.Attack}"
+   "Defense: {Binding Player.Defense}"
+• Optionally add small note "(Includes equipment bonuses)"
+• Add TODO:
+   <!-- TODO: Replace text with styled stat window -->
+   <!-- TODO: Add colored stat increase indicators -->
 
 ---
 

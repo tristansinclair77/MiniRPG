@@ -667,3 +667,17 @@
   - Added TODO comment: "Add enemy defense and attack scaling next" for future enemy stat implementation.
 
 ---
+
+## MapView.xaml: Player Stats Display Enhanced
+
+- Enhanced the Equipment Display section in MapView.xaml:
+  - Added new "Stats:" section below the equipment names with #F9E97A colored header text.
+  - Added TextBlock displaying "Attack: {Binding Player.Attack}" bound to the player's current Attack stat.
+  - Added TextBlock displaying "Defense: {Binding Player.Defense}" bound to the player's current Defense stat.
+  - Added informational note "(Includes equipment bonuses)" in light gray italics to clarify that values include base stats plus equipment modifiers.
+  - Added TODO comments for future enhancements:
+    - "Replace text with styled stat window" for improved visual design
+    - "Add colored stat increase indicators" for visual feedback when stats change
+  - Stats display updates in real-time when equipment is changed or player levels up.
+
+---
