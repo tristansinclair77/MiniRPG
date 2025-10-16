@@ -1,0 +1,85 @@
+﻿<!-- TODO: Add splash screen -->
+<!-- TODO: Add animated intro text -->
+<!-- TODO: Add save-slot selection -->
+<!-- TODO: Save Player to JSON file -->
+<!-- TODO: Add Load feature on startup -->
+<!-- TODO: Add main menu scene -->
+<!-- TODO: Replace entire layout with pixel-art themed UI -->
+<!-- TODO: Add main menu and title screen before MapView -->
+<!-- TODO: Hook into background music manager -->
+<!-- TODO: Add save system -->
+<!-- TODO: Add inventory and level-up after victory -->
+<!-- TODO: Add background music, player sprite, enemy sprite, and location art -->
+<!-- TODO: Add background art per location -->
+<!-- TODO: Add music/audio triggers when battle starts -->
+<!-- TODO: Later SceneManager or Animation layer -->
+<!-- TODO: Encrypt save file -->
+<!-- TODO: Add multiple save slots -->
+<!-- TODO: Add "Continue" option on main menu -->
+<Window x:Class="MiniRPG.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MiniRPG"
+        xmlns:vm="clr-namespace:MiniRPG.ViewModels"
+        xmlns:v="clr-namespace:MiniRPG"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Foreground" Value="#F9E97A" />
+            <Setter Property="Background" Value="#222233" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+        <DataTemplate DataType="{x:Type vm:MapViewModel}">
+            <v:MapView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:BattleViewModel}">
+            <v:BattleView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:TitleViewModel}">
+            <v:TitleView />
+        </DataTemplate>
+        <!-- TODO: Add fade transitions between views here -->
+        <!-- TODO: Add animated fade between title and map -->
+    </Window.Resources>
+    <Grid Background="#222233" Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /> <!-- Top MenuBar -->
+            <RowDefinition Height="*" />    <!-- Main Content -->
+            <RowDefinition Height="100" />  <!-- Bottom Log -->
+        </Grid.RowDefinitions>
+
+        <!-- Top MenuBar -->
+        <Menu Grid.Row="0" Name="MainMenuBar" Foreground="White" Background="#292944" Margin="0,0,0,8">
+            <MenuItem Header="Map" Name="MapMenuButton" Foreground="White" Background="#444466"
+                      Command="{Binding ShowMapCommand}" />
+            <MenuItem Header="Battle" Name="BattleMenuButton" Foreground="White" Background="#444466"
+                      Command="{Binding ShowBattleCommand}" />
+            <!-- Art assets for menu icons can be inserted here -->
+        </Menu>
+
+        <!-- Main ContentControl with Card-style Border -->
+        <Border Grid.Row="1" Margin="0,0,0,8" Background="#292944" BorderBrush="#444466" BorderThickness="2" CornerRadius="12">
+            <ContentControl Name="MainContentControl" Content="{Binding CurrentViewModel}" Foreground="White" Margin="16" />
+        </Border>
+
+        <!-- Bottom Log ListBox with Card-style Border and darker background -->
+        <Border Grid.Row="2" Margin="0,0,0,0" BorderBrush="#444466" BorderThickness="2" CornerRadius="12" Background="#181820">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                <ListBox Name="GlobalLogListBox"
+                         ItemsSource="{Binding GlobalLog}"
+                         FontFamily="Consolas"
+                         FontSize="14"
+                         Background="#181820" Foreground="White"
+                         IsHitTestVisible="False"
+                         Margin="8">
+                    <!-- TODO: Style log box with pixel-art frame -->
+                </ListBox>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Window>

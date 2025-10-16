@@ -1,0 +1,80 @@
+<UserControl x:Class="MiniRPG.MapView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converters="clr-namespace:MiniRPG.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="400">
+    <UserControl.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
+    <!-- TODO: Replace text with pixel-art status window -->
+    <!-- TODO: Add animated portrait or player sprite here -->
+    <!-- TODO: Insert background map image here -->
+    <!-- TODO: Add equipment and stat bonuses -->
+    <!-- TODO: Add item shop -->
+    <!-- TODO: Add crafting and material combination -->
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" /> <!-- Inventory row -->
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Player Info Panel -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
+            <TextBlock Text="Level: " FontWeight="Bold" Foreground="White" />
+            <TextBlock Text="{Binding Player.Level}" Foreground="White" Margin="4,0,12,0" />
+            <TextBlock Text="HP: " FontWeight="Bold" Foreground="White" />
+            <TextBlock Text="{Binding Player.HP}" Foreground="White" />
+            <TextBlock Text="/" Foreground="White" />
+            <TextBlock Text="{Binding Player.MaxHP}" Foreground="White" Margin="4,0,12,0" />
+            <TextBlock Text="EXP: " FontWeight="Bold" Foreground="White" />
+            <TextBlock Text="{Binding Player.Experience}" Foreground="White" />
+            <TextBlock Text="/" Foreground="White" />
+            <TextBlock Text="{Binding Player.ExperienceToNextLevel}" Foreground="White" />
+            <Button Content="Rest" Command="{Binding RestCommand}" Margin="16,0,0,0" Foreground="#F9E97A" Background="#222233" FontWeight="Bold">
+                <!-- TODO: Replace with inn scene and cost-based healing later -->
+            </Button>
+            <Button Content="Save Game" Command="{Binding DataContext.SaveCommand, RelativeSource={RelativeSource AncestorType=Window}}" Margin="8,0,0,0" Foreground="#F9E97A" Background="#222233" FontWeight="Bold">
+                <!-- TODO: Replace with auto-save indicator and custom UI slot menu -->
+            </Button>
+        </StackPanel>
+        <!-- Game Saved message -->
+        <TextBlock Grid.Row="0" Text="Game Saved!" Foreground="LimeGreen" FontWeight="Bold" FontSize="16" Margin="0,32,0,0" HorizontalAlignment="Center"
+                   Visibility="{Binding IsSaveConfirmed, Converter={StaticResource BoolToVis}}">
+            <!-- TODO: Replace with pixel-art popup animation for future version -->
+        </TextBlock>
+
+        <!-- Inventory Expander -->
+        <Expander Grid.Row="1" Header="Inventory" Margin="0,0,0,10" Foreground="White" Background="#292944">
+            <!-- TODO: Replace with pixel-art inventory icons -->
+            <!-- TODO: Add categories (Consumables, Materials, etc.) -->
+            <StackPanel>
+                <ListBox x:Name="InventoryListBox" ItemsSource="{Binding Player.Inventory}" SelectedItem="{Binding SelectedInventoryItem, Mode=TwoWay}" Background="#222233" Foreground="White" Height="100">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="White" />
+                                <TextBlock Text=" (" Foreground="White" />
+                                <TextBlock Text="{Binding Type}" Foreground="White" />
+                                <TextBlock Text=")" Foreground="White" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <TextBlock Text="{Binding SelectedInventoryItem.Description}" Foreground="White" Margin="0,8,0,0" TextWrapping="Wrap" />
+                <Button Content="Use Item" Command="{Binding UseItemCommand}" CommandParameter="{Binding SelectedItem, ElementName=InventoryListBox}" Margin="0,8,0,0" Foreground="#F9E97A" Background="#222233" FontWeight="Bold" />
+                <!-- TODO: Replace with contextual radial menu or drag/drop inventory UI -->
+            </StackPanel>
+        </Expander>
+
+        <Label Grid.Row="2" Content="Choose a Battle Location" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" Margin="0,0,0,10" Foreground="#F9E97A" />
+
+        <ListBox Grid.Row="3" Name="LocationList" ItemsSource="{Binding Locations}" Margin="0,0,0,10" />
+
+        <Button Grid.Row="4" Content="Fight!" Command="{Binding StartBattleCommand}" HorizontalAlignment="Right" Width="100" Foreground="#F9E97A" Background="#222233" FontWeight="Bold" />
+    </Grid>
+</UserControl>

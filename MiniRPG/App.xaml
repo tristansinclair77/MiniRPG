@@ -1,0 +1,9 @@
+﻿<Application x:Class="MiniRPG.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:MiniRPG"
+             xmlns:converters="clr-namespace:MiniRPG.Converters">
+    <Application.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Application.Resources>
+</Application>
