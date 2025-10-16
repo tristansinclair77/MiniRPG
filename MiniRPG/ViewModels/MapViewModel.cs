@@ -38,6 +38,7 @@ namespace MiniRPG.ViewModels
         public ICommand RestCommand { get; }
         public ICommand SaveCommand { get; }
         public ICommand UseItemCommand { get; }
+        public ICommand EquipItemCommand { get; }
         private ObservableCollection<string> _globalLog;
 
         private bool _isSaveConfirmed;
@@ -66,6 +67,7 @@ namespace MiniRPG.ViewModels
             RestCommand = new RelayCommand(_ => Rest());
             SaveCommand = new RelayCommand(async _ => await SaveGame());
             UseItemCommand = new RelayCommand(param => UseItem(param as Item));
+            EquipItemCommand = new RelayCommand(param => EquipItem(param as Item));
         }
 
         private void StartBattle()
@@ -126,6 +128,36 @@ namespace MiniRPG.ViewModels
                 _globalLog.Add("That item cannot be used now.");
             }
             // TODO: Add targeting and status effects later
+        }
+
+        private void EquipItem(Item? item)
+        {
+            if (item == null)
+            {
+                _globalLog.Add("No item selected.");
+                return;
+            }
+
+            if (item.IsEquippable)
+            {
+                bool equipped = Player.EquipItem(item);
+                if (equipped)
+                {
+                    _globalLog.Add($"You equipped {item.Name}.");
+                }
+                else
+                {
+                    _globalLog.Add("Cannot equip this item.");
+                }
+            }
+            else
+            {
+                _globalLog.Add("That item is not equippable.");
+            }
+
+            // After equipping, save the player data
+            SaveLoadService.SavePlayer(Player);
+            // TODO: // Add equipment change sound effect later
         }
     }
 }

@@ -1,25 +1,18 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify Player.cs.
+Edit MapViewModel.cs.
 
 Requirements:
-• Add nullable Item properties:
-   - Item? EquippedWeapon
-   - Item? EquippedArmor
-   - Item? EquippedAccessory
-• Add method EquipItem(Item item):
-   - If !item.IsEquippable → return false
-   - Switch(item.SlotType):
-       * "Weapon": EquippedWeapon = item
-       * "Armor": EquippedArmor = item
-       * "Accessory": EquippedAccessory = item
-   - Recalculate effective stats:
-       Attack = BaseAttack + (EquippedWeapon?.AttackBonus ?? 0)
-       Defense = BaseDefense + (EquippedArmor?.DefenseBonus ?? 0)
-   - Return true
-• Add BaseAttack and BaseDefense fields to track original stat values separately.
-• Update constructor to set BaseAttack = Attack, BaseDefense = Defense.
-• Add TODO: // Add unequip logic and visual equipment preview later
+• Add RelayCommand named EquipItemCommand.
+• Command parameter: selected Item.
+• When executed:
+   - If item.IsEquippable:
+       * bool equipped = Player.EquipItem(item);
+       * If equipped: Log $"You equipped {item.Name}."
+       * Else Log "Cannot equip this item."
+   - Else Log "That item is not equippable."
+• After equipping, call SaveLoadService.SavePlayer(Player).
+• Add TODO: // Add equipment change sound effect later
 
 ---
 

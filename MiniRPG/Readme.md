@@ -626,3 +626,17 @@
   - Added TODO comment for unequip logic and visual equipment preview.
 
 ---
+
+## MapViewModel: EquipItemCommand Added
+
+- Added EquipItemCommand (RelayCommand) to MapViewModel.cs:
+  - Command accepts an Item parameter from the selected inventory item.
+  - When executed:
+    - If item.IsEquippable is true, calls Player.EquipItem(item).
+    - If equipped successfully, logs "You equipped {item.Name}." to GlobalLog.
+    - If equip fails, logs "Cannot equip this item." to GlobalLog.
+    - If item is not equippable, logs "That item is not equippable." to GlobalLog.
+  - After equipping, calls SaveLoadService.SavePlayer(Player) to persist changes.
+  - Added TODO comment for equipment change sound effect.
+
+---
