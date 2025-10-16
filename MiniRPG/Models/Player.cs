@@ -46,6 +46,13 @@ namespace MiniRPG.Models
             set { _experienceToNextLevel = value; OnPropertyChanged(); }
         }
 
+        private int _gold = 100;
+        public int Gold
+        {
+            get => _gold;
+            set { _gold = value; OnPropertyChanged(); }
+        }
+
         // Base stats (original values before equipment bonuses)
         public int BaseAttack { get; set; }
         public int BaseDefense { get; set; }
@@ -101,6 +108,7 @@ namespace MiniRPG.Models
             Level = 1;
             Experience = 0;
             ExperienceToNextLevel = 10;
+            Gold = 100;
             // TODO: Future - include inventory, experience, and leveling system
         }
 
@@ -160,6 +168,22 @@ namespace MiniRPG.Models
             // TODO: // Add inventory capacity and sorting later
         }
 
+        public void AddGold(int amount) => Gold += amount;
+
+        public bool SpendGold(int amount)
+        {
+            if (Gold >= amount)
+            {
+                Gold -= amount;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        // TODO: Add currency icons and multi-currency support later
         // TODO: // Add unequip logic and visual equipment preview later
     }
 }

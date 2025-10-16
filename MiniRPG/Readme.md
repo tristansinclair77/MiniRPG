@@ -741,3 +741,19 @@
   - Maintains consistent behavior with other MapView actions like Rest and Use Item that also show save confirmations.
 
 ---
+
+## Player Currency System Added
+
+- Updated Player.cs in Models folder to implement a complete currency system:
+  - Added `int Gold { get; set; } = 100;` property with INotifyPropertyChanged support for UI binding.
+  - Added `AddGold(int amount)` method that increases Gold by the specified amount using simplified syntax.
+  - Added `SpendGold(int amount)` method that:
+    - Returns true and deducts gold if player has sufficient funds (Gold >= amount).
+    - Returns false without deducting gold if player has insufficient funds.
+  - Updated constructor to initialize Gold = 100, giving new players starting currency.
+  - Currency system integrates with existing save/load functionality through SaveLoadService.
+  - Added TODO comment: "Add currency icons and multi-currency support later" for future enhancements.
+  - Gold property supports data binding for real-time UI updates when currency changes.
+  - Foundation ready for shop systems, item purchasing, service costs, and economic gameplay mechanics.
+
+---

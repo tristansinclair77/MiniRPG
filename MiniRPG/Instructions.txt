@@ -1,4 +1,14 @@
-﻿
+﻿You are GitHub Copilot inside Visual Studio 2022.
+
+Modify Player.cs.
+
+Requirements:
+• Add property int Gold { get; set; } = 100;
+• Add method AddGold(int amount) => Gold += amount;
+• Add method SpendGold(int amount):
+   - If Gold >= amount: Gold -= amount; return true;
+   - Else return false;
+• Add TODO: // Add currency icons and multi-currency support later
 
 ---
 
