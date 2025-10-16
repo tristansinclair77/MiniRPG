@@ -1,15 +1,11 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Enhance MapView.xaml.
+Modify SaveLoadService.cs.
 
 Requirements:
-• Below equipment names, add TextBlocks displaying:
-   "Attack: {Binding Player.Attack}"
-   "Defense: {Binding Player.Defense}"
-• Optionally add small note "(Includes equipment bonuses)"
-• Add TODO:
-   <!-- TODO: Replace text with styled stat window -->
-   <!-- TODO: Add colored stat increase indicators -->
+• Ensure equipped items (EquippedWeapon, EquippedArmor, EquippedAccessory) are serialized/deserialized correctly with Player.
+• Test by equipping an item, saving, closing, and reloading.
+• Add TODO: // Add save versioning and item ID mapping later
 
 ---
 

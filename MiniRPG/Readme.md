@@ -681,3 +681,20 @@
   - Stats display updates in real-time when equipment is changed or player levels up.
 
 ---
+
+## SaveLoadService: Equipment Serialization Enhanced
+
+- Updated SaveLoadService.cs in Services folder to ensure equipped items are properly serialized and deserialized:
+  - Enhanced JsonSerializerOptions with IncludeFields = true to handle INotifyPropertyChanged backing fields correctly.
+  - Added PropertyNamingPolicy = JsonNamingPolicy.CamelCase for consistent JSON formatting.
+  - Added DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull to reduce save file size.
+  - Implemented automatic backup system - creates .backup files before saving to prevent data loss.
+  - Enhanced LoadPlayer method to recalculate stats after loading to ensure equipment bonuses are applied correctly.
+  - Added comprehensive debug logging to track equipped items during save/load operations.
+  - Implemented backup recovery system - attempts to load from backup if main save file is corrupted.
+  - Added ValidateSaveFile method for save file integrity checking.
+  - Added detailed error handling and recovery mechanisms for both save and load operations.
+  - Added TODO comment: "Add save versioning and item ID mapping later" as requested.
+  - Equipment persistence testing workflow: equip item → save → close app → reload → verify equipped items restored.
+
+---
