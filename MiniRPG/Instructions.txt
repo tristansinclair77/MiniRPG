@@ -1,18 +1,17 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit MapViewModel.cs.
+Edit MapView.xaml.
 
 Requirements:
-• Add RelayCommand named EquipItemCommand.
-• Command parameter: selected Item.
-• When executed:
-   - If item.IsEquippable:
-       * bool equipped = Player.EquipItem(item);
-       * If equipped: Log $"You equipped {item.Name}."
-       * Else Log "Cannot equip this item."
-   - Else Log "That item is not equippable."
-• After equipping, call SaveLoadService.SavePlayer(Player).
-• Add TODO: // Add equipment change sound effect later
+• Under the "Use Item" button, add another Button labeled "Equip Item".
+• Bind Command to EquipItemCommand.
+• Bind CommandParameter to SelectedItem of the Inventory ListBox.
+• Add TextBlock area below listing equipped gear:
+   "Weapon: {Binding Player.EquippedWeapon.Name}"
+   "Armor: {Binding Player.EquippedArmor.Name}"
+• Add TODO:
+   <!-- TODO: Replace with equipment UI grid and sprites -->
+   <!-- TODO: Add unequip and compare stats feature -->
 
 ---
 

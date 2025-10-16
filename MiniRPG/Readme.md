@@ -640,3 +640,17 @@
   - Added TODO comment for equipment change sound effect.
 
 ---
+
+## MapView.xaml: Equipment UI Added
+
+- Updated MapView.xaml in the root directory:
+  - Added "Equip Item" Button under the existing "Use Item" button in the Inventory Expander.
+  - Button Command is bound to EquipItemCommand with CommandParameter set to SelectedItem of InventoryListBox.
+  - Added new Equipment Display section (Grid.Row="2") with Border styling matching the game theme.
+  - Equipment display shows:
+    - "Weapon: {Binding Player.EquippedWeapon.Name}"
+    - "Armor: {Binding Player.EquippedArmor.Name}"
+  - Updated Grid.RowDefinitions to accommodate the new equipment display row.
+  - Added TODO comments for future equipment UI grid, sprites, unequip functionality, and stat comparison features.
+
+---
