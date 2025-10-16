@@ -772,3 +772,16 @@
   - Players now receive meaningful economic progression alongside experience and equipment rewards.
 
 ---
+
+## ShopItem Model Added
+
+- Created ShopItem.cs in Models folder.
+- ShopItem class with properties:
+  - public Item Item { get; set; } - The item being sold
+  - public int BuyPrice { get; set; } - Cost to purchase from shop
+  - public int SellPrice { get; set; } - Value when selling to shop
+- Constructor: ShopItem(Item item, int buyPrice, int sellPrice) for quick setup.
+- Added TODO comment: "Add stock quantity and restock timers later" for future shop mechanics.
+- Foundation ready for shop system integration with player currency and inventory.
+
+---

@@ -1,14 +1,14 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify BattleViewModel.cs.
+Create ShopItem.cs in the Models folder.
 
 Requirements:
-• After victory and loot:
-   - int gold = new Random().Next(5, 20);
-   - Player.AddGold(gold);
-   - Append $"You earned {gold} gold!"
-• Save after awarding gold.
-• Add TODO: // Add scaling rewards per enemy type later
+• public class ShopItem
+   - public Item Item { get; set; }
+   - public int BuyPrice { get; set; }
+   - public int SellPrice { get; set; }
+• Constructor: (Item item, int buyPrice, int sellPrice)
+• Add TODO: // Add stock quantity and restock timers later
 
 ---
 
