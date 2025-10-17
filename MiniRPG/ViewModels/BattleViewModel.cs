@@ -85,22 +85,27 @@ namespace MiniRPG.ViewModels
                 _globalLog.Add("You defeated the enemy!");
 
                 // Quest tracking - check active quests for enemy kill requirements
+                var questsToComplete = new List<Quest>();
                 foreach (var quest in Player.ActiveQuests)
                 {
                     if (quest.Title.Contains(CurrentEnemy, StringComparison.OrdinalIgnoreCase))
                     {
                         quest.CurrentKills++;
                         quest.CheckProgress();
-                        
                         if (quest.IsCompleted)
                         {
-                            Player.CompleteQuest(quest);
-                            var questCompleteMsg = $"Quest complete: {quest.Title}!";
-                            CombatLog.Add(questCompleteMsg);
-                            _globalLog.Add(questCompleteMsg);
+                            questsToComplete.Add(quest);
                         }
                     }
                 }
+                foreach (var quest in questsToComplete)
+                {
+                    Player.CompleteQuest(quest);
+                    var questCompleteMsg = $"Quest complete: {quest.Title}!";
+                    CombatLog.Add(questCompleteMsg);
+                    _globalLog.Add(questCompleteMsg);
+                }
+
                 // Add quest tracking popup and sound effect
                 // Add enemy type classification for matching
 

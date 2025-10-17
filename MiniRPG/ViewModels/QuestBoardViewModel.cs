@@ -102,20 +102,17 @@ namespace MiniRPG.ViewModels
 
         private void AcceptQuest()
         {
-            if (SelectedQuest != null && _player != null)
+            if (SelectedQuest != null && _player != null && AvailableQuests != null && _player.ActiveQuests != null)
             {
+                var questToAccept = SelectedQuest;
                 // Add quest to player's active quests
-                _player.AddQuest(SelectedQuest);
-                
+                _player.AddQuest(questToAccept);
                 // Remove from available quests
-                AvailableQuests.Remove(SelectedQuest);
-                
+                AvailableQuests.Remove(questToAccept);
                 // Log the acceptance
-                Debug.WriteLine($"You accepted the quest: {SelectedQuest.Title}");
-                
+                Debug.WriteLine($"You accepted the quest: {questToAccept.Title}");
                 // Clear selection
                 SelectedQuest = null;
-                
                 // Notify UI of changes
                 OnPropertyChanged(nameof(ActiveQuests));
             }
