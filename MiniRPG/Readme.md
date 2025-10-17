@@ -34,3 +34,22 @@
 - Shop system fully integrates with existing currency, inventory, equipment, and save/load systems for seamless gameplay experience.
 
 ---
+
+## Quest Model Added
+
+- Created Quest.cs in Models folder implementing a comprehensive quest system foundation:
+  - **Properties**: Title, Description, IsCompleted, RequiredKills, CurrentKills, RewardGold, RewardExp, RewardItem
+  - **Constructor**: Accepts title, description, required kills, gold reward, experience reward, and optional item reward
+  - **CheckProgress() Method**: Automatically sets IsCompleted = true when CurrentKills >= RequiredKills
+  - **Example Usage**: `new Quest("Slime Hunt", "Defeat 3 Slimes terrorizing the outskirts.", 3, 50, 20)`
+  - **Flexible Rewards**: Supports gold, experience, and optional item rewards for quest completion
+  - **Kill Tracking**: CurrentKills property can be incremented as player defeats enemies
+  - **Completion Logic**: CheckProgress() method provides automatic quest completion detection
+- Added future enhancement TODO placeholders:
+  - `// TODO: Add quest types: Fetch, Deliver, Explore` - For expanding beyond kill-based quests
+  - `// TODO: Add quest giver NPC info` - For associating quests with specific NPCs and dialogue
+- Quest model follows established patterns from Item and Player classes for consistency
+- Foundation ready for integration with quest UI, quest giver NPCs, and quest tracking systems
+- Supports serialization for future quest persistence and save/load functionality
+
+---

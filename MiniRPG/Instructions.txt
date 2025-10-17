@@ -1,16 +1,24 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Testing checklist:
-1. Enter battles, win gold, collect loot.
-2. Go to Map → click "Shop".
-3. Buy items → verify gold decreases and item added to inventory.
-4. Sell items → verify gold increases and item removed.
-5. Leave shop → return to MapView.
-6. Save game, restart → verify gold and inventory persist.
-7. Add TODO placeholders:
-   <!-- TODO: Add rare item rotation -->
-   <!-- TODO: Add equipment upgrade system -->
-   <!-- TODO: Add shopkeeper dialogue and art -->
+Create Quest.cs in the Models folder.
+
+Requirements:
+• public class Quest
+   - string Title
+   - string Description
+   - bool IsCompleted
+   - int RequiredKills
+   - int CurrentKills
+   - int RewardGold
+   - int RewardExp
+   - Item? RewardItem
+• Method CheckProgress():
+   - If CurrentKills >= RequiredKills → IsCompleted = true
+• Constructor example:
+   new Quest("Slime Hunt", "Defeat 3 Slimes terrorizing the outskirts.", 3, 50, 20)
+• Add TODO:
+   // Add quest types: Fetch, Deliver, Explore
+   // Add quest giver NPC info
 
 ---
 
