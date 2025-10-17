@@ -846,3 +846,17 @@
 - Complete shop workflow: MapView → Shop button → ShopView → Buy/Sell items → Exit Shop → back to MapView.
 
 ---
+
+## MapView Shop Button Relocated
+
+- Updated MapView.xaml layout structure:
+  - Moved "Shop" button from bottom row (next to "Fight!" button) to player info panel (Grid.Row="0").
+  - Shop button now positioned near "Rest" and "Save Game" buttons in the top section for better accessibility.
+  - Added TODO comments as requested:
+    - `<!-- TODO: Add multiple shop types (Weapons, Items, Blacksmith) -->`
+    - `<!-- TODO: Replace with map-based clickable shop marker -->`
+  - Shop button maintains same styling (gold text #F9E97A on dark background #222233) and OpenShopCommand binding.
+  - Bottom row now only contains "Fight!" button, providing cleaner separation of actions.
+  - Improves UI organization by grouping utility actions (Rest, Save, Shop) together in the player info area.
+
+---
