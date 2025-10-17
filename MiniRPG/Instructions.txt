@@ -1,18 +1,13 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify MapViewModel.cs and MainViewModel.cs.
+Edit MapView.xaml.
 
-MapViewModel:
-• Add RelayCommand named OpenQuestBoardCommand.
-• When executed, trigger event OnOpenQuestBoard.
-
-MainViewModel:
-• Subscribe to OnOpenQuestBoard.
-• When triggered:
-   - Set CurrentViewModel = new QuestBoardViewModel(CurrentPlayer)
-• Subscribe to ExitBoardCommand to return to MapViewModel.
+Requirements:
+• Add Button labeled "Quest Board" near "Shop" and "Rest".
+• Bind Command to OpenQuestBoardCommand.
 • Add TODO:
-   // Add NPCs offering quests directly later
+   <!-- TODO: Add quest board building on map -->
+   <!-- TODO: Replace with clickable map object -->
 
 ---
 

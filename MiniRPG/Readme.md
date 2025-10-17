@@ -16,6 +16,24 @@
 
 ---
 
+## MapView Quest Board TODO Comments Added
+
+- Updated MapView.xaml with additional TODO comments for future quest board enhancements:
+  - **`<!-- TODO: Add quest board building on map -->`** - Placeholder for adding a visual quest board building/structure on the game map
+  - **`<!-- TODO: Replace with clickable map object -->`** - Future enhancement to replace the Quest Board button with an interactive map object
+- Quest Board button functionality already implemented and working:
+  - **Button Label**: "Quest Board" positioned next to "Shop" and "Rest" buttons
+  - **Command Binding**: Properly bound to `{Binding OpenQuestBoardCommand}` in MapViewModel
+  - **Navigation**: Full integration with MainViewModel for seamless view switching
+  - **UI Consistency**: Matches existing button styling with gold theme (#F9E97A) and dark background (#222233)
+- TODO comments provide roadmap for future map-based interaction improvements:
+  - Transform from button-based UI to immersive map-based quest board building
+  - Enable clickable map objects for more intuitive gameplay experience
+  - Support for visual quest board representation in game world
+- MapView.xaml quest board integration complete and ready for future map enhancement features
+
+---
+
 ## Shop System Testing Checklist & Advanced TODOs Added
 
 - Comprehensive shop system testing checklist implemented and documented:
