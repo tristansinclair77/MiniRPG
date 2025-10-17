@@ -7,6 +7,9 @@
              d:DesignHeight="400" d:DesignWidth="600">
     <!-- TODO: Add shopkeeper portrait and themed background -->
     <!-- TODO: Replace with pixel UI and sound effects -->
+    <!-- TODO: Add rare item rotation -->
+    <!-- TODO: Add equipment upgrade system -->
+    <!-- TODO: Add shopkeeper dialogue and art -->
     <Grid Margin="10" Background="#222233">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

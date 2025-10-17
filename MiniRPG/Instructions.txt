@@ -1,13 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit MapView.xaml and BattleView.xaml.
-
-Requirements:
-• Add TextBlock in corner showing "Gold: {Binding Player.Gold}".
-• Bind Player through DataContext properly.
-• Add TODO:
-   <!-- TODO: Replace text with animated coin icon -->
-   <!-- TODO: Add gold transaction animations -->
+Testing checklist:
+1. Enter battles, win gold, collect loot.
+2. Go to Map → click "Shop".
+3. Buy items → verify gold decreases and item added to inventory.
+4. Sell items → verify gold increases and item removed.
+5. Leave shop → return to MapView.
+6. Save game, restart → verify gold and inventory persist.
+7. Add TODO placeholders:
+   <!-- TODO: Add rare item rotation -->
+   <!-- TODO: Add equipment upgrade system -->
+   <!-- TODO: Add shopkeeper dialogue and art -->
 
 ---
 
