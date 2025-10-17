@@ -1,32 +1,18 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create ShopViewModel.cs in the ViewModels folder.
+Modify MapViewModel.cs and MainViewModel.cs.
 
-Requirements:
-• Inherit from BaseViewModel.
-• Properties:
-   - ObservableCollection<ShopItem> ShopInventory
-   - ShopItem? SelectedItem
-   - Player Player
-• Commands:
-   - BuyCommand
-   - SellCommand
-   - ExitShopCommand
-• Constructor(Player player):
-   - Initialize Player
-   - Populate ShopInventory with sample items (Potion, Wooden Sword, Leather Armor)
-• BuyCommand logic:
-   - If Player.SpendGold(SelectedItem.BuyPrice):
-       * Player.AddItem(SelectedItem.Item)
-       * Append "Purchased [item name]!"
-   - Else log "Not enough gold."
-• SellCommand logic:
-   - If Player.Inventory contains similar item:
-       * Remove it
-       * Player.AddGold(SelectedItem.SellPrice)
-       * Append "Sold [item name]!"
-   - Else log "You don't have that item."
-• Add TODO: // Add shop restock and random inventory later
+MapViewModel:
+• Add RelayCommand named OpenShopCommand.
+• When executed, trigger event OnOpenShop.
+
+MainViewModel:
+• Subscribe to OnOpenShop.
+• When called:
+   - Set CurrentViewModel = new ShopViewModel(CurrentPlayer)
+   - Append "You enter the shop."
+• Subscribe to ShopViewModel.ExitShopCommand → switch back to MapViewModel.
+• Add TODO: // Add shop icons on map and custom merchant types later
 
 ---
 

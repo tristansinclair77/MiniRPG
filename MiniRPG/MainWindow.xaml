@@ -43,6 +43,9 @@
         <DataTemplate DataType="{x:Type vm:TitleViewModel}">
             <v:TitleView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ShopViewModel}">
+            <v:ShopView />
+        </DataTemplate>
         <!-- TODO: Add fade transitions between views here -->
         <!-- TODO: Add animated fade between title and map -->
     </Window.Resources>

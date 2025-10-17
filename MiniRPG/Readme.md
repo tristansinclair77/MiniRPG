@@ -825,3 +825,24 @@
 - Foundation complete for shop system integration with existing currency and inventory systems
 
 ---
+
+## Shop Navigation System Added
+
+- Updated MapViewModel.cs in ViewModels folder:
+  - Added OpenShopCommand (RelayCommand) that triggers OnOpenShop event when executed.
+  - Added OnOpenShop event to signal when player wants to enter the shop.
+- Updated MainViewModel.cs to handle shop navigation:
+  - Subscribed to MapViewModel.OnOpenShop event in CreateMapViewModel method.
+  - When OnOpenShop is triggered:
+    - Creates new ShopViewModel with CurrentPlayer and GlobalLog.
+    - Sets ShopViewModel.ExitShopCommand to switch back to MapViewModel.
+    - Sets CurrentViewModel = shopVM to display the shop.
+    - Appends "You enter the shop." message to GlobalLog.
+- Updated MapView.xaml:
+  - Added "Shop" button next to the "Fight!" button.
+  - Shop button bound to OpenShopCommand for easy shop access.
+- Added DataTemplate for ShopViewModel in MainWindow.xaml resources to enable proper view switching.
+- Added TODO comment: "Add shop icons on map and custom merchant types later" for future map enhancements.
+- Complete shop workflow: MapView → Shop button → ShopView → Buy/Sell items → Exit Shop → back to MapView.
+
+---

@@ -39,6 +39,7 @@ namespace MiniRPG.ViewModels
         public ICommand SaveCommand { get; }
         public ICommand UseItemCommand { get; }
         public ICommand EquipItemCommand { get; }
+        public ICommand OpenShopCommand { get; }
         private ObservableCollection<string> _globalLog;
 
         private bool _isSaveConfirmed;
@@ -52,6 +53,9 @@ namespace MiniRPG.ViewModels
 
         // Event/callback for starting battle
         public event Action<string>? OnStartBattle;
+        
+        // Event/callback for opening shop
+        public event Action? OnOpenShop;
 
         public MapViewModel(ObservableCollection<string> globalLog, Player player)
         {
@@ -68,6 +72,7 @@ namespace MiniRPG.ViewModels
             SaveCommand = new RelayCommand(async _ => await SaveGame());
             UseItemCommand = new RelayCommand(param => UseItem(param as Item));
             EquipItemCommand = new RelayCommand(param => EquipItem(param as Item));
+            OpenShopCommand = new RelayCommand(_ => OpenShop());
         }
 
         private void StartBattle()
@@ -77,6 +82,11 @@ namespace MiniRPG.ViewModels
             _globalLog.Add(msg);
             OnStartBattle?.Invoke(SelectedLocation ?? "Unknown");
             // TODO: In future, connect to BattleViewModel and load enemy data
+        }
+
+        private void OpenShop()
+        {
+            OnOpenShop?.Invoke();
         }
 
         private async void Rest()

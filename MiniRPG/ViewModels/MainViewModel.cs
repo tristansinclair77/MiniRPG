@@ -53,23 +53,7 @@ namespace MiniRPG.ViewModels
             if (selection == "New")
             {
                 CurrentPlayer = new Player();
-                var mapVM = new MapViewModel(GlobalLog, CurrentPlayer);
-                mapVM.OnStartBattle += async location =>
-                {
-                    var battleVM = new BattleViewModel(GlobalLog, CurrentPlayer);
-                    // Optionally pass location to BattleViewModel here
-                    battleVM.BattleEnded += async result =>
-                    {
-                        AddLog($"Battle ended with result: {result}");
-                        // TODO: Later, implement rewards and experience points after victory
-                        await Task.Delay(1000);
-                        ShowMap();
-                    };
-                    CurrentViewModel = battleVM;
-                    try { AudioService.PlayBattleTheme(); } catch { }
-                    AddLog($"Entering battle at {location}");
-                    // TODO: Later - fade transition and music change between map and battle
-                };
+                var mapVM = CreateMapViewModel();
                 CurrentViewModel = mapVM;
                 try { AudioService.PlayMapTheme(); } catch { }
                 AddLog("A new adventure begins!");
@@ -79,41 +63,18 @@ namespace MiniRPG.ViewModels
             {
                 var loadedPlayer = SaveLoadService.LoadPlayer();
                 CurrentPlayer = loadedPlayer ?? new Player();
-                var mapVM = new MapViewModel(GlobalLog, CurrentPlayer);
-                mapVM.OnStartBattle += async location =>
-                {
-                    var battleVM = new BattleViewModel(GlobalLog, CurrentPlayer);
-                    // Optionally pass location to BattleViewModel here
-                    battleVM.BattleEnded += async result =>
-                    {
-                        AddLog($"Battle ended with result: {result}");
-                        // TODO: Later, implement rewards and experience points after victory
-                        await Task.Delay(1000);
-                        ShowMap();
-                    };
-                    CurrentViewModel = battleVM;
-                    try { AudioService.PlayBattleTheme(); } catch { }
-                    AddLog($"Entering battle at {location}");
-                    // TODO: Later - fade transition and music change between map and battle
-                };
+                var mapVM = CreateMapViewModel();
                 CurrentViewModel = mapVM;
                 try { AudioService.PlayMapTheme(); } catch { }
                 AddLog("Welcome back!");
             }
         }
 
-        public void AddLog(string message)
-        {
-            GlobalLog.Add(message);
-            OnPropertyChanged(nameof(GlobalLog));
-            OnPropertyChanged(nameof(CombinedLog));
-        }
-
-        public string CombinedLog => string.Join("\n", GlobalLog);
-
-        private void ShowMap()
+        private MapViewModel CreateMapViewModel()
         {
             var mapVM = new MapViewModel(GlobalLog, CurrentPlayer);
+            
+            // Subscribe to battle events
             mapVM.OnStartBattle += async location =>
             {
                 var battleVM = new BattleViewModel(GlobalLog, CurrentPlayer);
@@ -130,12 +91,38 @@ namespace MiniRPG.ViewModels
                 AddLog($"Entering battle at {location}");
                 // TODO: Later - fade transition and music change between map and battle
             };
+            
+            // Subscribe to shop events
+            mapVM.OnOpenShop += () =>
+            {
+                var shopVM = new ShopViewModel(CurrentPlayer, GlobalLog);
+                shopVM.ExitShopCommand = new RelayCommand(_ => ShowMap());
+                CurrentViewModel = shopVM;
+                AddLog("You enter the shop.");
+            };
+            
+            return mapVM;
+        }
+
+        public void AddLog(string message)
+        {
+            GlobalLog.Add(message);
+            OnPropertyChanged(nameof(GlobalLog));
+            OnPropertyChanged(nameof(CombinedLog));
+        }
+
+        public string CombinedLog => string.Join("\n", GlobalLog);
+
+        private void ShowMap()
+        {
+            var mapVM = CreateMapViewModel();
             CurrentViewModel = mapVM;
             try { AudioService.PlayMapTheme(); } catch { }
             AddLog("Switched to MapView");
             // Future: Insert transition/animation logic here for MapView
         }
         // TODO: Add currency, inventory, and gear tabs next
+        // TODO: Add shop icons on map and custom merchant types later
 
         private void ShowBattle()
         {
