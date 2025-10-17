@@ -1,18 +1,27 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create a new UserControl named QuestBoardView.
+Create QuestBoardViewModel.cs in the ViewModels folder.
 
-XAML layout:
-• Left ListBox bound to AvailableQuests
-• Right panel with:
-   - Title
-   - Description
-   - Button "Accept Quest"
-• Bottom ListBox showing "Active Quests"
+Requirements:
+• Inherit from BaseViewModel.
+• Properties:
+   - ObservableCollection<Quest> AvailableQuests
+   - Quest? SelectedQuest
+   - Player Player
+• Commands:
+   - AcceptQuestCommand
+   - ExitBoardCommand
+• Constructor(Player player):
+   - Initialize Player
+   - Load AvailableQuests from QuestService.GetAvailableQuests()
+• AcceptQuestCommand logic:
+   - If SelectedQuest not null:
+       * Player.AddQuest(SelectedQuest)
+       * Remove from AvailableQuests
+       * Log "You accepted the quest: [Title]"
 • Add TODO:
-   <!-- TODO: Add parchment background -->
-   <!-- TODO: Add quest board animation -->
-   <!-- TODO: Replace text with stylized UI -->
+   // Add quest filtering by type and region
+   // Add quest completion check refresh
 
 ---
 

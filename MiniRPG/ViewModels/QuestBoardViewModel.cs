@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows.Input;
 using MiniRPG.Models;
 using MiniRPG.Services;
@@ -11,7 +12,6 @@ namespace MiniRPG.ViewModels
     public class QuestBoardViewModel : BaseViewModel
     {
         private Player _player;
-        private ObservableCollection<string> _globalLog;
 
         public Player Player => _player;
 
@@ -45,12 +45,11 @@ namespace MiniRPG.ViewModels
         public string QuestDescription => SelectedQuest?.Description ?? "Choose a quest from the available quests list.";
 
         public ICommand AcceptQuestCommand { get; }
-        public ICommand ExitQuestBoardCommand { get; set; }
+        public ICommand ExitBoardCommand { get; set; }
 
-        public QuestBoardViewModel(Player player, ObservableCollection<string> globalLog)
+        public QuestBoardViewModel(Player player)
         {
             _player = player;
-            _globalLog = globalLog;
 
             // Load available quests from QuestService
             var allQuests = QuestService.GetAvailableQuests();
@@ -108,7 +107,7 @@ namespace MiniRPG.ViewModels
                 AvailableQuests.Remove(SelectedQuest);
                 
                 // Log the acceptance
-                _globalLog.Add($"Quest accepted: {SelectedQuest.Title}");
+                Debug.WriteLine($"You accepted the quest: {SelectedQuest.Title}");
                 
                 // Clear selection
                 SelectedQuest = null;
@@ -117,5 +116,8 @@ namespace MiniRPG.ViewModels
                 OnPropertyChanged(nameof(ActiveQuests));
             }
         }
+
+        // Add quest filtering by type and region
+        // Add quest completion check refresh
     }
 }

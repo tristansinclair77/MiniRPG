@@ -104,8 +104,8 @@ namespace MiniRPG.ViewModels
             // Subscribe to quest board events
             mapVM.OnOpenQuestBoard += () =>
             {
-                var questBoardVM = new QuestBoardViewModel(CurrentPlayer, GlobalLog);
-                questBoardVM.ExitQuestBoardCommand = new RelayCommand(_ => ShowMap());
+                var questBoardVM = new QuestBoardViewModel(CurrentPlayer);
+                questBoardVM.ExitBoardCommand = new RelayCommand(_ => ShowMap());
                 CurrentViewModel = questBoardVM;
                 AddLog("You approach the quest board.");
             };
