@@ -49,5 +49,13 @@ namespace MiniRPG.ViewModels
             add { CommandManager.RequerySuggested += value; }
             remove { CommandManager.RequerySuggested -= value; }
         }
+
+        /// <summary>
+        /// Raises the CanExecuteChanged event.
+        /// </summary>
+        public void RaiseCanExecuteChanged()
+        {
+            CommandManager.InvalidateRequerySuggested();
+        }
     }
 }

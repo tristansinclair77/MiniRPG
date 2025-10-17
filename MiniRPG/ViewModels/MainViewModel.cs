@@ -77,8 +77,7 @@ namespace MiniRPG.ViewModels
             // Subscribe to battle events
             mapVM.OnStartBattle += async location =>
             {
-                var battleVM = new BattleViewModel(GlobalLog, CurrentPlayer);
-                // Optionally pass location to BattleViewModel here
+                var battleVM = new BattleViewModel(GlobalLog, CurrentPlayer, location);
                 battleVM.BattleEnded += async result =>
                 {
                     AddLog($"Battle ended with result: {result}");

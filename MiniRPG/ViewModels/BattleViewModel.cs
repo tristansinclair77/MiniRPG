@@ -44,6 +44,13 @@ namespace MiniRPG.ViewModels
             set { _battleResult = value; OnPropertyChanged(); }
         }
 
+        private string _battleLocation = "Unknown";
+        public string BattleLocation
+        {
+            get => _battleLocation;
+            set { _battleLocation = value; OnPropertyChanged(); }
+        }
+
         private bool _canAct = true;
         private bool _defendNext = false;
 
@@ -58,10 +65,11 @@ namespace MiniRPG.ViewModels
         // Event for battle end
         public event Action<string>? BattleEnded;
 
-        public BattleViewModel(ObservableCollection<string> globalLog, Player player)
+        public BattleViewModel(ObservableCollection<string> globalLog, Player player, string location = "Unknown")
         {
             _globalLog = globalLog;
             Player = player;
+            BattleLocation = location;
             CurrentEnemy = GameService.GetRandomEnemy();
             EnemyHP = 20;
             IsBattleOver = false;
@@ -85,22 +93,27 @@ namespace MiniRPG.ViewModels
                 _globalLog.Add("You defeated the enemy!");
 
                 // Quest tracking - check active quests for enemy kill requirements
+                var questsToComplete = new List<Quest>();
                 foreach (var quest in Player.ActiveQuests)
                 {
                     if (quest.Title.Contains(CurrentEnemy, StringComparison.OrdinalIgnoreCase))
                     {
                         quest.CurrentKills++;
                         quest.CheckProgress();
-                        
                         if (quest.IsCompleted)
                         {
-                            Player.CompleteQuest(quest);
-                            var questCompleteMsg = $"Quest complete: {quest.Title}!";
-                            CombatLog.Add(questCompleteMsg);
-                            _globalLog.Add(questCompleteMsg);
+                            questsToComplete.Add(quest);
                         }
                     }
                 }
+                foreach (var quest in questsToComplete)
+                {
+                    Player.CompleteQuest(quest);
+                    var questCompleteMsg = $"Quest complete: {quest.Title}!";
+                    CombatLog.Add(questCompleteMsg);
+                    _globalLog.Add(questCompleteMsg);
+                }
+
                 // Add quest tracking popup and sound effect
                 // Add enemy type classification for matching
 

@@ -24,7 +24,12 @@ namespace MiniRPG.ViewModels
         public string? SelectedLocation
         {
             get => _selectedLocation;
-            set { _selectedLocation = value; OnPropertyChanged(); }
+            set
+            {
+                _selectedLocation = value;
+                OnPropertyChanged();
+                (StartBattleCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            }
         }
 
         private Item? _selectedInventoryItem;
@@ -71,7 +76,7 @@ namespace MiniRPG.ViewModels
                 "Cave",
                 "Ruins"
             };
-            StartBattleCommand = new RelayCommand(_ => StartBattle());
+            StartBattleCommand = new RelayCommand(_ => StartBattle(), _ => !string.IsNullOrEmpty(this.SelectedLocation));
             RestCommand = new RelayCommand(_ => Rest());
             SaveCommand = new RelayCommand(async _ => await SaveGame());
             UseItemCommand = new RelayCommand(param => UseItem(param as Item));

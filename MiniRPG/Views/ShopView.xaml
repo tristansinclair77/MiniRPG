@@ -66,17 +66,54 @@
                     <ListBox x:Name="PlayerInventoryListBox" 
                              ItemsSource="{Binding Player.Inventory}" 
                              SelectedItem="{Binding SelectedInventoryItem, Mode=TwoWay}"
+                             SelectedIndex="{Binding SelectedInventoryIndex, Mode=TwoWay}"
                              Background="#222233" 
                              Foreground="White" 
-                             Height="150">
+                             Height="150"
+                             SelectionMode="Single">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="IsEnabled" Value="True" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                        <Setter Property="IsEnabled" Value="False" />
+                                        <Setter Property="Focusable" Value="False" />
+                                        <Setter Property="Opacity" Value="0.5" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="White" />
-                                    <TextBlock Text=" (" Foreground="White" />
-                                    <TextBlock Text="{Binding Type}" Foreground="White" />
-                                    <TextBlock Text=")" Foreground="White" />
-                                </StackPanel>
+                                <ContentControl Content="{Binding}">
+                                    <ContentControl.Style>
+                                        <Style TargetType="ContentControl">
+                                            <Setter Property="ContentTemplate">
+                                                <Setter.Value>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="White" />
+                                                            <TextBlock Text=" (" Foreground="White" />
+                                                            <TextBlock Text="{Binding Type}" Foreground="White" />
+                                                            <TextBlock Text=")" Foreground="White" />
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                                    <Setter Property="ContentTemplate">
+                                                        <Setter.Value>
+                                                            <DataTemplate>
+                                                                <TextBlock Text="" />
+                                                            </DataTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ContentControl.Style>
+                                </ContentControl>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>

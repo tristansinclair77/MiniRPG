@@ -19,7 +19,7 @@ namespace MiniRPG.Models
             set { _maxInventoryCapacity = value; OnPropertyChanged(); OnPropertyChanged(nameof(InventoryCount)); }
         }
 
-        public int InventoryCount => Inventory?.Count ?? 0;
+        public int InventoryCount => Inventory?.Count(item => item != null) ?? 0;
 
         private int _hp;
         public int HP
@@ -104,7 +104,7 @@ namespace MiniRPG.Models
             set { _equippedAccessory = value; OnPropertyChanged(); }
         }
 
-        public ObservableCollection<Item> Inventory { get; set; } = new();
+        public ObservableCollection<Item?> Inventory { get; set; } = new();
 
         // Quest system
         public ObservableCollection<Quest> ActiveQuests { get; set; } = new();
@@ -242,6 +242,23 @@ namespace MiniRPG.Models
                 Debug.WriteLine($"Quest '{quest.Title}' completed! Rewards: {quest.RewardGold} gold, {quest.RewardExp} experience" +
                     (quest.RewardItem != null ? $", {quest.RewardItem.Name}" : ""));
             }
+        }
+
+        public void NotifyInventoryChanged()
+        {
+            OnPropertyChanged(nameof(InventoryCount));
+        }
+
+        public void CompactInventory()
+        {
+            for (int i = Inventory.Count - 1; i >= 0; i--)
+            {
+                if (Inventory[i] == null)
+                {
+                    Inventory.RemoveAt(i);
+                }
+            }
+            NotifyInventoryChanged();
         }
 
         // TODO: Later - add quest categories (Main, Side, Daily)
