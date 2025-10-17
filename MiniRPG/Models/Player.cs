@@ -96,6 +96,10 @@ namespace MiniRPG.Models
 
         public ObservableCollection<Item> Inventory { get; set; } = new();
 
+        // Quest system
+        public ObservableCollection<Quest> ActiveQuests { get; set; } = new();
+        public ObservableCollection<Quest> CompletedQuests { get; set; } = new();
+
         public Player(string name = "Hero")
         {
             Name = name;
@@ -183,6 +187,40 @@ namespace MiniRPG.Models
             }
         }
 
+        /// <summary>
+        /// Adds a quest to the player's active quest list.
+        /// </summary>
+        /// <param name="quest">The quest to add</param>
+        public void AddQuest(Quest quest) => ActiveQuests.Add(quest);
+
+        /// <summary>
+        /// Completes a quest, moving it to completed quests and awarding rewards.
+        /// </summary>
+        /// <param name="quest">The quest to complete</param>
+        public void CompleteQuest(Quest quest)
+        {
+            // Move quest from ActiveQuests to CompletedQuests
+            if (ActiveQuests.Contains(quest))
+            {
+                ActiveQuests.Remove(quest);
+                CompletedQuests.Add(quest);
+                
+                // Award rewards
+                AddGold(quest.RewardGold);
+                GainExperience(quest.RewardExp);
+                
+                if (quest.RewardItem != null)
+                {
+                    AddItem(quest.RewardItem);
+                }
+                
+                // Log reward message
+                Debug.WriteLine($"Quest '{quest.Title}' completed! Rewards: {quest.RewardGold} gold, {quest.RewardExp} experience" +
+                    (quest.RewardItem != null ? $", {quest.RewardItem.Name}" : ""));
+            }
+        }
+
+        // TODO: Later - add quest categories (Main, Side, Daily)
         // TODO: Add currency icons and multi-currency support later
         // TODO: // Add unequip logic and visual equipment preview later
     }
