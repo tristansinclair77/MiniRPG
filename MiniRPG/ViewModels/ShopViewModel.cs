@@ -45,6 +45,17 @@ namespace MiniRPG.ViewModels
             }
         }
 
+        private int _selectedInventoryIndex = -1;
+        public int SelectedInventoryIndex
+        {
+            get => _selectedInventoryIndex;
+            set
+            {
+                _selectedInventoryIndex = value;
+                OnPropertyChanged();
+            }
+        }
+
         public Player Player { get; set; }
 
         public RelayCommand BuyCommand { get; set; }
@@ -110,48 +121,80 @@ namespace MiniRPG.ViewModels
 
         private void ExecuteSell(object? parameter)
         {
-            // Sell from player's selected inventory item
-            if (SelectedInventoryItem != null)
+            string message = string.Empty;
+            // Defensive: Check Player and Inventory
+            if (Player == null)
             {
-                // Calculate sell price (half of item value or use shop's sell price if available)
-                int sellPrice = SelectedInventoryItem.Value / 2;
-                
-                // Check if this item exists in shop inventory to get proper sell price
-                var shopItem = ShopInventory.FirstOrDefault(si => si.Item.Name == SelectedInventoryItem.Name);
-                if (shopItem != null)
-                {
-                    sellPrice = shopItem.SellPrice;
-                }
-                
-                Player.RemoveItem(SelectedInventoryItem);
-                Player.AddGold(sellPrice);
-                string message = $"Sold {SelectedInventoryItem.Name} for {sellPrice} gold!";
-                _globalLog.Add(message);
-                
-                // Clear selection
-                SelectedInventoryItem = null;
+                _globalLog.Add("Error: Player is null.");
+                return;
             }
-            else if (SelectedItem != null)
+            if (Player.Inventory == null)
             {
-                // Legacy: Sell from shop inventory (check if player has it)
-                var similarItem = Player.Inventory.FirstOrDefault(item => item.Name == SelectedItem.Item.Name);
-                
-                if (similarItem != null)
+                _globalLog.Add("Error: Player.Inventory is null.");
+                return;
+            }
+            // Defensive: Remove by slot
+            if (SelectedInventoryItem != null && SelectedInventoryIndex >= 0 && SelectedInventoryIndex < Player.Inventory.Count)
+            {
+                var itemInSlot = Player.Inventory[SelectedInventoryIndex];
+                string soldName = itemInSlot?.Name ?? "(unknown)";
+                if (itemInSlot == null)
                 {
-                    Player.RemoveItem(similarItem);
-                    Player.AddGold(SelectedItem.SellPrice);
-                    string message = $"Sold {SelectedItem.Item.Name}!";
-                    _globalLog.Add(message);
+                    message = "Error: Inventory slot already empty.";
+                }
+                else if (!object.ReferenceEquals(itemInSlot, SelectedInventoryItem))
+                {
+                    message = "Error: Selected item does not match inventory slot.";
                 }
                 else
                 {
-                    string message = "You don't have that item.";
-                    _globalLog.Add(message);
+                    int sellPrice = 0;
+                    if (SelectedInventoryItem != null)
+                    {
+                        sellPrice = (SelectedInventoryItem.Value > 0 ? SelectedInventoryItem.Value : 0) / 2;
+                        var shopItem = ShopInventory?.FirstOrDefault(si => si?.Item != null && si.Item.Name == SelectedInventoryItem.Name);
+                        if (shopItem != null)
+                        {
+                            sellPrice = shopItem.SellPrice;
+                        }
+                    }
+                    Player.Inventory[SelectedInventoryIndex] = null;
+                    Player.AddGold(sellPrice);
+                    message = $"Sold {soldName} for {sellPrice} gold!";
+                    // Notify inventory count changed
+                    Player.NotifyInventoryChanged();
+                    Player.CompactInventory();
                 }
+                _globalLog.Add(message);
+                SelectedInventoryItem = null;
+                SelectedInventoryIndex = -1;
+            }
+            else if (SelectedItem != null)
+            {
+                int similarItemIndex = -1;
+                string soldName = SelectedItem.Item?.Name ?? "(unknown)";
+                if (Player.Inventory != null)
+                {
+                    similarItemIndex = Player.Inventory.ToList().FindIndex(item => item != null && SelectedItem.Item != null && item.Name == SelectedItem.Item.Name);
+                }
+                if (similarItemIndex >= 0 && Player.Inventory[similarItemIndex] != null)
+                {
+                    Player.Inventory[similarItemIndex] = null;
+                    Player.AddGold(SelectedItem.SellPrice);
+                    message = $"Sold {soldName}!";
+                    // Notify inventory count changed
+                    Player.NotifyInventoryChanged();
+                    Player.CompactInventory();
+                }
+                else
+                {
+                    message = "You don't have that item.";
+                }
+                _globalLog.Add(message);
             }
             else
             {
-                string message = "No item selected to sell.";
+                message = "No item selected to sell.";
                 _globalLog.Add(message);
             }
         }
