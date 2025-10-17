@@ -83,6 +83,27 @@ namespace MiniRPG.ViewModels
             {
                 CombatLog.Add("You defeated the enemy!");
                 _globalLog.Add("You defeated the enemy!");
+
+                // Quest tracking - check active quests for enemy kill requirements
+                foreach (var quest in Player.ActiveQuests)
+                {
+                    if (quest.Title.Contains(CurrentEnemy, StringComparison.OrdinalIgnoreCase))
+                    {
+                        quest.CurrentKills++;
+                        quest.CheckProgress();
+                        
+                        if (quest.IsCompleted)
+                        {
+                            Player.CompleteQuest(quest);
+                            var questCompleteMsg = $"Quest complete: {quest.Title}!";
+                            CombatLog.Add(questCompleteMsg);
+                            _globalLog.Add(questCompleteMsg);
+                        }
+                    }
+                }
+                // Add quest tracking popup and sound effect
+                // Add enemy type classification for matching
+
                 // Experience and level-up logic
                 int exp = new Random().Next(5, 15);
                 bool leveledUp = Player.GainExperience(exp);

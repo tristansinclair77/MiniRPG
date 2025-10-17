@@ -1,13 +1,19 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit MapView.xaml.
+Modify BattleViewModel.cs.
 
 Requirements:
-• Add Button labeled "Quest Board" near "Shop" and "Rest".
-• Bind Command to OpenQuestBoardCommand.
+• When an enemy is defeated:
+   - foreach (var quest in Player.ActiveQuests)
+       * If quest.Title.Contains(CurrentEnemy, StringComparison.OrdinalIgnoreCase)
+            quest.CurrentKills++
+            quest.CheckProgress()
+            If quest.IsCompleted:
+                Player.CompleteQuest(quest)
+                Append $"Quest complete: {quest.Title}!"
 • Add TODO:
-   <!-- TODO: Add quest board building on map -->
-   <!-- TODO: Replace with clickable map object -->
+   // Add quest tracking popup and sound effect
+   // Add enemy type classification for matching
 
 ---
 

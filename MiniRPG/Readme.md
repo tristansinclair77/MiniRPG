@@ -16,6 +16,35 @@
 
 ---
 
+## BattleViewModel Quest Tracking Integration
+
+- **Quest Tracking on Enemy Defeat**: Modified BattleViewModel.cs to implement automatic quest progress tracking when enemies are defeated:
+  - **Active Quest Iteration**: Added `foreach (var quest in Player.ActiveQuests)` loop in enemy defeat logic
+  - **Enemy Name Matching**: Implemented `quest.Title.Contains(CurrentEnemy, StringComparison.OrdinalIgnoreCase)` for case-insensitive enemy type detection
+  - **Progress Tracking**: Increments `quest.CurrentKills++` for matching quests and calls `quest.CheckProgress()` for completion check
+  - **Quest Completion**: When `quest.IsCompleted` becomes true, automatically calls `Player.CompleteQuest(quest)` to award rewards
+  - **User Feedback**: Adds quest completion message `"Quest complete: {quest.Title}!"` to both CombatLog and GlobalLog
+  - **Integration Point**: Quest tracking occurs immediately after enemy defeat confirmation but before experience/loot rewards
+- **Future Enhancement TODO Comments Added**:
+  - `// Add quest tracking popup and sound effect` - For visual and audio feedback when quest progress updates
+  - `// Add enemy type classification for matching` - For more sophisticated enemy categorization beyond name matching
+- **Quest Workflow Integration**: Complete quest lifecycle now functional in battles:
+  - **Quest Acceptance**: Player accepts quests via Quest Board → quests added to Player.ActiveQuests
+  - **Progress Tracking**: Player defeats enemies in battle → matching quests automatically track kills
+  - **Quest Completion**: Kill requirements met → quest moves to CompletedQuests → rewards awarded immediately
+  - **Reward Distribution**: Quest completion triggers gold, experience, and item rewards through existing Player methods
+- **Real-Time Updates**: Quest progress updates are immediately visible in:
+  - Combat log during battles showing quest completion messages
+  - Global log for persistent quest completion tracking
+  - Player.ActiveQuests collection for UI binding updates
+  - Save/load system through existing Player serialization
+- **Smart Matching Logic**: Case-insensitive enemy name detection allows flexible quest design:
+  - "Slime Hunt" quest matches "Slime", "Forest Slime", "Giant Slime" enemies
+  - "Goblin Problem" quest matches "Goblin", "Goblin Warrior", "Goblin Shaman" enemies
+  - Future-proof for enemy variants and naming conventions
+
+---
+
 ## MapView Quest Board TODO Comments Added
 
 - Updated MapView.xaml with additional TODO comments for future quest board enhancements:
