@@ -26,6 +26,9 @@ namespace MiniRPG.ViewModels
         public RelayCommand SellCommand { get; set; }
         public RelayCommand ExitShopCommand { get; set; }
 
+        // Event for when the player wants to exit the shop
+        public event System.Action? OnExitShop;
+
         public ShopViewModel(Player player, ObservableCollection<string> globalLog)
         {
             Player = player;
@@ -52,7 +55,7 @@ namespace MiniRPG.ViewModels
             // Initialize commands
             BuyCommand = new RelayCommand(ExecuteBuy);
             SellCommand = new RelayCommand(ExecuteSell);
-            ExitShopCommand = new RelayCommand(ExecuteExitShop);
+            ExitShopCommand = new RelayCommand(_ => OnExitShop?.Invoke());
         }
 
         private void ExecuteBuy(object? parameter)

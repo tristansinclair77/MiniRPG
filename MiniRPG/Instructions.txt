@@ -1,13 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit MapView.xaml.
+Enhance ShopViewModel.cs and ShopView.xaml.
 
-Requirements:
-• Add a Button labeled "Shop" near "Rest" and "Save Game".
-• Bind Command to OpenShopCommand.
+ShopViewModel:
+• Initialize ExitShopCommand = new RelayCommand(_ => OnExitShop?.Invoke());
+• Add event Action OnExitShop;
+
+ShopView.xaml:
+• Add Button labeled "Leave Shop" bound to ExitShopCommand.
+• Place at bottom of view.
 • Add TODO:
-   <!-- TODO: Add multiple shop types (Weapons, Items, Blacksmith) -->
-   <!-- TODO: Replace with map-based clickable shop marker -->
+   <!-- TODO: Add exit confirmation and goodbye dialogue -->
 
 ---
 

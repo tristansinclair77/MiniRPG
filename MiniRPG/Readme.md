@@ -860,3 +860,27 @@
   - Improves UI organization by grouping utility actions (Rest, Save, Shop) together in the player info area.
 
 ---
+
+## ShopViewModel Exit Enhancement
+
+- Updated ShopViewModel.cs in ViewModels folder:
+  - Added `public event System.Action? OnExitShop;` event declaration for shop exit handling.
+  - Modified ExitShopCommand initialization to `new RelayCommand(_ => OnExitShop?.Invoke());` for proper event triggering.
+  - Removed the previous ExecuteExitShop method as the command now directly invokes the OnExitShop event.
+  - OnExitShop event allows MainViewModel to handle shop exit logic and view switching.
+  - Maintains existing shop functionality while providing cleaner event-driven architecture.
+
+---
+
+## ShopView Leave Shop Button Added
+
+- Updated ShopView.xaml user control:
+  - Added fourth row definition to Grid for Leave Shop button placement.
+  - Added "Leave Shop" button at bottom of view (Grid.Row="3") spanning both columns.
+  - Button bound to ExitShopCommand for proper MVVM command handling.
+  - Button uses consistent styling with other shop buttons (gold text #F9E97A on dark background #222233).
+  - Button centered horizontally for visual balance and accessibility.
+  - Added TODO comment: `<!-- TODO: Add exit confirmation and goodbye dialogue -->` for future enhancement.
+  - Provides clear and accessible way for players to exit the shop and return to map view.
+
+---
