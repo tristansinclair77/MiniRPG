@@ -48,5 +48,8 @@ namespace MiniRPG.Models
 
         // TODO: Add quest types: Fetch, Deliver, Explore
         // TODO: Add quest giver NPC info
+        // TODO: Add quest rewards summary UI
+        // TODO: Add storyline quest chains
+        // TODO: Add quest completion cutscenes
     }
 }

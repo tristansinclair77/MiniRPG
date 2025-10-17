@@ -1,14 +1,17 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit MapView.xaml.
-
-Requirements:
-• Add an Expander titled "Active Quests".
-• Inside, bind to Player.ActiveQuests.
-• Show Quest.Title and progress as "x/y defeated".
-• Add TODO:
-   <!-- TODO: Replace with quest journal UI -->
-   <!-- TODO: Add completion notifications -->
+Testing checklist:
+1. Enter Map → Open Quest Board.
+2. Accept a quest (e.g., "Slime Hunt").
+3. Fight battles → defeat matching enemies.
+4. Observe quest progress update in MapView.
+5. When completed, verify gold/EXP/item rewards granted.
+6. Check quest moves to CompletedQuests list.
+7. Save, exit, reload → verify quests persist.
+8. Add TODO placeholders:
+   <!-- TODO: Add quest rewards summary UI -->
+   <!-- TODO: Add storyline quest chains -->
+   <!-- TODO: Add quest completion cutscenes -->
 
 ---
 

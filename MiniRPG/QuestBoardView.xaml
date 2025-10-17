@@ -8,6 +8,9 @@
     <!-- TODO: Add parchment background -->
     <!-- TODO: Add quest board animation -->
     <!-- TODO: Replace text with stylized UI -->
+    <!-- TODO: Add quest rewards summary UI -->
+    <!-- TODO: Add storyline quest chains -->
+    <!-- TODO: Add quest completion cutscenes -->
     <Grid Margin="10" Background="#222233">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -178,7 +181,7 @@
         <!-- Exit Quest Board Button -->
         <Button Grid.Row="4" Grid.ColumnSpan="2" 
                 Content="Leave Quest Board" 
-                Command="{Binding ExitQuestBoardCommand}"
+                Command="{Binding ExitBoardCommand}"
                 Margin="0,15,0,0" 
                 Padding="10,6" 
                 Foreground="#F9E97A" 
