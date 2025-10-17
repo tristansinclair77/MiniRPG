@@ -1,27 +1,18 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create QuestBoardViewModel.cs in the ViewModels folder.
+Modify MapViewModel.cs and MainViewModel.cs.
 
-Requirements:
-• Inherit from BaseViewModel.
-• Properties:
-   - ObservableCollection<Quest> AvailableQuests
-   - Quest? SelectedQuest
-   - Player Player
-• Commands:
-   - AcceptQuestCommand
-   - ExitBoardCommand
-• Constructor(Player player):
-   - Initialize Player
-   - Load AvailableQuests from QuestService.GetAvailableQuests()
-• AcceptQuestCommand logic:
-   - If SelectedQuest not null:
-       * Player.AddQuest(SelectedQuest)
-       * Remove from AvailableQuests
-       * Log "You accepted the quest: [Title]"
+MapViewModel:
+• Add RelayCommand named OpenQuestBoardCommand.
+• When executed, trigger event OnOpenQuestBoard.
+
+MainViewModel:
+• Subscribe to OnOpenQuestBoard.
+• When triggered:
+   - Set CurrentViewModel = new QuestBoardViewModel(CurrentPlayer)
+• Subscribe to ExitBoardCommand to return to MapViewModel.
 • Add TODO:
-   // Add quest filtering by type and region
-   // Add quest completion check refresh
+   // Add NPCs offering quests directly later
 
 ---
 

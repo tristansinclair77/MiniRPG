@@ -108,6 +108,7 @@ namespace MiniRPG.ViewModels
                 questBoardVM.ExitBoardCommand = new RelayCommand(_ => ShowMap());
                 CurrentViewModel = questBoardVM;
                 AddLog("You approach the quest board.");
+                // TODO: Add NPCs offering quests directly later
             };
             
             return mapVM;
