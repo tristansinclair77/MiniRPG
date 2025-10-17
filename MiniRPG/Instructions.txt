@@ -1,18 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify Player.cs.
+Create QuestService.cs in the Services folder.
 
 Requirements:
-• Add ObservableCollection<Quest> ActiveQuests = new();
-• Add ObservableCollection<Quest> CompletedQuests = new();
-• Add method AddQuest(Quest quest) => ActiveQuests.Add(quest);
-• Add method CompleteQuest(Quest quest):
-   - Move quest from ActiveQuests to CompletedQuests
-   - AddGold(quest.RewardGold)
-   - GainExperience(quest.RewardExp)
-   - If quest.RewardItem != null → AddItem(quest.RewardItem)
-   - Log reward message.
-• Add TODO: // Later - add quest categories (Main, Side, Daily)
+• Static class QuestService
+• Static method GetAvailableQuests() returning List<Quest> with sample entries:
+   - "Slime Hunt" (3 kills)
+   - "Goblin Problem" (5 kills)
+• Add method FindQuestByTitle(string title)
+• Add TODO:
+   // Add dynamic quest generation based on region and player level
+   // Add quest chain progression
 
 ---
 
