@@ -44,6 +44,13 @@ namespace MiniRPG.ViewModels
             set { _battleResult = value; OnPropertyChanged(); }
         }
 
+        private string _battleLocation = "Unknown";
+        public string BattleLocation
+        {
+            get => _battleLocation;
+            set { _battleLocation = value; OnPropertyChanged(); }
+        }
+
         private bool _canAct = true;
         private bool _defendNext = false;
 
@@ -58,10 +65,11 @@ namespace MiniRPG.ViewModels
         // Event for battle end
         public event Action<string>? BattleEnded;
 
-        public BattleViewModel(ObservableCollection<string> globalLog, Player player)
+        public BattleViewModel(ObservableCollection<string> globalLog, Player player, string location = "Unknown")
         {
             _globalLog = globalLog;
             Player = player;
+            BattleLocation = location;
             CurrentEnemy = GameService.GetRandomEnemy();
             EnemyHP = 20;
             IsBattleOver = false;
