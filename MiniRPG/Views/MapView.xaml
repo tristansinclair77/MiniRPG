@@ -19,7 +19,8 @@
     <!-- TODO: Replace with clickable map object -->
     <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" /> <!-- Save message row -->
+            <RowDefinition Height="Auto" /> <!-- Top bar: gold, buttons -->
             <RowDefinition Height="Auto" /> <!-- Inventory row -->
             <RowDefinition Height="Auto" /> <!-- Equipment display row -->
             <RowDefinition Height="Auto" /> <!-- Active Quests row -->
@@ -27,8 +28,12 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <!-- Game Saved message -->
+        <TextBlock Grid.Row="0" Text="Game Saved!" Foreground="LimeGreen" FontWeight="Bold" FontSize="16" Margin="0,0,0,8" HorizontalAlignment="Center"
+                   Visibility="{Binding IsSaveConfirmed, Converter={StaticResource BoolToVis}}" Panel.ZIndex="100" />
+
         <!-- Gold Display in Top-Right Corner -->
-        <TextBlock Grid.Row="0" 
+        <TextBlock Grid.Row="1" 
                    Text="{Binding Player.Gold, StringFormat='Gold: {0}'}" 
                    HorizontalAlignment="Right" 
                    VerticalAlignment="Top" 
@@ -42,7 +47,7 @@
         </TextBlock>
 
         <!-- Player Info Panel -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
             <TextBlock Text="Level: " FontWeight="Bold" Foreground="White" />
             <TextBlock Text="{Binding Player.Level}" Foreground="White" Margin="4,0,12,0" />
             <TextBlock Text="HP: " FontWeight="Bold" Foreground="White" />
@@ -67,14 +72,9 @@
                 <!-- TODO: Replace with map-based clickable quest board marker -->
             </Button>
         </StackPanel>
-        <!-- Game Saved message -->
-        <TextBlock Grid.Row="0" Text="Game Saved!" Foreground="LimeGreen" FontWeight="Bold" FontSize="16" Margin="0,32,0,0" HorizontalAlignment="Center"
-                   Visibility="{Binding IsSaveConfirmed, Converter={StaticResource BoolToVis}}">
-            <!-- TODO: Replace with pixel-art popup animation for future version -->
-        </TextBlock>
 
         <!-- Inventory Expander -->
-        <Expander Grid.Row="1" Margin="0,0,0,10" Foreground="White" Background="#292944">
+        <Expander Grid.Row="2" Margin="0,0,0,10" Foreground="White" Background="#292944">
             <Expander.Header>
                 <TextBlock>
                     <Run Text="Inventory (" />
@@ -109,7 +109,7 @@
         </Expander>
 
         <!-- Equipment Display -->
-        <Border Grid.Row="2" Margin="0,0,0,10" Background="#292944" Padding="8">
+        <Border Grid.Row="3" Margin="0,0,0,10" Background="#292944" Padding="8">
             <StackPanel>
                 <TextBlock Text="Equipment:" Foreground="#F9E97A" FontWeight="Bold" FontSize="14" Margin="0,0,0,5" />
                 <TextBlock Foreground="White">
@@ -140,7 +140,7 @@
         </Border>
 
         <!-- Active Quests Expander -->
-        <Expander Grid.Row="3" Header="Active Quests" Margin="0,0,0,10" Foreground="White" Background="#292944">
+        <Expander Grid.Row="4" Header="Active Quests" Margin="0,0,0,10" Foreground="White" Background="#292944">
             <!-- TODO: Replace with quest journal UI -->
             <!-- TODO: Add completion notifications -->
             <ListBox ItemsSource="{Binding Player.ActiveQuests}" Background="#222233" Foreground="White" Height="100">
@@ -160,11 +160,11 @@
             </ListBox>
         </Expander>
 
-        <Label Grid.Row="4" Content="Choose a Battle Location" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" Margin="0,0,0,10" Foreground="#F9E97A" />
+        <Label Grid.Row="5" Content="Choose a Battle Location" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" Margin="0,0,0,10" Foreground="#F9E97A" />
 
-        <ListBox Grid.Row="4" Name="LocationList" ItemsSource="{Binding Locations}" SelectedItem="{Binding SelectedLocation, Mode=TwoWay}" Margin="0,0,0,10" />
+        <ListBox Grid.Row="5" Name="LocationList" ItemsSource="{Binding Locations}" SelectedItem="{Binding SelectedLocation, Mode=TwoWay}" Margin="0,0,0,10" />
 
-        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Fight!" Command="{Binding StartBattleCommand}" Width="100" Foreground="#F9E97A" Background="#222233" FontWeight="Bold" />
         </StackPanel>
     </Grid>
