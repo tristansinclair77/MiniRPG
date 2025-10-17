@@ -800,3 +800,28 @@
 - Foundation ready for shop functionality with buy/sell operations and currency integration.
 
 ---
+
+## ShopViewModel Added
+
+- Created ShopViewModel.cs in ViewModels folder.
+- Inherits from BaseViewModel with all required properties and commands:
+  - ObservableCollection<ShopItem> ShopInventory - populated with sample items (Potion, Wooden Sword, Leather Armor)
+  - ShopItem? SelectedItem - for tracking selected shop item
+  - Player Player - reference to player for transactions
+  - RelayCommand BuyCommand, SellCommand, ExitShopCommand - for shop interactions
+- Constructor accepts Player and GlobalLog, initializes sample shop inventory with proper pricing.
+- BuyCommand logic:
+  - Validates SelectedItem exists
+  - Uses Player.SpendGold(SelectedItem.BuyPrice) to check/deduct gold
+  - Adds item to Player.Inventory on successful purchase
+  - Logs "Purchased [item name]!" or "Not enough gold." to GlobalLog
+- SellCommand logic:
+  - Validates SelectedItem exists  
+  - Searches Player.Inventory for matching item by name
+  - Removes item and calls Player.AddGold(SelectedItem.SellPrice) on successful sale
+  - Logs "Sold [item name]!" or "You don't have that item." to GlobalLog
+- ExitShopCommand logs exit action (to be handled by parent ViewModel)
+- Added TODO comment: "Add shop restock and random inventory later" for future enhancements
+- Foundation complete for shop system integration with existing currency and inventory systems
+
+---
