@@ -16,6 +16,57 @@
 
 ---
 
+## Active Quests Expander Added to MapView
+
+- **MapView.xaml Updated**: Added "Active Quests" expander to display player's current quest progress on the map screen:
+  - **New Grid Row**: Added `<RowDefinition Height="Auto" /> <!-- Active Quests row -->` to accommodate the new expander
+  - **Expander Placement**: Positioned in Grid.Row="3" between Equipment Display and Battle Location selection
+  - **UI Consistency**: Matches existing expander styling with white foreground and #292944 background color
+  - **Proper Margins**: Uses "0,0,0,10" margin pattern consistent with other expanders for visual spacing
+  
+- **Quest Display Implementation**: 
+  - **Data Binding**: `ItemsSource="{Binding Player.ActiveQuests}"` binds directly to Player's ActiveQuests collection
+  - **ListBox Container**: Dark theme (#222233 background) with 100px height, consistent with Inventory expander
+  - **Quest Title Display**: Bold white TextBlock showing quest title using `{Binding Title}`
+  - **Progress Tracking**: Shows kill progress in format "x/y defeated" using three separate Run bindings:
+    - `{Binding CurrentKills}` - Current enemy kills
+    - `{Binding RequiredKills}` - Required kills for completion
+    - Static text " defeated" for clarity
+  - **Progress Styling**: Light gray (#CCCCCC) color for progress text to differentiate from quest title
+  
+- **Required TODO Comments Added**:
+  - `<!-- TODO: Replace with quest journal UI -->` - Future enhancement for dedicated quest journal interface
+  - `<!-- TODO: Add completion notifications -->` - Planned visual/audio feedback when quests complete
+  
+- **Grid Row Adjustments**: Updated row assignments to accommodate new quest expander:
+  - Row 0: Player info panel and gold display (unchanged)
+  - Row 1: Inventory expander (unchanged)
+  - Row 2: Equipment display (unchanged)
+  - Row 3: **Active Quests expander (NEW)**
+  - Row 4: Battle location selection (updated from Row 3)
+  - Row 5: Fight button (updated from Row 4)
+  
+- **Real-Time Quest Progress**: 
+  - Quest progress updates automatically as enemies are defeated in battle
+  - CurrentKills increments through BattleViewModel quest tracking integration
+  - ObservableCollection binding ensures immediate UI updates without manual refresh
+  - Quest completion automatically removes quests from ActiveQuests and moves to CompletedQuests
+  
+- **User Experience Enhancements**:
+  - Players can now view active quest progress without leaving the map screen
+  - No need to return to Quest Board to check quest status
+  - Clear visual feedback on quest objectives and current progress
+  - Seamless integration with existing quest system workflow
+  
+- **Integration with Existing Systems**:
+  - Works with quest acceptance from Quest Board (QuestBoardView)
+  - Displays quests added via Player.AddQuest() method
+  - Updates automatically when BattleViewModel tracks enemy defeats
+  - Persists through SaveLoadService along with other player data
+  - Complements quest completion logic in Player.CompleteQuest() method
+
+---
+
 ## BattleViewModel Quest Tracking Integration
 
 - **Quest Tracking on Enemy Defeat**: Modified BattleViewModel.cs to implement automatic quest progress tracking when enemies are defeated:

@@ -1,19 +1,14 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify BattleViewModel.cs.
+Edit MapView.xaml.
 
 Requirements:
-• When an enemy is defeated:
-   - foreach (var quest in Player.ActiveQuests)
-       * If quest.Title.Contains(CurrentEnemy, StringComparison.OrdinalIgnoreCase)
-            quest.CurrentKills++
-            quest.CheckProgress()
-            If quest.IsCompleted:
-                Player.CompleteQuest(quest)
-                Append $"Quest complete: {quest.Title}!"
+• Add an Expander titled "Active Quests".
+• Inside, bind to Player.ActiveQuests.
+• Show Quest.Title and progress as "x/y defeated".
 • Add TODO:
-   // Add quest tracking popup and sound effect
-   // Add enemy type classification for matching
+   <!-- TODO: Replace with quest journal UI -->
+   <!-- TODO: Add completion notifications -->
 
 ---
 
