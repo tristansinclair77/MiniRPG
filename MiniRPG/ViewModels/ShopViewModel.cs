@@ -17,7 +17,32 @@ namespace MiniRPG.ViewModels
         public ShopItem? SelectedItem
         {
             get => _selectedItem;
-            set { _selectedItem = value; OnPropertyChanged(); }
+            set 
+            { 
+                _selectedItem = value;
+                OnPropertyChanged();
+                // Clear inventory selection when shop item is selected
+                if (value != null)
+                {
+                    SelectedInventoryItem = null;
+                }
+            }
+        }
+
+        private Item? _selectedInventoryItem;
+        public Item? SelectedInventoryItem
+        {
+            get => _selectedInventoryItem;
+            set
+            {
+                _selectedInventoryItem = value;
+                OnPropertyChanged();
+                // Clear shop selection when inventory item is selected
+                if (value != null)
+                {
+                    SelectedItem = null;
+                }
+            }
         }
 
         public Player Player { get; set; }
@@ -62,6 +87,14 @@ namespace MiniRPG.ViewModels
         {
             if (SelectedItem == null) return;
 
+            // Check inventory capacity
+            if (Player.Inventory.Count >= Player.MaxInventoryCapacity)
+            {
+                string fullMsg = $"Cannot buy {SelectedItem.Item.Name}: Inventory Full!";
+                _globalLog.Add(fullMsg);
+                return;
+            }
+
             if (Player.SpendGold(SelectedItem.BuyPrice))
             {
                 Player.AddItem(SelectedItem.Item);
@@ -77,21 +110,48 @@ namespace MiniRPG.ViewModels
 
         private void ExecuteSell(object? parameter)
         {
-            if (SelectedItem == null) return;
-
-            // Check if Player.Inventory contains similar item
-            var similarItem = Player.Inventory.FirstOrDefault(item => item.Name == SelectedItem.Item.Name);
-            
-            if (similarItem != null)
+            // Sell from player's selected inventory item
+            if (SelectedInventoryItem != null)
             {
-                Player.Inventory.Remove(similarItem);
-                Player.AddGold(SelectedItem.SellPrice);
-                string message = $"Sold {SelectedItem.Item.Name}!";
+                // Calculate sell price (half of item value or use shop's sell price if available)
+                int sellPrice = SelectedInventoryItem.Value / 2;
+                
+                // Check if this item exists in shop inventory to get proper sell price
+                var shopItem = ShopInventory.FirstOrDefault(si => si.Item.Name == SelectedInventoryItem.Name);
+                if (shopItem != null)
+                {
+                    sellPrice = shopItem.SellPrice;
+                }
+                
+                Player.RemoveItem(SelectedInventoryItem);
+                Player.AddGold(sellPrice);
+                string message = $"Sold {SelectedInventoryItem.Name} for {sellPrice} gold!";
                 _globalLog.Add(message);
+                
+                // Clear selection
+                SelectedInventoryItem = null;
+            }
+            else if (SelectedItem != null)
+            {
+                // Legacy: Sell from shop inventory (check if player has it)
+                var similarItem = Player.Inventory.FirstOrDefault(item => item.Name == SelectedItem.Item.Name);
+                
+                if (similarItem != null)
+                {
+                    Player.RemoveItem(similarItem);
+                    Player.AddGold(SelectedItem.SellPrice);
+                    string message = $"Sold {SelectedItem.Item.Name}!";
+                    _globalLog.Add(message);
+                }
+                else
+                {
+                    string message = "You don't have that item.";
+                    _globalLog.Add(message);
+                }
             }
             else
             {
-                string message = "You don't have that item.";
+                string message = "No item selected to sell.";
                 _globalLog.Add(message);
             }
         }

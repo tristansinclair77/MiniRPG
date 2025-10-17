@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Input;
@@ -15,7 +16,7 @@ namespace MiniRPG.ViewModels
 
         public Player Player => _player;
 
-        private ObservableCollection<Quest> _availableQuests;
+        private ObservableCollection<Quest> _availableQuests = new ObservableCollection<Quest>();
         public ObservableCollection<Quest> AvailableQuests
         {
             get => _availableQuests;
@@ -26,7 +27,7 @@ namespace MiniRPG.ViewModels
             }
         }
 
-        public ObservableCollection<Quest> ActiveQuests => _player.ActiveQuests;
+        public ObservableCollection<Quest> ActiveQuests => _player?.ActiveQuests ?? new ObservableCollection<Quest>();
 
         private Quest? _selectedQuest;
         public Quest? SelectedQuest
@@ -45,15 +46,17 @@ namespace MiniRPG.ViewModels
         public string QuestDescription => SelectedQuest?.Description ?? "Choose a quest from the available quests list.";
 
         public ICommand AcceptQuestCommand { get; }
-        public ICommand ExitBoardCommand { get; set; }
+        public ICommand ExitBoardCommand { get; set; } = null!;
 
         public QuestBoardViewModel(Player player)
         {
-            _player = player;
+            _player = player ?? throw new ArgumentNullException(nameof(player));
+
+            // Initialize AcceptQuestCommand before loading quests
+            AcceptQuestCommand = new RelayCommand(_ => AcceptQuest(), _ => CanAcceptQuest());
 
             // Load available quests from QuestService
             var allQuests = QuestService.GetAvailableQuests();
-            AvailableQuests = new ObservableCollection<Quest>();
 
             // Only show quests that aren't already active or completed
             foreach (var quest in allQuests)
@@ -61,20 +64,23 @@ namespace MiniRPG.ViewModels
                 bool isAlreadyActive = false;
                 bool isAlreadyCompleted = false;
 
-                foreach (var activeQuest in _player.ActiveQuests)
+                if (_player.ActiveQuests != null)
                 {
-                    if (activeQuest.Title == quest.Title)
+                    foreach (var activeQuest in _player.ActiveQuests)
                     {
-                        isAlreadyActive = true;
-                        break;
+                        if (activeQuest != null && activeQuest.Title == quest.Title)
+                        {
+                            isAlreadyActive = true;
+                            break;
+                        }
                     }
                 }
 
-                if (!isAlreadyActive)
+                if (!isAlreadyActive && _player.CompletedQuests != null)
                 {
                     foreach (var completedQuest in _player.CompletedQuests)
                     {
-                        if (completedQuest.Title == quest.Title)
+                        if (completedQuest != null && completedQuest.Title == quest.Title)
                         {
                             isAlreadyCompleted = true;
                             break;
@@ -87,8 +93,6 @@ namespace MiniRPG.ViewModels
                     AvailableQuests.Add(quest);
                 }
             }
-
-            AcceptQuestCommand = new RelayCommand(_ => AcceptQuest(), _ => CanAcceptQuest());
         }
 
         private bool CanAcceptQuest()
@@ -98,7 +102,7 @@ namespace MiniRPG.ViewModels
 
         private void AcceptQuest()
         {
-            if (SelectedQuest != null)
+            if (SelectedQuest != null && _player != null)
             {
                 // Add quest to player's active quests
                 _player.AddQuest(SelectedQuest);

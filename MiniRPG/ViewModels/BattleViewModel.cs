@@ -118,9 +118,20 @@ namespace MiniRPG.ViewModels
                 var loot = GameService.GetRandomLoot();
                 if (loot != null)
                 {
+                    int inventoryBefore = Player.Inventory.Count;
                     Player.AddItem(loot);
-                    CombatLog.Add($"You found {loot.Name}!");
-                    _globalLog.Add($"You found {loot.Name}!");
+                    if (Player.Inventory.Count == inventoryBefore)
+                    {
+                        // Item was not added - inventory full
+                        string fullMsg = $"{loot.Name} could not be collected: Inventory Full!";
+                        CombatLog.Add(fullMsg);
+                        _globalLog.Add(fullMsg);
+                    }
+                    else
+                    {
+                        CombatLog.Add($"You found {loot.Name}!");
+                        _globalLog.Add($"You found {loot.Name}!");
+                    }
                 }
                 else
                 {

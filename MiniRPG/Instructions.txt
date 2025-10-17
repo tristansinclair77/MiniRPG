@@ -1,17 +1,18 @@
-﻿You are GitHub Copilot inside Visual Studio 2022.
+﻿Noticed issues:
+1. Shop menu: When I select an item, the item details section is empty. No info. Create an item info object somewhere that contains an item info lookup table that ties items to descriptions. It must work with the project in a way where a new item added need only be referenced in the lookup so the description added will automatically work everywhere it might be needed.
+2. The sell button in the shop does nothing. If we don't have a way for it to work yet, that's fine. In that case, add an inventory display and when an item in the inventory is selected and "sell" is clicked, that item is sold and the player gains gold equal to the item's sell value.
+3. Critical: Fix this error when clicking "Accept Quest" button.
 
-Testing checklist:
-1. Enter Map → Open Quest Board.
-2. Accept a quest (e.g., "Slime Hunt").
-3. Fight battles → defeat matching enemies.
-4. Observe quest progress update in MapView.
-5. When completed, verify gold/EXP/item rewards granted.
-6. Check quest moves to CompletedQuests list.
-7. Save, exit, reload → verify quests persist.
-8. Add TODO placeholders:
-   <!-- TODO: Add quest rewards summary UI -->
-   <!-- TODO: Add storyline quest chains -->
-   <!-- TODO: Add quest completion cutscenes -->
+System.NullReferenceException
+  HResult=0x80004003
+  Message=Object reference not set to an instance of an object.
+  Source=MiniRPG
+  StackTrace:
+   at MiniRPG.ViewModels.QuestBoardViewModel.AcceptQuest() in D:\MiniRPG\MiniRPG\MiniRPG\ViewModels\QuestBoardViewModel.cs:line 114
+
+
+4. Inventory need a max capacity. It can be something large like 40, but I want a text display next to the inventory title that shows "Inventory (X/Y)" where X is the current number of items and Y is the max capacity. When the player would get an item with a full inventory, add a message in the game's log window showing something like, "X item could not be collect: Inventory Full!"
+
 
 ---
 

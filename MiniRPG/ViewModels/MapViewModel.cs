@@ -135,7 +135,7 @@ namespace MiniRPG.ViewModels
             {
                 int oldHP = Player.HP;
                 Player.HP = Math.Min(Player.MaxHP, Player.HP + 10);
-                Player.Inventory.Remove(item);
+                Player.RemoveItem(item);
                 OnPropertyChanged(nameof(Player));
                 _globalLog.Add("You used a Potion and recovered 10 HP.");
                 SaveLoadService.SavePlayer(Player);

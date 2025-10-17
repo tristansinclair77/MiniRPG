@@ -74,7 +74,16 @@
         </TextBlock>
 
         <!-- Inventory Expander -->
-        <Expander Grid.Row="1" Header="Inventory" Margin="0,0,0,10" Foreground="White" Background="#292944">
+        <Expander Grid.Row="1" Margin="0,0,0,10" Foreground="White" Background="#292944">
+            <Expander.Header>
+                <TextBlock>
+                    <Run Text="Inventory (" />
+                    <Run Text="{Binding Player.InventoryCount, Mode=OneWay}" />
+                    <Run Text="/" />
+                    <Run Text="{Binding Player.MaxInventoryCapacity, Mode=OneWay}" />
+                    <Run Text=")" />
+                </TextBlock>
+            </Expander.Header>
             <!-- TODO: Replace with pixel-art inventory icons -->
             <!-- TODO: Add categories (Consumables, Materials, etc.) -->
             <!-- TODO: Add enchantments and rarity colors -->

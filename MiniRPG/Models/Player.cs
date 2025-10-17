@@ -11,6 +11,16 @@ namespace MiniRPG.Models
     {
         public string Name { get; set; }
 
+        // Inventory management
+        private int _maxInventoryCapacity = 40;
+        public int MaxInventoryCapacity
+        {
+            get => _maxInventoryCapacity;
+            set { _maxInventoryCapacity = value; OnPropertyChanged(); OnPropertyChanged(nameof(InventoryCount)); }
+        }
+
+        public int InventoryCount => Inventory?.Count ?? 0;
+
         private int _hp;
         public int HP
         {
@@ -167,9 +177,23 @@ namespace MiniRPG.Models
 
         public void AddItem(Item item)
         {
+            if (Inventory.Count >= MaxInventoryCapacity)
+            {
+                Debug.WriteLine($"{item.Name} could not be collected: Inventory Full!");
+                return;
+            }
             Inventory.Add(item);
+            OnPropertyChanged(nameof(InventoryCount));
             Debug.WriteLine($"{item.Name} added to inventory.");
             // TODO: // Add inventory capacity and sorting later
+        }
+
+        public void RemoveItem(Item item)
+        {
+            if (Inventory.Remove(item))
+            {
+                OnPropertyChanged(nameof(InventoryCount));
+            }
         }
 
         public void AddGold(int amount) => Gold += amount;

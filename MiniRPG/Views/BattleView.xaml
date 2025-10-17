@@ -15,7 +15,7 @@
     <!-- TODO: Later SceneManager or Animation layer -->
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <local:ResultToColorConverter x:Key="ResultToColor" />
+        <converters:ResultToColorConverter x:Key="ResultToColor" />
     </UserControl.Resources>
     <Grid Margin="10" Background="#222233">
         <Grid.RowDefinitions>
