@@ -1,16 +1,18 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create QuestService.cs in the Services folder.
+Create a new UserControl named QuestBoardView.
 
-Requirements:
-• Static class QuestService
-• Static method GetAvailableQuests() returning List<Quest> with sample entries:
-   - "Slime Hunt" (3 kills)
-   - "Goblin Problem" (5 kills)
-• Add method FindQuestByTitle(string title)
+XAML layout:
+• Left ListBox bound to AvailableQuests
+• Right panel with:
+   - Title
+   - Description
+   - Button "Accept Quest"
+• Bottom ListBox showing "Active Quests"
 • Add TODO:
-   // Add dynamic quest generation based on region and player level
-   // Add quest chain progression
+   <!-- TODO: Add parchment background -->
+   <!-- TODO: Add quest board animation -->
+   <!-- TODO: Replace text with stylized UI -->
 
 ---
 

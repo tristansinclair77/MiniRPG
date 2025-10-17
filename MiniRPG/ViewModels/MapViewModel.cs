@@ -40,6 +40,7 @@ namespace MiniRPG.ViewModels
         public ICommand UseItemCommand { get; }
         public ICommand EquipItemCommand { get; }
         public ICommand OpenShopCommand { get; }
+        public ICommand OpenQuestBoardCommand { get; }
         private ObservableCollection<string> _globalLog;
 
         private bool _isSaveConfirmed;
@@ -56,6 +57,9 @@ namespace MiniRPG.ViewModels
         
         // Event/callback for opening shop
         public event Action? OnOpenShop;
+        
+        // Event/callback for opening quest board
+        public event Action? OnOpenQuestBoard;
 
         public MapViewModel(ObservableCollection<string> globalLog, Player player)
         {
@@ -73,6 +77,7 @@ namespace MiniRPG.ViewModels
             UseItemCommand = new RelayCommand(param => UseItem(param as Item));
             EquipItemCommand = new RelayCommand(param => EquipItem(param as Item));
             OpenShopCommand = new RelayCommand(_ => OpenShop());
+            OpenQuestBoardCommand = new RelayCommand(_ => OpenQuestBoard());
         }
 
         private void StartBattle()
@@ -87,6 +92,11 @@ namespace MiniRPG.ViewModels
         private void OpenShop()
         {
             OnOpenShop?.Invoke();
+        }
+
+        private void OpenQuestBoard()
+        {
+            OnOpenQuestBoard?.Invoke();
         }
 
         private async void Rest()

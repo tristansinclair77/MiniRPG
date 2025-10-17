@@ -101,6 +101,15 @@ namespace MiniRPG.ViewModels
                 AddLog("You enter the shop.");
             };
             
+            // Subscribe to quest board events
+            mapVM.OnOpenQuestBoard += () =>
+            {
+                var questBoardVM = new QuestBoardViewModel(CurrentPlayer, GlobalLog);
+                questBoardVM.ExitQuestBoardCommand = new RelayCommand(_ => ShowMap());
+                CurrentViewModel = questBoardVM;
+                AddLog("You approach the quest board.");
+            };
+            
             return mapVM;
         }
 
