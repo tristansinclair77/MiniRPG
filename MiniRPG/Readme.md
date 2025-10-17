@@ -884,3 +884,21 @@
   - Provides clear and accessible way for players to exit the shop and return to map view.
 
 ---
+
+## Gold Display Added to MapView and BattleView
+
+- Updated MapView.xaml and BattleView.xaml user controls:
+  - Added Gold display TextBlock in top-right corner of both views.
+  - TextBlock bound to `{Binding Player.Gold, StringFormat='Gold: {0}'}` for proper data binding.
+  - Positioned with `HorizontalAlignment="Right"` and `VerticalAlignment="Top"` for corner placement.
+  - Uses gold theme color (#F9E97A) with bold font styling for visibility and consistency.
+  - Set `Panel.ZIndex="10"` to ensure Gold display appears above other elements.
+  - Added proper margins for spacing from view edges.
+  - Player property binding works through existing DataContext in both MapViewModel and BattleViewModel.
+  - Added required TODO comments:
+    - `<!-- TODO: Replace text with animated coin icon -->`
+    - `<!-- TODO: Add gold transaction animations -->`
+  - Real-time updates when player gold changes through transactions, rewards, or shop purchases.
+  - Provides consistent gold visibility across both main gameplay views for better user experience.
+
+---

@@ -1,16 +1,13 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Enhance ShopViewModel.cs and ShopView.xaml.
+Edit MapView.xaml and BattleView.xaml.
 
-ShopViewModel:
-• Initialize ExitShopCommand = new RelayCommand(_ => OnExitShop?.Invoke());
-• Add event Action OnExitShop;
-
-ShopView.xaml:
-• Add Button labeled "Leave Shop" bound to ExitShopCommand.
-• Place at bottom of view.
+Requirements:
+• Add TextBlock in corner showing "Gold: {Binding Player.Gold}".
+• Bind Player through DataContext properly.
 • Add TODO:
-   <!-- TODO: Add exit confirmation and goodbye dialogue -->
+   <!-- TODO: Replace text with animated coin icon -->
+   <!-- TODO: Add gold transaction animations -->
 
 ---
 
