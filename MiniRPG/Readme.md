@@ -1,6 +1,39 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: DialogueViewModel Quest Acceptance Enhancement
+## Latest Update: MapView NPC Quest Indicators
+
+### Improvements Made ✨
+
+#### NPC Quest Status Indicators
+- **Added**: Visual quest indicators in NPC ListBox (MapView.xaml)
+  - **(Quest!)** - Displayed in gold color when NPC has an offered quest not yet accepted by the player
+  - **(Thanks!)** - Displayed in gold color when player has completed the NPC's quest
+  - No indicator shown when quest is in progress or NPC has no quest
+  - Helps players quickly identify which NPCs have available or completed quests
+- **Created**: `NPCQuestStatusConverter` - Multi-value converter in Converters folder
+  - Intelligently determines quest status based on NPC's OfferedQuest and Player's quest lists
+  - Checks Player.CompletedQuests for completed quests
+  - Checks Player.ActiveQuests for accepted quests
+  - Returns appropriate indicator text based on quest state
+- **Added TODO Comments**:
+  - `<!-- TODO: Replace with NPC portrait and quest marker icons -->`
+  - `<!-- TODO: Add friendship/relationship meter -->`
+  - Placeholders for future enhancements to NPC display system
+
+#### Technical Implementation
+- **Binding Logic**: Uses MultiBinding with NPCQuestStatusConverter
+  - Binds both the NPC object and Player object from UserControl DataContext
+  - Converter evaluates quest status dynamically
+  - Text displayed in gold color (#F9E97A) to match game theme
+- **Benefits**:
+  - **Improved UX**: Players can see at a glance which NPCs have quests available
+  - **Quest Completion Feedback**: Visual confirmation when quests are completed
+  - **Seamless Integration**: Works with existing NPC and quest systems
+  - **Dynamic Updates**: Indicators update automatically as quest states change
+
+---
+
+## Previous Update: DialogueViewModel Quest Acceptance Enhancement
 
 ### Improvements Made ✨
 

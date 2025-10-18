@@ -8,6 +8,7 @@
              d:DesignHeight="300" d:DesignWidth="400">
     <UserControl.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <converters:NPCQuestStatusConverter x:Key="NPCQuestStatus" />
     </UserControl.Resources>
     <!-- TODO: Replace text with pixel-art status window -->
     <!-- TODO: Add animated portrait or player sprite here -->
@@ -165,6 +166,8 @@
 
         <!-- NPCs Expander -->
         <Expander Grid.Row="5" Header="NPCs" Margin="0,0,0,10" Foreground="White" Background="#292944">
+            <!-- TODO: Replace with NPC portrait and quest marker icons -->
+            <!-- TODO: Add friendship/relationship meter -->
             <StackPanel>
                 <ListBox x:Name="NPCListBox" ItemsSource="{Binding NearbyNPCs}" SelectedItem="{Binding SelectedNPC, Mode=TwoWay}" Background="#222233" Foreground="White" Height="100">
                     <ListBox.ItemTemplate>
@@ -174,6 +177,14 @@
                                 <TextBlock Text="(" Foreground="#CCCCCC" />
                                 <TextBlock Text="{Binding Role}" Foreground="#CCCCCC" />
                                 <TextBlock Text=")" Foreground="#CCCCCC" />
+                                <TextBlock Foreground="#F9E97A" FontWeight="Bold">
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{StaticResource NPCQuestStatus}">
+                                            <Binding />
+                                            <Binding Path="DataContext.Player" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

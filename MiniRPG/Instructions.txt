@@ -1,14 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify DialogueViewModel.cs.
+Edit MapView.xaml.
 
 Requirements:
-• When AcceptQuestCommand executes:
-   - If CurrentNPC.OfferedQuest not already in Player.ActiveQuests:
-       * Player.AddQuest(CurrentNPC.OfferedQuest)
-       * Append to GlobalLog: $"Quest accepted: {CurrentNPC.OfferedQuest.Title}"
-       * Call SaveLoadService.SavePlayer(Player)
-• Add TODO: // Add voiced confirmation and quest acceptance animation later
+• In NPC ListBox, display icons or text next to each NPC:
+   - "(Quest!)" if NPC.OfferedQuest not yet accepted.
+   - "(Thanks!)" if Player has completed their quest.
+• Simple binding logic:
+   - Use DataTriggers or Converters to display indicators.
+• Add TODO:
+   <!-- TODO: Replace with NPC portrait and quest marker icons -->
+   <!-- TODO: Add friendship/relationship meter -->
 
 ---
 
