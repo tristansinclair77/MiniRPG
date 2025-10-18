@@ -1,16 +1,17 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit MapView.xaml.
-
-Requirements:
-• In NPC ListBox, display icons or text next to each NPC:
-   - "(Quest!)" if NPC.OfferedQuest not yet accepted.
-   - "(Thanks!)" if Player has completed their quest.
-• Simple binding logic:
-   - Use DataTriggers or Converters to display indicators.
-• Add TODO:
-   <!-- TODO: Replace with NPC portrait and quest marker icons -->
-   <!-- TODO: Add friendship/relationship meter -->
+Testing checklist:
+1. Open Map → view list of NPCs.
+2. Select Mira → click “Talk”.
+3. Read dialogue → accept quest.
+4. Fight related enemies → progress quest.
+5. Return to Mira → verify quest marked as completed.
+6. Ensure dialogue changes after completion.
+7. Save, exit, and reload → verify NPC and quest states persist.
+8. Add TODO placeholders:
+   <!-- TODO: Add branching quest dialogue trees -->
+   <!-- TODO: Add romance / affinity system -->
+   <!-- TODO: Add voice acting and portraits -->
 
 ---
 

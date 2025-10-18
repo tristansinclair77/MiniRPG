@@ -27,7 +27,8 @@ namespace MiniRPG.Services
                     "Slimes have been attacking our village!",
                     "Please defeat 3 of them.",
                     "I'll reward you handsomely if you help us."
-                }
+                },
+                OfferedQuest = new Quest("Slime Hunt", "Defeat 3 Slimes for Mira.", 3, 50, 20)
             };
             npcs.Add(mira);
 

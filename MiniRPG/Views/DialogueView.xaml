@@ -3,11 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converters="clr-namespace:MiniRPG.Converters"
              mc:Ignorable="d"
              d:DesignHeight="400" d:DesignWidth="600">
+    <UserControl.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </UserControl.Resources>
     <!-- TODO: Add character portrait -->
     <!-- TODO: Add typing animation and voice blips -->
     <!-- TODO: Add relationship tracker visuals -->
+    <!-- TODO: Add branching quest dialogue trees -->
+    <!-- TODO: Add romance / affinity system -->
+    <!-- TODO: Add voice acting and portraits -->
     <Grid Margin="10" Background="#222233">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -48,7 +55,7 @@
                         MinHeight="150"
                         Margin="0,0,0,20">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <TextBlock Text="{Binding CurrentDialogue}" 
+                        <TextBlock Text="{Binding CurrentLine}" 
                                    FontSize="16" 
                                    Foreground="White" 
                                    TextWrapping="Wrap"
@@ -62,7 +69,7 @@
                             Margin="0,10,0,0">
                     <!-- Next Button -->
                     <Button Content="Next" 
-                            Command="{Binding NextDialogueCommand}"
+                            Command="{Binding NextCommand}"
                             Width="100"
                             Height="40"
                             Margin="0,0,10,0"
@@ -87,7 +94,7 @@
                         </Button.Style>
                     </Button>
 
-                    <!-- Accept Quest Button (visible only if OfferedQuest exists) -->
+                    <!-- Accept Quest Button -->
                     <Button Content="Accept Quest" 
                             Command="{Binding AcceptQuestCommand}"
                             Width="140"
@@ -101,7 +108,6 @@
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="Background" Value="#446644" />
-                                <Setter Property="Visibility" Value="{Binding HasOfferedQuest, Converter={StaticResource BoolToVisibilityConverter}}" />
                                 <Style.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
                                         <Setter Property="Background" Value="#557755" />
@@ -109,6 +115,7 @@
                                     <Trigger Property="IsEnabled" Value="False">
                                         <Setter Property="Background" Value="#334433" />
                                         <Setter Property="Foreground" Value="#888899" />
+                                        <Setter Property="Visibility" Value="Collapsed" />
                                     </Trigger>
                                 </Style.Triggers>
                             </Style>
@@ -117,7 +124,7 @@
 
                     <!-- Leave Button -->
                     <Button Content="Leave" 
-                            Command="{Binding LeaveDialogueCommand}"
+                            Command="{Binding ExitDialogueCommand}"
                             Width="100"
                             Height="40"
                             Padding="8,4"

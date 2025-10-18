@@ -79,7 +79,17 @@ namespace MiniRPG.ViewModels
             CurrentNPC = npc;
             Player = player;
             _globalLog = globalLog ?? new ObservableCollection<string>();
-            CurrentLine = npc.Greeting;
+            
+            // Check if quest was completed by this player
+            if (npc.OfferedQuest != null && player.CompletedQuests.Any(q => q.Title == npc.OfferedQuest.Title))
+            {
+                CurrentLine = GetCompletedQuestDialogue(npc);
+            }
+            else
+            {
+                CurrentLine = npc.Greeting;
+            }
+            
             CurrentIndex = -1; // Start at -1 so first Next goes to index 0
 
             NextCommand = new RelayCommand(_ => NextDialogue());
@@ -92,6 +102,13 @@ namespace MiniRPG.ViewModels
         /// </summary>
         private void NextDialogue()
         {
+            // Check if quest was completed
+            if (CurrentNPC.OfferedQuest != null && Player.CompletedQuests.Any(q => q.Title == CurrentNPC.OfferedQuest.Title))
+            {
+                CurrentLine = GetCompletedQuestDialogue(CurrentNPC);
+                return;
+            }
+            
             CurrentIndex++;
 
             if (CurrentIndex < CurrentNPC.DialogueLines.Count)
@@ -117,7 +134,14 @@ namespace MiniRPG.ViewModels
         /// </summary>
         private bool CanAcceptQuest()
         {
-            return CurrentNPC.OfferedQuest != null && CurrentIndex >= CurrentNPC.DialogueLines.Count;
+            if (CurrentNPC.OfferedQuest == null)
+                return false;
+            
+            // Don't show accept button if quest is already completed
+            if (Player.CompletedQuests.Any(q => q.Title == CurrentNPC.OfferedQuest.Title))
+                return false;
+            
+            return CurrentIndex >= CurrentNPC.DialogueLines.Count;
         }
 
         /// <summary>
@@ -142,6 +166,21 @@ namespace MiniRPG.ViewModels
                     CurrentLine = $"You already have this quest!";
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets the dialogue for when the player has completed the NPC's quest.
+        /// </summary>
+        private string GetCompletedQuestDialogue(NPC npc)
+        {
+            // Customize based on NPC name
+            if (npc.Name == "Mira")
+            {
+                return "Thank you so much for dealing with those slimes! Our village is safe again.";
+            }
+            
+            // Default completion dialogue
+            return "Thank you for your help, adventurer!";
         }
 
         /// <summary>
