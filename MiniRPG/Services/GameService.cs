@@ -9,7 +9,7 @@ namespace MiniRPG.Services
     /// </summary>
     public static class GameService
     {
-        private static readonly List<string> _enemies = new() { "Slime", "Goblin", "Wolf" };
+        private static readonly List<string> _enemies = new() { "Slime", "Goblin", "Wolf", "Dwarf" };
         private static readonly Random _random = new();
 
         /// <summary>
@@ -38,24 +38,46 @@ namespace MiniRPG.Services
         public static Item? GetRandomLoot()
         {
             double roll = _random.NextDouble();
-            
-            if (roll < 0.2) // 20% chance for weapon
+
+            if (roll < 0.05) // 5% chance for weapon
+            {
+                return new Item("Bitch-nasty Sword", "A fuck-ass sick nasty weapon.", "Weapon", 5552)
+                {
+                    IsEquippable = true,
+                    SlotType = "Weapon",
+                    AttackBonus = 1300
+                };
+            }
+            else if (roll < 0.2) // 20% chance for weapon
             {
                 return new Item("Wooden Sword", "A basic starter weapon.", "Weapon", 0)
                 {
                     IsEquippable = true,
                     SlotType = "Weapon",
-                    AttackBonus = 2
+                    AttackBonus = 3
                 };
             }
             else if (roll < 0.4) // 20% chance for armor (0.2 to 0.4)
             {
-                return new Item("Leather Armor", "Simple protection made of hide.", "Armor", 0)
+                double chance = _random.NextDouble();
+                if (chance < 0.95)
                 {
-                    IsEquippable = true,
-                    SlotType = "Armor",
-                    DefenseBonus = 1
-                };
+                    return new Item("Titty Armor", "The best protection, if you know what I mean.", "Armor", 0)
+                    {
+                        IsEquippable = true,
+                        SlotType = "Armor",
+                        DefenseBonus = -500
+                    };
+                }
+                else
+                {
+                    return new Item("Leather Armor", "Simple protection made of hide.", "Armor", 0)
+                    {
+                        IsEquippable = true,
+                        SlotType = "Armor",
+                        DefenseBonus = 1
+                    };
+                }
             }
             else if (roll < 1.0) // 60% chance for consumable/material (0.4 to 1.0)
             {

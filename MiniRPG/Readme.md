@@ -1,6 +1,25 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Shop & Inventory Improvements + Bug Fixes
+## Latest Update: NPC System Added
+
+### New Features ✨
+
+#### NPC Class Implementation
+- **Added**: `NPC.cs` in the Models folder
+- **Features**:
+  - Core NPC properties: Name, Role, Greeting
+  - `ObservableCollection<string>` for dynamic dialogue lines
+  - Quest integration with `OfferedQuest` property (nullable)
+  - Constructor for quick NPC setup
+- **Example Usage**:new NPC("Mira", "QuestGiver", "Oh! Adventurer, can you help me?")
+{
+    DialogueLines = new() { "Slimes have been attacking!", "Please defeat 3 of them." },
+    OfferedQuest = new Quest("Slime Hunt", "Defeat 3 Slimes for Mira.", 3, 50, 20)
+  };- **Future Enhancements**: Portrait support, voice acting, and branching dialogue options planned
+
+---
+
+## Previous Update: Shop & Inventory Improvements + Bug Fixes
 
 ### Issues Fixed ✅
 
