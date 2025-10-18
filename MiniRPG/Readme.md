@@ -1,6 +1,35 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: MapView NPC UI Implementation
+## Latest Update: DialogueViewModel Quest Acceptance Enhancement
+
+### Improvements Made ✨
+
+#### DialogueViewModel AcceptQuest Enhancement
+- **Enhanced**: `AcceptQuest()` method in DialogueViewModel
+  - **Duplicate Quest Check**: Now verifies if quest is not already in `Player.ActiveQuests` before adding
+  - **GlobalLog Integration**: Appends quest acceptance message to GlobalLog: `"Quest accepted: {questTitle}"`
+  - **Auto-Save**: Automatically calls `SaveLoadService.SavePlayer(Player)` after accepting quest
+  - **User Feedback**: Displays "You already have this quest!" if player attempts to accept duplicate quest
+- **Constructor Updated**: Added optional `globalLog` parameter to DialogueViewModel constructor
+  - MainViewModel now passes GlobalLog when creating DialogueViewModel instances
+  - Enables quest acceptance messages to appear in the main game log
+- **Added TODO**: `// Add voiced confirmation and quest acceptance animation later`
+  - Placeholder for future audio/visual enhancements to quest acceptance
+
+#### Integration Updates
+- **MainViewModel**: Updated to pass `GlobalLog` to DialogueViewModel constructor
+  - Ensures quest acceptance messages are logged to the main game log
+  - Maintains consistent logging across all game systems
+
+#### Benefits
+- **Prevents Duplicate Quests**: Players can no longer accept the same quest multiple times
+- **Better User Feedback**: Quest acceptance is now logged to the global game log
+- **Data Persistence**: Quest acceptance automatically saves player progress
+- **Improved UX**: Players receive clear feedback when attempting to accept duplicate quests
+
+---
+
+## Previous Update: MapView NPC UI Implementation
 
 ### New Features ✨
 

@@ -113,7 +113,7 @@ namespace MiniRPG.ViewModels
             // Subscribe to TalkToNPC events
             mapVM.OnTalkToNPC += selectedNPC =>
             {
-                var dialogueVM = new DialogueViewModel(selectedNPC, CurrentPlayer);
+                var dialogueVM = new DialogueViewModel(selectedNPC, CurrentPlayer, GlobalLog);
                 dialogueVM.OnDialogueExit += () => ShowMap();
                 CurrentViewModel = dialogueVM;
                 AddLog($"You approach {selectedNPC.Name}.");

@@ -1,7 +1,10 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Input;
 using MiniRPG.Models;
+using MiniRPG.Services;
 
 namespace MiniRPG.ViewModels
 {
@@ -54,6 +57,8 @@ namespace MiniRPG.ViewModels
             }
         }
 
+        private ObservableCollection<string> _globalLog;
+
         public ICommand NextCommand { get; }
         public ICommand AcceptQuestCommand { get; }
         public ICommand ExitDialogueCommand { get; }
@@ -68,10 +73,12 @@ namespace MiniRPG.ViewModels
         /// </summary>
         /// <param name="npc">The NPC to dialogue with</param>
         /// <param name="player">The player character</param>
-        public DialogueViewModel(NPC npc, Player player)
+        /// <param name="globalLog">The global log for game messages (optional)</param>
+        public DialogueViewModel(NPC npc, Player player, ObservableCollection<string>? globalLog = null)
         {
             CurrentNPC = npc;
             Player = player;
+            _globalLog = globalLog ?? new ObservableCollection<string>();
             CurrentLine = npc.Greeting;
             CurrentIndex = -1; // Start at -1 so first Next goes to index 0
 
@@ -120,9 +127,20 @@ namespace MiniRPG.ViewModels
         {
             if (CurrentNPC.OfferedQuest != null)
             {
-                Player.AddQuest(CurrentNPC.OfferedQuest);
-                Debug.WriteLine($"You accepted {CurrentNPC.OfferedQuest.Title} from {CurrentNPC.Name}.");
-                CurrentLine = $"Thank you! I'm counting on you.";
+                // Check if quest is not already in Player.ActiveQuests
+                if (!Player.ActiveQuests.Any(q => q.Title == CurrentNPC.OfferedQuest.Title))
+                {
+                    Player.AddQuest(CurrentNPC.OfferedQuest);
+                    _globalLog.Add($"Quest accepted: {CurrentNPC.OfferedQuest.Title}");
+                    SaveLoadService.SavePlayer(Player);
+                    // Add voiced confirmation and quest acceptance animation later
+                    Debug.WriteLine($"You accepted {CurrentNPC.OfferedQuest.Title} from {CurrentNPC.Name}.");
+                    CurrentLine = $"Thank you! I'm counting on you.";
+                }
+                else
+                {
+                    CurrentLine = $"You already have this quest!";
+                }
             }
         }
 

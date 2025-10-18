@@ -1,15 +1,14 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit MapView.xaml.
+Modify DialogueViewModel.cs.
 
 Requirements:
-• Add Expander labeled "NPCs".
-• Inside, ListBox bound to NearbyNPCs showing each NPC.Name and Role.
-• Add Button labeled "Talk" bound to TalkToNPCCommand.
-• CommandParameter = SelectedItem.
-• Add TODO:
-   <!-- TODO: Add animated NPC sprites on map -->
-   <!-- TODO: Replace with click-based town map interaction -->
+• When AcceptQuestCommand executes:
+   - If CurrentNPC.OfferedQuest not already in Player.ActiveQuests:
+       * Player.AddQuest(CurrentNPC.OfferedQuest)
+       * Append to GlobalLog: $"Quest accepted: {CurrentNPC.OfferedQuest.Title}"
+       * Call SaveLoadService.SavePlayer(Player)
+• Add TODO: // Add voiced confirmation and quest acceptance animation later
 
 ---
 
