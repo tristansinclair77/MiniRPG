@@ -1,18 +1,31 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create DialogueView.xaml.
+Create DialogueViewModel.cs in the ViewModels folder.
 
-XAML layout:
-• Border or card background.
-• TextBlock for NPC name (bold).
-• TextBlock for dialogue text (multi-line, text-wrapping).
-• Button "Next" to advance dialogue.
-• Button "Accept Quest" (visible only if OfferedQuest exists).
-• Button "Leave" to exit dialogue.
+Requirements:
+• Inherit from BaseViewModel.
+• Properties:
+   - NPC CurrentNPC
+   - string CurrentLine
+   - int CurrentIndex
+   - Player Player
+• Commands:
+   - NextCommand
+   - AcceptQuestCommand
+   - ExitDialogueCommand
+• Constructor(NPC npc, Player player):
+   - Set CurrentNPC and Player.
+   - Initialize CurrentLine = npc.Greeting.
+• NextCommand:
+   - Move through DialogueLines sequentially.
+   - When end reached, show AcceptQuestCommand if OfferedQuest != null.
+• AcceptQuestCommand:
+   - Player.AddQuest(CurrentNPC.OfferedQuest)
+   - Log "You accepted [quest title] from [NPC name]."
+• ExitDialogueCommand triggers event OnDialogueExit.
 • Add TODO:
-   <!-- TODO: Add character portrait -->
-   <!-- TODO: Add typing animation and voice blips -->
-   <!-- TODO: Add relationship tracker visuals -->
+   // Add branching paths and player dialogue choices
+   // Add emotion indicators and quest gating
 
 ---
 

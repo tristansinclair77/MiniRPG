@@ -1,6 +1,38 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: DialogueView UI Implementation
+## Latest Update: DialogueViewModel Implementation
+
+### New Features ✨
+
+#### DialogueViewModel Class Implementation
+- **Added**: `DialogueViewModel.cs` in the ViewModels folder
+- **Inheritance**: Inherits from `BaseViewModel` for MVVM support
+- **Properties**:
+  - `CurrentNPC` - The NPC being interacted with
+  - `CurrentLine` - The current dialogue line being displayed
+  - `CurrentIndex` - Index tracking position in dialogue sequence
+  - `Player` - The player character reference
+- **Commands**:
+  - `NextCommand` - Advances through dialogue lines sequentially
+  - `AcceptQuestCommand` - Accepts the quest offered by NPC (only available when OfferedQuest exists and dialogue is complete)
+  - `ExitDialogueCommand` - Exits the dialogue and triggers `OnDialogueExit` event
+- **Features**:
+  - Constructor initializes with NPC and Player, sets CurrentLine to NPC's Greeting
+  - `NextDialogue()` method navigates through DialogueLines collection
+  - When dialogue end is reached and OfferedQuest exists, displays quest acceptance prompt
+  - `AcceptQuest()` method adds quest to player's quest log and logs acceptance message
+  - Event-driven exit mechanism for integration with parent ViewModels
+- **Quest Integration**:
+  - Automatically detects when NPC has an offered quest
+  - Enables AcceptQuestCommand only after all dialogue lines are viewed
+  - Logs quest acceptance: "You accepted [quest title] from [NPC name]."
+- **Future Enhancements**:
+  - Branching paths and player dialogue choices
+  - Emotion indicators and quest gating
+
+---
+
+## Previous Update: DialogueView UI Implementation
 
 ### New Features ✨
 
@@ -66,7 +98,7 @@
 {
     DialogueLines = new() { "Slimes have been attacking!", "Please defeat 3 of them." },
     OfferedQuest = new Quest("Slime Hunt", "Defeat 3 Slimes for Mira.", 3, 50, 20)
-};- **Future Enhancements**: Portrait support, voice acting, and branching dialogue options planned
+  };- **Future Enhancements**: Portrait support, voice acting, and branching dialogue options planned
 
 ---
 
