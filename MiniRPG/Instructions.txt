@@ -1,14 +1,18 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create DialogueService.cs in the Services folder.
+Create DialogueView.xaml.
 
-Requirements:
-• Static class DialogueService
-• Method GetAllNPCs() returns a list of NPCs (Mira, Shopkeeper, Guard)
-• Method GetDialogueForNPC(string name) → returns NPC.DialogueLines
+XAML layout:
+• Border or card background.
+• TextBlock for NPC name (bold).
+• TextBlock for dialogue text (multi-line, text-wrapping).
+• Button "Next" to advance dialogue.
+• Button "Accept Quest" (visible only if OfferedQuest exists).
+• Button "Leave" to exit dialogue.
 • Add TODO:
-   // Add branching dialogue and choices later
-   // Add relationship/affection system
+   <!-- TODO: Add character portrait -->
+   <!-- TODO: Add typing animation and voice blips -->
+   <!-- TODO: Add relationship tracker visuals -->
 
 ---
 

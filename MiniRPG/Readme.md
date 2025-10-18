@@ -1,6 +1,38 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: DialogueService Implementation
+## Latest Update: DialogueView UI Implementation
+
+### New Features ✨
+
+#### DialogueView XAML Implementation
+- **Added**: `DialogueView.xaml` and `DialogueView.xaml.cs` in the Views folder
+- **Features**:
+  - Card-style dialogue interface with border and themed background (#292944 with #444466 border)
+  - **NPC Name Display**: Bold, large text (24pt) in gold color (#F9E97A)
+  - **NPC Role Display**: Italic subtitle showing NPC's role
+  - **Dialogue Text Area**: Scrollable, multi-line text block with text wrapping for displaying dialogue
+  - **Three Action Buttons**:
+    - **Next Button**: Advances through dialogue lines (green-tinted)
+    - **Accept Quest Button**: Conditionally visible only when `HasOfferedQuest` is true (uses BoolToVisibilityConverter)
+    - **Leave Button**: Exits the dialogue (red-tinted)
+  - Consistent color scheme matching other views in the game
+  - Hover effects and disabled states for all buttons
+- **Bindings Required**:
+  - `CurrentNPC.Name` - NPC's name
+  - `CurrentNPC.Role` - NPC's role
+  - `CurrentDialogue` - Current dialogue text
+  - `HasOfferedQuest` - Boolean for quest button visibility
+  - `NextDialogueCommand` - Command for Next button
+  - `AcceptQuestCommand` - Command for Accept Quest button
+  - `LeaveDialogueCommand` - Command for Leave button
+- **Future Enhancements Planned**:
+  - Character portrait display
+  - Typing animation effects with voice blips
+  - Relationship tracker visuals
+  
+---
+
+## Previous Update: DialogueService Implementation
 
 ### New Features ✨
 
