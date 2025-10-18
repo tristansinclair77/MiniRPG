@@ -1,6 +1,25 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: NPC System Added
+## Latest Update: DialogueService Implementation
+
+### New Features ✨
+
+#### DialogueService Class Implementation
+- **Added**: `DialogueService.cs` in the Services folder
+- **Features**:
+  - Static service for centralized NPC and dialogue management
+  - `GetAllNPCs()` method returns predefined NPCs: Mira (QuestGiver), Shopkeeper (Merchant), and Guard (Villager)
+  - `GetDialogueForNPC(string name)` method retrieves dialogue lines for specific NPCs by name
+  - Each NPC comes with appropriate greeting and dialogue lines
+- **NPCs Included**:
+  - **Mira**: Quest giver who needs help with slime attacks
+  - **Shopkeeper**: Merchant with welcoming shop dialogue
+  - **Guard**: Village protector with safety warnings
+- **Future Enhancements**: Branching dialogue with choices and relationship/affection system planned
+
+---
+
+## Previous Update: NPC System Added
 
 ### New Features ✨
 
@@ -15,7 +34,7 @@
 {
     DialogueLines = new() { "Slimes have been attacking!", "Please defeat 3 of them." },
     OfferedQuest = new Quest("Slime Hunt", "Defeat 3 Slimes for Mira.", 3, 50, 20)
-  };- **Future Enhancements**: Portrait support, voice acting, and branching dialogue options planned
+};- **Future Enhancements**: Portrait support, voice acting, and branching dialogue options planned
 
 ---
 

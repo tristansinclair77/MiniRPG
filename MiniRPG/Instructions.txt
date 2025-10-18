@@ -1,22 +1,14 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create NPC.cs in the Models folder.
+Create DialogueService.cs in the Services folder.
 
 Requirements:
-• public class NPC
-   - string Name
-   - string Role (e.g. "Villager", "Merchant", "QuestGiver")
-   - string Greeting
-   - ObservableCollection<string> DialogueLines
-   - Quest? OfferedQuest
-• Add constructor for quick setup.
-• Example NPC:
-   new NPC("Mira", "QuestGiver", "Oh! Adventurer, can you help me?")
-   {
-       DialogueLines = new() { "Slimes have been attacking!", "Please defeat 3 of them." },
-       OfferedQuest = new Quest("Slime Hunt", "Defeat 3 Slimes for Mira.", 3, 50, 20)
-   };
-• Add TODO: // Add portrait, voice, and branching dialogue options later
+• Static class DialogueService
+• Method GetAllNPCs() returns a list of NPCs (Mira, Shopkeeper, Guard)
+• Method GetDialogueForNPC(string name) → returns NPC.DialogueLines
+• Add TODO:
+   // Add branching dialogue and choices later
+   // Add relationship/affection system
 
 ---
 
