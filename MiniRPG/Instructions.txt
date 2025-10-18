@@ -1,19 +1,15 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify MapViewModel.cs and MainViewModel.cs.
+Edit MapView.xaml.
 
-MapViewModel:
-• Add ObservableCollection<NPC> NearbyNPCs.
-• Populate with DialogueService.GetAllNPCs().
-• Add RelayCommand named TalkToNPCCommand (parameter: NPC).
-
-MainViewModel:
-• Subscribe to TalkToNPCCommand event.
-• When triggered:
-   - Set CurrentViewModel = new DialogueViewModel(selectedNPC, CurrentPlayer)
-• Subscribe to DialogueViewModel.OnDialogueExit → return to MapViewModel.
+Requirements:
+• Add Expander labeled "NPCs".
+• Inside, ListBox bound to NearbyNPCs showing each NPC.Name and Role.
+• Add Button labeled "Talk" bound to TalkToNPCCommand.
+• CommandParameter = SelectedItem.
 • Add TODO:
-   // Add NPC proximity detection and movement system later
+   <!-- TODO: Add animated NPC sprites on map -->
+   <!-- TODO: Replace with click-based town map interaction -->
 
 ---
 

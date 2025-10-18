@@ -1,6 +1,34 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: NPC Interaction System Integration
+## Latest Update: MapView NPC UI Implementation
+
+### New Features ✨
+
+#### MapView NPC Expander Added
+- **Added**: NPCs Expander section in MapView.xaml
+  - Displays list of nearby NPCs with collapsible interface
+  - ListBox bound to `NearbyNPCs` property from MapViewModel
+  - Shows each NPC's Name (bold) and Role (in parentheses)
+  - Consistent styling matching game's theme (#292944 background, #222233 ListBox)
+- **Added**: Talk Button
+  - Command binding to `TalkToNPCCommand`
+  - CommandParameter bound to selected NPC from ListBox
+  - Enables player to initiate conversation with selected NPC
+  - Gold color (#F9E97A) matching other action buttons
+- **Added TODO Comments**:
+  - `<!-- TODO: Add animated NPC sprites on map -->`
+  - `<!-- TODO: Replace with click-based town map interaction -->`
+  - Placeholders for future enhancements to NPC interaction system
+
+#### UI Layout Update
+- Updated Grid row definitions to accommodate NPCs section
+- NPCs Expander placed between Active Quests and Battle Location selection
+- Maintains consistent spacing and visual hierarchy
+- All existing functionality preserved
+
+---
+
+## Previous Update: NPC Interaction System Integration
 
 ### New Features ✨
 
