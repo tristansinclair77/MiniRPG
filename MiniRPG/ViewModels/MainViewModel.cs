@@ -110,6 +110,15 @@ namespace MiniRPG.ViewModels
                 // TODO: Add NPCs offering quests directly later
             };
             
+            // Subscribe to TalkToNPC events
+            mapVM.OnTalkToNPC += selectedNPC =>
+            {
+                var dialogueVM = new DialogueViewModel(selectedNPC, CurrentPlayer);
+                dialogueVM.OnDialogueExit += () => ShowMap();
+                CurrentViewModel = dialogueVM;
+                AddLog($"You approach {selectedNPC.Name}.");
+            };
+            
             return mapVM;
         }
 
@@ -132,6 +141,7 @@ namespace MiniRPG.ViewModels
         }
         // TODO: Add currency, inventory, and gear tabs next
         // TODO: Add shop icons on map and custom merchant types later
+        // TODO: Add NPC proximity detection and movement system later
 
         private void ShowBattle()
         {

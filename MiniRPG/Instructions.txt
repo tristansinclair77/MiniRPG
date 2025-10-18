@@ -1,31 +1,19 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create DialogueViewModel.cs in the ViewModels folder.
+Modify MapViewModel.cs and MainViewModel.cs.
 
-Requirements:
-• Inherit from BaseViewModel.
-• Properties:
-   - NPC CurrentNPC
-   - string CurrentLine
-   - int CurrentIndex
-   - Player Player
-• Commands:
-   - NextCommand
-   - AcceptQuestCommand
-   - ExitDialogueCommand
-• Constructor(NPC npc, Player player):
-   - Set CurrentNPC and Player.
-   - Initialize CurrentLine = npc.Greeting.
-• NextCommand:
-   - Move through DialogueLines sequentially.
-   - When end reached, show AcceptQuestCommand if OfferedQuest != null.
-• AcceptQuestCommand:
-   - Player.AddQuest(CurrentNPC.OfferedQuest)
-   - Log "You accepted [quest title] from [NPC name]."
-• ExitDialogueCommand triggers event OnDialogueExit.
+MapViewModel:
+• Add ObservableCollection<NPC> NearbyNPCs.
+• Populate with DialogueService.GetAllNPCs().
+• Add RelayCommand named TalkToNPCCommand (parameter: NPC).
+
+MainViewModel:
+• Subscribe to TalkToNPCCommand event.
+• When triggered:
+   - Set CurrentViewModel = new DialogueViewModel(selectedNPC, CurrentPlayer)
+• Subscribe to DialogueViewModel.OnDialogueExit → return to MapViewModel.
 • Add TODO:
-   // Add branching paths and player dialogue choices
-   // Add emotion indicators and quest gating
+   // Add NPC proximity detection and movement system later
 
 ---
 

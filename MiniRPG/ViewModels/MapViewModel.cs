@@ -39,6 +39,13 @@ namespace MiniRPG.ViewModels
             set { _selectedInventoryItem = value; OnPropertyChanged(); }
         }
 
+        private ObservableCollection<NPC> _nearbyNPCs;
+        public ObservableCollection<NPC> NearbyNPCs
+        {
+            get => _nearbyNPCs;
+            set { _nearbyNPCs = value; OnPropertyChanged(); }
+        }
+
         public ICommand StartBattleCommand { get; }
         public ICommand RestCommand { get; }
         public ICommand SaveCommand { get; }
@@ -46,6 +53,7 @@ namespace MiniRPG.ViewModels
         public ICommand EquipItemCommand { get; }
         public ICommand OpenShopCommand { get; }
         public ICommand OpenQuestBoardCommand { get; }
+        public ICommand TalkToNPCCommand { get; }
         private ObservableCollection<string> _globalLog;
 
         private bool _isSaveConfirmed;
@@ -65,6 +73,9 @@ namespace MiniRPG.ViewModels
         
         // Event/callback for opening quest board
         public event Action? OnOpenQuestBoard;
+        
+        // Event/callback for talking to NPC
+        public event Action<NPC>? OnTalkToNPC;
 
         public MapViewModel(ObservableCollection<string> globalLog, Player player)
         {
@@ -76,6 +87,10 @@ namespace MiniRPG.ViewModels
                 "Cave",
                 "Ruins"
             };
+            
+            // Populate NearbyNPCs with all NPCs from DialogueService
+            NearbyNPCs = new ObservableCollection<NPC>(DialogueService.GetAllNPCs());
+            
             StartBattleCommand = new RelayCommand(_ => StartBattle(), _ => !string.IsNullOrEmpty(this.SelectedLocation));
             RestCommand = new RelayCommand(_ => Rest());
             SaveCommand = new RelayCommand(async _ => await SaveGame());
@@ -83,6 +98,7 @@ namespace MiniRPG.ViewModels
             EquipItemCommand = new RelayCommand(param => EquipItem(param as Item));
             OpenShopCommand = new RelayCommand(_ => OpenShop());
             OpenQuestBoardCommand = new RelayCommand(_ => OpenQuestBoard());
+            TalkToNPCCommand = new RelayCommand(param => TalkToNPC(param as NPC));
         }
 
         private void StartBattle()
@@ -102,6 +118,14 @@ namespace MiniRPG.ViewModels
         private void OpenQuestBoard()
         {
             OnOpenQuestBoard?.Invoke();
+        }
+
+        private void TalkToNPC(NPC? npc)
+        {
+            if (npc != null)
+            {
+                OnTalkToNPC?.Invoke(npc);
+            }
         }
 
         private async void Rest()

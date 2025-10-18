@@ -1,6 +1,41 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: DialogueViewModel Implementation
+## Latest Update: NPC Interaction System Integration
+
+### New Features ✨
+
+#### MapViewModel Integration with NPC System
+- **Added**: `NearbyNPCs` - ObservableCollection<NPC> property
+  - Automatically populated with all NPCs from `DialogueService.GetAllNPCs()`
+  - Provides list of NPCs available for interaction in the current area
+- **Added**: `TalkToNPCCommand` - RelayCommand that accepts NPC parameter
+  - Triggers when player interacts with an NPC
+  - Raises `OnTalkToNPC` event to communicate with MainViewModel
+- **Event Added**: `OnTalkToNPC` event with NPC parameter for parent ViewModel integration
+
+#### MainViewModel NPC Dialogue Integration
+- **Subscribed** to `MapViewModel.OnTalkToNPC` event
+  - When triggered, creates new `DialogueViewModel` with selected NPC and CurrentPlayer
+  - Sets CurrentViewModel to DialogueViewModel for dialogue interaction
+  - Logs interaction: "You approach [NPC Name]."
+- **Subscribed** to `DialogueViewModel.OnDialogueExit` event
+  - Returns to MapViewModel when dialogue ends
+  - Seamless navigation between map and dialogue views
+- **Added TODO**: "Add NPC proximity detection and movement system later"
+  - Placeholder for future feature where NPCs only appear when player is near
+  - Movement system will allow player to walk around the map
+
+#### System Flow
+1. Player sees list of nearby NPCs in MapView
+2. Player clicks on NPC, triggering `TalkToNPCCommand`
+3. MainViewModel receives event and creates DialogueViewModel
+4. Player interacts with NPC dialogue system
+5. Player exits dialogue, returning to MapView
+6. Future: NPCs will only be "nearby" based on player position
+
+---
+
+## Previous Update: DialogueViewModel Implementation
 
 ### New Features ✨
 
