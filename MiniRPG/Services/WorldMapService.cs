@@ -25,6 +25,12 @@ namespace MiniRPG.Services
                 {
                     DialogueService.GetAllNPCs().Find(npc => npc.Name == "Mira")!,
                     DialogueService.GetAllNPCs().Find(npc => npc.Name == "Shopkeeper")!
+                },
+                Buildings = new ObservableCollection<Building>
+                {
+                    new Building("General Shop", "A well-stocked shop selling basic supplies and equipment.", "Shop"),
+                    new Building("Inn", "A cozy inn where travelers can rest and recover.", "Inn"),
+                    new Building("Mira's Home", "A cozy cottage where Mira lives.", "House")
                 }
             };
             regions.Add(greenfieldTown);

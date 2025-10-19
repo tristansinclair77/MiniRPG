@@ -12,6 +12,7 @@ namespace MiniRPG.Models
         public ObservableCollection<NPC> NPCs { get; set; }
         public ObservableCollection<string> AvailableEnemies { get; set; }
         public ObservableCollection<Quest> LocalQuests { get; set; }
+        public ObservableCollection<Building> Buildings { get; set; }
 
         /// <summary>
         /// Constructor for creating a new region with basic information.
@@ -25,6 +26,7 @@ namespace MiniRPG.Models
             NPCs = new ObservableCollection<NPC>();
             AvailableEnemies = new ObservableCollection<string>();
             LocalQuests = new ObservableCollection<Quest>();
+            Buildings = new ObservableCollection<Building>();
         }
 
         // Example usage:

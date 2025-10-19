@@ -1,18 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create Building.cs in the Models folder.
+Modify Region.cs.
 
 Requirements:
-• public class Building
-   - string Name
-   - string Description
-   - string Type (e.g. "Shop", "Inn", "House", "Guild")
-   - ObservableCollection<NPC> Occupants
-• Constructor sets defaults and accepts name/type.
-• Example:
-   new Building("Mira’s Home", "A cozy cottage where Mira lives.", "House");
+• Add ObservableCollection<Building> Buildings { get; set; } = new();
+• Update sample regions in WorldMapService:
+   - "Greenfield Town" includes:
+       * "General Shop" (Type = "Shop")
+       * "Inn" (Type = "Inn")
+       * "Mira’s Home" (Type = "House")
 • Add TODO:
-   // Add building art, entry coordinates, and special functions later
+   // Add unlockable guilds or special event locations
 
 ---
 
