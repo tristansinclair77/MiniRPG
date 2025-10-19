@@ -25,6 +25,9 @@
     <!-- TODO: Add animated sun/moon icons -->
     <!-- TODO: Add day-night background tint -->
     <!-- TODO: Add flashing warning or quest marker on minimap -->
+    <!-- TODO: Add calendar UI -->
+    <!-- TODO: Add festivals or timed events -->
+    <!-- TODO: Add NPC schedules tied to time of day -->
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- Region Name row -->

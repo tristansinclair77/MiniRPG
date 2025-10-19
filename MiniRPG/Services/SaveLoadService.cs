@@ -16,6 +16,8 @@ namespace MiniRPG.Services
     {
         public Player Player { get; set; } = new Player();
         public List<string> UnlockedRegions { get; set; } = new List<string>();
+        public int Day { get; set; } = 1;
+        public int Hour { get; set; } = 8;
     }
 
     public static class SaveLoadService
@@ -39,11 +41,13 @@ namespace MiniRPG.Services
                     File.Copy(filePath, backupPath, true);
                 }
 
-                // Create save data that includes player and unlocked regions
+                // Create save data that includes player, unlocked regions, and time
                 var saveData = new SaveData
                 {
                     Player = player,
-                    UnlockedRegions = FastTravelService.UnlockedRegions.ToList()
+                    UnlockedRegions = FastTravelService.UnlockedRegions.ToList(),
+                    Day = TimeService.Day,
+                    Hour = TimeService.Hour
                 };
 
                 string json = JsonSerializer.Serialize(saveData, _jsonOptions);
@@ -54,6 +58,7 @@ namespace MiniRPG.Services
                               $"Armor: {player.EquippedArmor?.Name ?? "None"}, " +
                               $"Accessory: {player.EquippedAccessory?.Name ?? "None"}");
                 Debug.WriteLine($"Unlocked regions saved: {string.Join(", ", saveData.UnlockedRegions)}");
+                Debug.WriteLine($"Time saved - Day {saveData.Day}, Hour {saveData.Hour}");
             }
             catch (Exception ex)
             {
@@ -103,7 +108,7 @@ namespace MiniRPG.Services
                 
                 if (saveData?.Player != null)
                 {
-                    // New format with unlocked regions
+                    // New format with unlocked regions and time
                     player = saveData.Player;
                     
                     // Rehydrate FastTravelService.UnlockedRegions from JSON
@@ -113,13 +118,19 @@ namespace MiniRPG.Services
                         FastTravelService.UnlockedRegions.Add(regionName);
                     }
                     
+                    // Restore time from save
+                    TimeService.Day = saveData.Day;
+                    TimeService.Hour = saveData.Hour;
+                    
                     Debug.WriteLine($"Loaded unlocked regions: {string.Join(", ", saveData.UnlockedRegions)}");
+                    Debug.WriteLine($"Time loaded - Day {TimeService.Day}, Hour {TimeService.Hour} ({TimeService.GetTimeOfDay()})");
                 }
                 else
                 {
                     // Legacy format - just Player object
                     player = JsonSerializer.Deserialize<Player>(json, _jsonOptions);
-                    Debug.WriteLine("Loaded from legacy save format (no unlocked regions)");
+                    Debug.WriteLine("Loaded from legacy save format (no unlocked regions or time data)");
+                    // Keep default time values (Day 1, Hour 8)
                 }
                 
                 if (player != null)
@@ -173,6 +184,10 @@ namespace MiniRPG.Services
                             {
                                 FastTravelService.UnlockedRegions.Add(regionName);
                             }
+                            
+                            // Restore time from backup
+                            TimeService.Day = backupSaveData.Day;
+                            TimeService.Hour = backupSaveData.Hour;
                         }
                         else
                         {

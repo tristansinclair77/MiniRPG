@@ -245,6 +245,15 @@ namespace MiniRPG.ViewModels
             // TODO: Add time-based events and NPC schedules
         }
 
+        /// <summary>
+        /// Refreshes the time-related properties to update the UI after time changes.
+        /// </summary>
+        public void RefreshTimeDisplay()
+        {
+            OnPropertyChanged(nameof(CurrentDay));
+            OnPropertyChanged(nameof(TimeOfDay));
+        }
+
         private void StartBattle()
         {
             var msg = $"Starting battle at [{SelectedLocation}]";
@@ -253,8 +262,7 @@ namespace MiniRPG.ViewModels
             
             // Advance time by 1 hour for battle
             TimeService.AdvanceHours(1);
-            OnPropertyChanged(nameof(CurrentDay));
-            OnPropertyChanged(nameof(TimeOfDay));
+            RefreshTimeDisplay();
             
             // Pass the region name to the battle system for region-aware enemy selection
             OnStartBattle?.Invoke(RegionName ?? "Unknown");
@@ -297,8 +305,7 @@ namespace MiniRPG.ViewModels
             {
                 // Advance time by 2 hours for travel
                 TimeService.AdvanceHours(2);
-                OnPropertyChanged(nameof(CurrentDay));
-                OnPropertyChanged(nameof(TimeOfDay));
+                RefreshTimeDisplay();
                 
                 _globalLog?.Add($"Fast traveling to {regionName}... It is now Day {CurrentDay}, {TimeOfDay}.");
                 OnFastTravel?.Invoke(regionName);
@@ -317,8 +324,7 @@ namespace MiniRPG.ViewModels
         {
             // Advance time by 8 hours for resting
             TimeService.AdvanceHours(8);
-            OnPropertyChanged(nameof(CurrentDay));
-            OnPropertyChanged(nameof(TimeOfDay));
+            RefreshTimeDisplay();
             
             Player.HP = Player.MaxHP;
             OnPropertyChanged(nameof(Player));

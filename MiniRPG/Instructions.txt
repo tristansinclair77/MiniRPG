@@ -1,15 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Enhance BuildingInteriorView.xaml and AudioService.cs.
-
-Requirements:
-• When StayAtInnCommand triggers:
-   - Display overlay TextBlock "Sleeping..." for 2 seconds.
-   - Play sleep.wav via AudioService.
-   - After delay, hide overlay and refresh HP/time.
-• Add TODO:
-   <!-- TODO: Replace with animated fade-to-black -->
-   <!-- TODO: Add morning light transition -->
+Testing checklist:
+1. Observe current Day and Time in MapView.
+2. Travel or battle → time advances correctly.
+3. Enter Inn → pay gold and rest → HP restored, time advanced 8 hours.
+4. Confirm music and background update for morning/evening/night.
+5. Test quest expiration system by advancing days.
+6. Save and reload → verify time persists correctly.
+7. Add TODO placeholders:
+   <!-- TODO: Add calendar UI -->
+   <!-- TODO: Add festivals or timed events -->
+   <!-- TODO: Add NPC schedules tied to time of day -->
 
 ---
 

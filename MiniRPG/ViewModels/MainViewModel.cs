@@ -96,7 +96,10 @@ namespace MiniRPG.ViewModels
                 
                 var mapVM = CreateMapViewModel();
                 CurrentViewModel = mapVM;
-                try { AudioService.PlayMapTheme(); } catch { }
+                
+                // Update music based on loaded time of day
+                try { AudioService.UpdateMusicForTime(); } catch { }
+                
                 AddLog("Welcome back!");
             }
         }
