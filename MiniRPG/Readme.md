@@ -1,6 +1,49 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Faction System
+## Latest Update: Faction System Integration
+
+### Player.cs Enhancements
+- **Added `Factions` property**:
+  - Dictionary<string, Faction> collection for tracking player's relationships with all factions
+  - Initialized as empty dictionary on player creation
+  - Key = faction name (string), Value = Faction object with reputation data
+  - Enables dynamic faction relationship tracking throughout the game
+- **Added `GetFaction(string name)` method**:
+  - Returns the Faction object for the specified faction name
+  - If faction doesn't exist in the dictionary, creates a new Faction with default Reputation = 0
+  - Ensures all faction lookups are safe and never return null
+  - Automatically initializes new factions with neutral standing
+- **Added `AdjustFactionReputation(string name, int amount)` method**:
+  - Adjusts reputation with a specific faction by the given amount (positive or negative)
+  - Calls `GetFaction(name)` to retrieve or create the faction
+  - Calls `faction.AdjustReputation(amount)` to modify reputation (clamped -100 to +100)
+  - Logs debug message: "Faction {name} reputation changed to {faction.Reputation}."
+  - Provides centralized faction reputation management
+- **Added TODO comment**:
+  - `// Add global faction relationships (guilds, towns, bandits)`
+  - Placeholder for implementing global faction system with predefined factions
+
+### Technical Details
+- Player faction system now fully integrated with existing Faction.cs model
+- Factions are created on-demand when first referenced (lazy initialization)
+- All factions start at neutral standing (Reputation = 0) when first encountered
+- Reputation changes are automatically clamped to -100 (hostile) to +100 (allied)
+- Debug logging provides clear feedback for reputation changes
+- Foundation laid for:
+  - Quest rewards/penalties affecting faction reputation
+  - Faction-specific dialogue options based on standing
+  - Faction vendors with dynamic prices based on reputation
+  - Faction territory access restrictions
+  - Faction war and alliance systems
+  - Faction-specific items and rewards for allied status
+  - Save/load persistence for faction data
+  - UI display showing all faction standings
+- Integrates seamlessly with existing Player progression systems (quests, combat, dialogue)
+- Completes the faction system foundation: Faction.cs → Player.cs → ready for quest/dialogue integration
+
+---
+
+## Previous Update: Faction System
 
 ### Faction.cs (New File)
 - **Created `Faction` class in Models folder**:

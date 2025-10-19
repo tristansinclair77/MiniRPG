@@ -1,23 +1,19 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create Faction.cs in the Models folder.
+Modify Player.cs.
 
 Requirements:
-• public class Faction
-   - string Name
-   - string Description
-   - int Reputation       // -100 (enemy) to +100 (ally)
-   - int ThresholdFriendly = 50
-   - int ThresholdHostile = -50
+• Add property:
+   - Dictionary<string, Faction> Factions { get; set; } = new();
 • Add methods:
-   - AdjustReputation(int amount)
-       * Reputation = Math.Clamp(Reputation + amount, -100, 100)
-   - GetStanding():
-       * Return "Allied" if Reputation >= ThresholdFriendly
-       * Return "Neutral" if between thresholds
-       * Return "Hostile" if Reputation <= ThresholdHostile
+   - GetFaction(string name):
+       * Return Factions[name] if exists, else create with default Reputation = 0.
+   - AdjustFactionReputation(string name, int amount):
+       * var faction = GetFaction(name);
+       * faction.AdjustReputation(amount);
+       * Log $"Faction {name} reputation changed to {faction.Reputation}."
 • Add TODO:
-   // Add icons, territory ownership, and alliances later
+   // Add global faction relationships (guilds, towns, bandits)
 
 ---
 

@@ -90,6 +90,9 @@ namespace MiniRPG.Models
         public ObservableCollection<Skill> LearnedSkills { get; set; } = new();
         public ObservableCollection<Skill> AvailableSkills { get; set; } = new();
 
+        // Faction system
+        public Dictionary<string, Faction> Factions { get; set; } = new();
+
         // Base stats (original values before equipment bonuses)
         public int BaseAttack { get; set; }
         public int BaseDefense { get; set; }
@@ -240,6 +243,32 @@ namespace MiniRPG.Models
             }
         }
 
+        /// <summary>
+        /// Gets a faction by name, creating it with default reputation (0) if it doesn't exist.
+        /// </summary>
+        /// <param name="name">The faction name</param>
+        /// <returns>The faction with the specified name</returns>
+        public Faction GetFaction(string name)
+        {
+            if (!Factions.ContainsKey(name))
+            {
+                Factions[name] = new Faction(name, "");
+            }
+            return Factions[name];
+        }
+
+        /// <summary>
+        /// Adjusts the reputation with a specific faction and logs the change.
+        /// </summary>
+        /// <param name="name">The faction name</param>
+        /// <param name="amount">The amount to adjust reputation by (positive or negative)</param>
+        public void AdjustFactionReputation(string name, int amount)
+        {
+            var faction = GetFaction(name);
+            faction.AdjustReputation(amount);
+            Debug.WriteLine($"Faction {name} reputation changed to {faction.Reputation}.");
+        }
+
         public void AddItem(Item item)
         {
             if (Inventory.Count >= MaxInventoryCapacity)
@@ -339,5 +368,6 @@ namespace MiniRPG.Models
         // TODO: Add currency icons and multi-currency support later
         // TODO: // Add unequip logic and visual equipment preview later
         // TODO: Add skill respec (reset) feature later
+        // Add global faction relationships (guilds, towns, bandits)
     }
 }
