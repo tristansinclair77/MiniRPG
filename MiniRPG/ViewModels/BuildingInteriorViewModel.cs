@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using MiniRPG.Models;
 using MiniRPG.Services;
@@ -34,6 +35,17 @@ namespace MiniRPG.ViewModels
             set
             {
                 _player = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isSleeping;
+        public bool IsSleeping
+        {
+            get => _isSleeping;
+            set
+            {
+                _isSleeping = value;
                 OnPropertyChanged();
             }
         }
@@ -105,14 +117,25 @@ namespace MiniRPG.ViewModels
             OnExitBuilding?.Invoke();
         }
 
-        private void StayAtInn()
+        private async void StayAtInn()
         {
             const int cost = 20;
             if (Player.Gold >= cost)
             {
                 Player.SpendGold(cost);
+                
+                // Play sleep sound effect
+                try { AudioService.PlaySleep(); } catch { }
+                
+                // Display "Sleeping..." overlay for 2 seconds
+                IsSleeping = true;
+                await Task.Delay(2000);
+                
+                // After delay, restore HP, advance time, and hide overlay
                 Player.HP = Player.MaxHP;
                 TimeService.AdvanceHours(8);
+                IsSleeping = false;
+                
                 Debug.WriteLine("You rest at the inn and feel refreshed.");
                 
                 // Update music for new time of day after resting

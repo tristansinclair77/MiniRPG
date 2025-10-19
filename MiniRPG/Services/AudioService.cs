@@ -38,6 +38,14 @@ namespace MiniRPG.Services
         }
 
         /// <summary>
+        /// Plays the sleep sound effect when player rests at an inn.
+        /// </summary>
+        public static void PlaySleep()
+        {
+            PlayWavOnceIfExists("sleep.wav");
+        }
+
+        /// <summary>
         /// Updates background music based on current time of day.
         /// Should be called when player travels, rests, or enters a region.
         /// </summary>
@@ -75,6 +83,23 @@ namespace MiniRPG.Services
                 // Optionally log or ignore
             }
         }
+
+        private static void PlayWavOnceIfExists(string fileName)
+        {
+            try
+            {
+                if (File.Exists(fileName))
+                {
+                    using var player = new SoundPlayer(fileName);
+                    player.Play();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Optionally log or ignore
+            }
+        }
+        
         // TODO: // Replace with cross-fade audio engine later.
         // TODO: // Add smooth crossfade and environmental sound effects later
         // TODO: Add dynamic volume crossfades and weather ambience later

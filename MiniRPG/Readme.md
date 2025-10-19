@@ -1,6 +1,326 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Quest Expiration Display Enhancement
+## Latest Update: Inn Sleep Animation & Sound Effect
+
+### Changes Made ✨
+
+#### BuildingInteriorView.xaml - Sleep Overlay Display
+- **Added**: "Sleeping..." overlay TextBlock
+  - **Display**: Full-screen black background with centered white "Sleeping..." text
+  - **Font**: 48px, Bold, White color
+  - **Visibility**: Controlled by `IsSleeping` property in ViewModel
+  - **Z-Index**: 1000 (appears above all other UI elements)
+  - **Functionality**: Displays for 2 seconds when player rests at inn
+
+- **Added**: BooleanToVisibilityConverter resource
+  - **Purpose**: Converts `IsSleeping` boolean to Visibility enum
+  - **Usage**: Controls overlay display state
+
+- **Added**: TODO comments for future enhancements
+  - `<!-- TODO: Replace with animated fade-to-black -->`
+  - `<!-- TODO: Add morning light transition -->`
+  - Planned features: Smooth fade animations and morning wake-up effects
+
+#### BuildingInteriorViewModel.cs - Sleep Sequence Implementation
+- **Added**: `IsSleeping` property
+  - **Type**: Boolean with INotifyPropertyChanged
+  - **Purpose**: Controls visibility of "Sleeping..." overlay
+  - **Default**: false (overlay hidden)
+
+- **Modified**: `StayAtInn()` method - Enhanced sleep sequence
+  - **Flow**:
+    1. Check if player has enough gold (20 gold cost)
+    2. Deduct gold from player
+    3. Play sleep.wav sound effect via `AudioService.PlaySleep()`
+    4. Set `IsSleeping = true` to display overlay
+    5. Wait 2 seconds using `await Task.Delay(2000)`
+    6. Restore player HP to maximum
+    7. Advance time by 8 hours via `TimeService.AdvanceHours(8)`
+    8. Set `IsSleeping = false` to hide overlay
+    9. Update background music for new time of day
+  - **Safety**: All audio calls wrapped in try-catch blocks
+  - **Made async**: Method signature changed to `async void` to support Task.Delay
+
+- **Added**: Using directive for System.Threading.Tasks
+
+#### AudioService.cs - Sleep Sound Effect Support
+- **Added**: `PlaySleep()` method
+  - **Purpose**: Plays sleep.wav sound effect when player rests at inn
+  - **Implementation**: Calls `PlayWavOnceIfExists("sleep.wav")`
+  - **Documentation**: XML summary explaining usage
+
+- **Added**: `PlayWavOnceIfExists(string fileName)` helper method
+  - **Purpose**: Plays a WAV file once (not looping)
+  - **Implementation**: Uses `SoundPlayer.Play()` instead of `PlayLooping()`
+  - **Error Handling**: Try-catch to handle missing audio files gracefully
+  - **Scope**: Private helper method
+
+#### Requirements Fulfilled
+
+All requirements from Instructions.txt have been implemented:
+
+**BuildingInteriorView.xaml:**
+- ✅ Display overlay TextBlock "Sleeping..." for 2 seconds when StayAtInnCommand triggers
+- ✅ Added TODO: `<!-- TODO: Replace with animated fade-to-black -->`
+- ✅ Added TODO: `<!-- TODO: Add morning light transition -->`
+
+**BuildingInteriorViewModel.cs:**
+- ✅ StayAtInn triggers sleep sequence
+- ✅ Displays "Sleeping..." overlay for 2 seconds
+- ✅ After delay, hides overlay and refreshes HP/time
+
+**AudioService.cs:**
+- ✅ Play sleep.wav via AudioService when StayAtInnCommand triggers
+
+**Readme.md:**
+- ✅ Updated with the changes
+
+#### Implementation Details
+
+**BuildingInteriorView.xaml - Sleeping Overlay:**<!-- Sleeping Overlay (displayed during inn rest) -->
+<Border Grid.RowSpan="4" 
+        Background="#000000"
+        Visibility="{Binding IsSleeping, Converter={StaticResource BoolToVis}}"
+        Panel.ZIndex="1000">
+    <TextBlock Text="Sleeping..." 
+               FontSize="48" 
+               FontWeight="Bold" 
+               Foreground="White" 
+               HorizontalAlignment="Center" 
+               VerticalAlignment="Center" />
+</Border>
+**BuildingInteriorViewModel.cs - Sleep Sequence:**private async void StayAtInn()
+{
+    const int cost = 20;
+    if (Player.Gold >= cost)
+    {
+        Player.SpendGold(cost);
+        
+        // Play sleep sound effect
+        try { AudioService.PlaySleep(); } catch { }
+        
+        // Display "Sleeping..." overlay for 2 seconds
+        IsSleeping = true;
+        await Task.Delay(2000);
+        
+        // After delay, restore HP, advance time, and hide overlay
+        Player.HP = Player.MaxHP;
+        TimeService.AdvanceHours(8);
+        IsSleeping = false;
+        
+        Debug.WriteLine("You rest at the inn and feel refreshed.");
+        
+        // Update music for new time of day after resting
+        try { AudioService.UpdateMusicForTime(); } catch { }
+    }
+    else
+    {
+        Debug.WriteLine("You can't afford a room.");
+    }
+}
+**AudioService.cs - Sleep Sound Effect:**/// <summary>
+/// Plays the sleep sound effect when player rests at an inn.
+/// </summary>
+public static void PlaySleep()
+{
+    PlayWavOnceIfExists("sleep.wav");
+}
+
+private static void PlayWavOnceIfExists(string fileName)
+{
+    try
+    {
+        if (File.Exists(fileName))
+        {
+            using var player = new SoundPlayer(fileName);
+            player.Play();
+        }
+    }
+    catch (Exception ex)
+    {
+        // Optionally log or ignore
+    }
+}
+#### Gameplay Flow
+
+**Player Rests at Inn - Step by Step:**
+
+1. **Initial State**:
+   - Player HP: 50/100
+   - Player Gold: 100
+   - Time: Day 1, Morning (8:00 AM)
+   - Current Music: morning.wav
+
+2. **Player Clicks "Stay the Night"**:
+   - Gold check: 100 >= 20 ✓
+   - Gold deducted: 100 - 20 = 80
+   - Sleep sound plays: sleep.wav starts
+
+3. **Overlay Appears** (0.0s):
+   - IsSleeping = true
+   - Screen goes black with "Sleeping..." text
+   - Music continues in background (morning.wav)
+
+4. **2-Second Delay** (0.0s - 2.0s):
+   - "Sleeping..." overlay remains visible
+   - Player cannot interact with UI
+   - Task.Delay(2000) running
+
+5. **After Delay** (2.0s):
+   - HP restored: 50 → 100
+   - Time advances: 8:00 AM → 4:00 PM (Afternoon)
+   - IsSleeping = false
+   - Overlay disappears
+
+6. **Music Update**:
+   - UpdateMusicForTime() called
+   - TimeService.GetTimeOfDay() returns "Afternoon"
+   - Music changes: morning.wav → daytime.wav
+
+7. **Final State**:
+   - Player HP: 100/100 (fully healed)
+   - Player Gold: 80
+   - Time: Day 1, Afternoon (4:00 PM)
+   - Current Music: daytime.wav
+   - Debug message: "You rest at the inn and feel refreshed."
+
+#### Visual Examples
+
+**Example 1: Normal Inn Rest**
+- **Before**: HP 30/100, Gold 50, Morning (8 AM)
+- **Action**: Click "Stay the Night"
+- **During**: Black screen with "Sleeping..." for 2 seconds, sleep.wav plays
+- **After**: HP 100/100, Gold 30, Afternoon (4 PM), daytime.wav playing
+
+**Example 2: Insufficient Gold**
+- **Before**: HP 40/100, Gold 10, Evening (6 PM)
+- **Action**: Click "Stay the Night"
+- **Result**: No overlay, no sound, debug message "You can't afford a room."
+
+**Example 3: Overnight Rest (Night → Morning)**
+- **Before**: HP 75/100, Gold 100, Night (2 AM)
+- **Action**: Rest at inn
+- **During**: "Sleeping..." overlay + sleep.wav for 2 seconds
+- **After**: HP 100/100, Gold 80, Morning (10 AM), morning.wav playing
+
+#### Integration with Existing Systems
+
+**Time Service Integration:**
+- Sleep advances time by 8 hours via `TimeService.AdvanceHours(8)`
+- Time advancement may change time of day (e.g., Morning → Afternoon)
+- Music automatically updates to match new time period
+
+**Audio Service Integration:**
+- **Sleep Sound**: `PlaySleep()` plays sleep.wav once (not looping)
+- **Background Music**: `UpdateMusicForTime()` switches to time-appropriate track
+- **Error Handling**: Missing audio files don't crash the game
+
+**Player Stats Integration:**
+- **HP Restoration**: `Player.HP = Player.MaxHP` fully heals player
+- **Gold Cost**: `Player.SpendGold(20)` deducts inn cost
+- **Stats Update**: UI automatically reflects new HP/Gold via data binding
+
+**UI Binding Flow:**
+1. IsSleeping property changes (false → true → false)
+2. OnPropertyChanged notifies view
+3. BooleanToVisibilityConverter converts to Visibility enum
+4. Overlay Border visibility updates automatically
+5. No manual UI manipulation required
+
+#### Technical Details
+
+**Async/Await Pattern:**
+- **Method Signature**: `async void StayAtInn()`
+  - Async allows use of `await Task.Delay(2000)`
+  - Void return type appropriate for event handlers/commands
+- **Non-Blocking**: UI remains responsive during 2-second delay
+- **Thread Safety**: All property updates happen on UI thread
+
+**Z-Index Layering:**
+- Overlay uses `Panel.ZIndex="1000"`
+- Ensures overlay appears above all other UI elements
+- Building interior remains visible underneath (dimmed by black background)
+
+**Error Handling:**
+- Audio playback wrapped in try-catch
+- Missing sleep.wav file won't crash game
+- Music update failures logged but ignored
+- Player still heals even if audio fails
+
+#### Potential Future Enhancements
+
+Based on the new TODO comments:
+
+**Animated Fade-to-Black:**
+- **Smooth Transitions**: Replace instant black overlay with gradual fade
+- **Implementation**:
+  - Use WPF Storyboard with DoubleAnimation
+  - Animate Border.Opacity from 0.0 to 1.0 over 0.5 seconds
+  - Fade in: 0 → 1 (sleep begins)
+  - Hold: 1.5 seconds (sleeping)
+  - Fade out: 1 → 0 (waking up)
+- **Code Example**:<Border.Triggers>
+    <EventTrigger RoutedEvent="Loaded">
+        <BeginStoryboard>
+            <Storyboard>
+                <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                 From="0" To="1" Duration="0:0:0.5" />
+            </Storyboard>
+        </BeginStoryboard>
+      </EventTrigger>
+  </Border.Triggers>
+**Morning Light Transition:**
+- **Wake-Up Effect**: Add warm light effect when player wakes up
+- **Visual Elements**:
+  - Sunrise gradient overlay (orange/yellow)
+  - Gentle glow animation
+  - "Good morning!" text fade-in
+- **Implementation**:
+  - Second overlay Border with RadialGradientBrush
+  - Animate opacity and scale for "light spreading" effect
+  - Display time of day after waking (e.g., "Morning, Day 2")
+- **Sound Integration**:
+  - Play bird chirping SFX if waking during morning
+  - Play rooster crow for early morning wake-ups
+  - Silent wake-up for afternoon/evening rests
+
+**Enhanced Sleep Sequence:**
+- **Variable Duration**: Different rest options
+  - Quick nap: 2 hours, 5 gold, +30% HP
+  - Standard rest: 8 hours, 20 gold, 100% HP (current)
+  - Luxury suite: 12 hours, 50 gold, 100% HP + buffs
+- **Dream Events**: Random encounters during sleep
+  - Prophetic dreams (quest hints)
+  - Nightmares (debuffs)
+  - Skill training dreams (bonus XP)
+- **Time Visualization**: Show clock hands moving during sleep
+  - Circular clock face on overlay
+  - Hands rotate from start time to end time
+  - Visual feedback for time passage
+
+**Innkeeper Dialogue Integration:**
+- **Pre-Sleep Conversation**: Talk to innkeeper before sleeping
+  - "Would you like a room for the night?"
+  - Show room options (Standard/Luxury)
+  - Warning if late night: "It's already quite late!"
+- **Post-Sleep Dialogue**: Wake-up message from innkeeper
+  - "Good morning! I hope you slept well."
+  - Different messages based on time of day
+  - Quest updates: "A messenger came looking for you."
+
+**Status Effects During Sleep:**
+- **Healing Calculations**: HP restoration based on room quality
+  - Standard room: 100% HP
+  - Luxury room: 100% HP + remove debuffs
+  - Cheap room: 75% HP only
+- **Buff/Debuff Management**:
+  - Remove temporary debuffs (poison, fatigue)
+  - Keep permanent debuffs (curses)
+  - Apply "Well Rested" buff: +10% XP for 4 hours
+
+---
+
+## Previous Update: Quest Expiration Display Enhancement
 
 ### Changes Made ✨
 

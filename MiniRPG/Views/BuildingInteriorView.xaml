@@ -3,8 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converters="clr-namespace:MiniRPG.Converters"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="600">
+    <UserControl.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
     <!-- TODO: Add interior background art -->
     <!-- TODO: Add custom music per building type -->
     <!-- TODO: Add clickable NPC sprites -->
@@ -118,6 +122,8 @@
                                 Margin="0,15,0,0">
                         <!-- TODO: Replace with innkeeper NPC dialogue and fade-out sleep animation -->
                         <!-- TODO: Add sound effect for morning wake-up -->
+                        <!-- TODO: Replace with animated fade-to-black -->
+                        <!-- TODO: Add morning light transition -->
                         
                         <!-- Stay the Night Button -->
                         <Button Content="Stay the Night" 
@@ -175,5 +181,18 @@
                 </Style>
             </Button.Style>
         </Button>
+
+        <!-- Sleeping Overlay (displayed during inn rest) -->
+        <Border Grid.RowSpan="4" 
+                Background="#000000"
+                Visibility="{Binding IsSleeping, Converter={StaticResource BoolToVis}}"
+                Panel.ZIndex="1000">
+            <TextBlock Text="Sleeping..." 
+                       FontSize="48" 
+                       FontWeight="Bold" 
+                       Foreground="White" 
+                       HorizontalAlignment="Center" 
+                       VerticalAlignment="Center" />
+        </Border>
     </Grid>
 </UserControl>

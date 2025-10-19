@@ -1,12 +1,15 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Enhance MapView.xaml.
+Enhance BuildingInteriorView.xaml and AudioService.cs.
 
 Requirements:
-• In "Active Quests" list, show "(Expires Day X)" if ExpireDay != null.
-• Use red text if Day is within 1 of expiration.
+• When StayAtInnCommand triggers:
+   - Display overlay TextBlock "Sleeping..." for 2 seconds.
+   - Play sleep.wav via AudioService.
+   - After delay, hide overlay and refresh HP/time.
 • Add TODO:
-   <!-- TODO: Add flashing warning or quest marker on minimap -->
+   <!-- TODO: Replace with animated fade-to-black -->
+   <!-- TODO: Add morning light transition -->
 
 ---
 
