@@ -245,18 +245,27 @@ namespace MiniRPG.Models
                 ActiveQuests.Remove(quest);
                 CompletedQuests.Add(quest);
                 
-                // Award rewards
-                AddGold(quest.RewardGold);
-                GainExperience(quest.RewardExp);
-                
-                if (quest.RewardItem != null)
+                // Check if quest expired
+                if (quest.IsExpired())
                 {
-                    AddItem(quest.RewardItem);
+                    // Award reduced or no rewards for expired quest
+                    Debug.WriteLine($"Quest '{quest.Title}' completed but expired! No rewards given.");
                 }
-                
-                // Log reward message
-                Debug.WriteLine($"Quest '{quest.Title}' completed! Rewards: {quest.RewardGold} gold, {quest.RewardExp} experience" +
-                    (quest.RewardItem != null ? $", {quest.RewardItem.Name}" : ""));
+                else
+                {
+                    // Award full rewards
+                    AddGold(quest.RewardGold);
+                    GainExperience(quest.RewardExp);
+                    
+                    if (quest.RewardItem != null)
+                    {
+                        AddItem(quest.RewardItem);
+                    }
+                    
+                    // Log reward message
+                    Debug.WriteLine($"Quest '{quest.Title}' completed! Rewards: {quest.RewardGold} gold, {quest.RewardExp} experience" +
+                        (quest.RewardItem != null ? $", {quest.RewardItem.Name}" : ""));
+                }
             }
         }
 

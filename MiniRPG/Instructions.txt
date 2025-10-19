@@ -1,17 +1,14 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Enhance AudioService.cs.
+Modify Quest.cs.
 
 Requirements:
-• Add method UpdateMusicForTime():
-   - switch(TimeService.GetTimeOfDay()):
-       * "Morning" → play morning.wav
-       * "Afternoon" → play daytime.wav
-       * "Evening" → play dusk.wav
-       * "Night" → play night.wav
-• Call this method each time player travels, rests, or enters region.
+• Add int? ExpireDay (null = no expiry)
+• Method IsExpired() => ExpireDay.HasValue && TimeService.Day > ExpireDay.Value
+• Modify Player.CompleteQuest to check if quest expired:
+   - If expired, reward reduced or none.
 • Add TODO:
-   // Add dynamic volume crossfades and weather ambience later
+   // Add quest timers displayed on quest board
 
 ---
 

@@ -13,6 +13,11 @@ namespace MiniRPG.Models
         public int RewardGold { get; set; }
         public int RewardExp { get; set; }
         public Item? RewardItem { get; set; }
+        
+        /// <summary>
+        /// The day on which this quest expires (null = no expiry).
+        /// </summary>
+        public int? ExpireDay { get; set; }
 
         /// <summary>
         /// Constructor for creating a new quest with kill requirements.
@@ -46,10 +51,17 @@ namespace MiniRPG.Models
             }
         }
 
+        /// <summary>
+        /// Checks if the quest has expired based on the current day.
+        /// </summary>
+        /// <returns>True if the quest has expired, false otherwise</returns>
+        public bool IsExpired() => ExpireDay.HasValue && Services.TimeService.Day > ExpireDay.Value;
+
         // TODO: Add quest types: Fetch, Deliver, Explore
         // TODO: Add quest giver NPC info
         // TODO: Add quest rewards summary UI
         // TODO: Add storyline quest chains
         // TODO: Add quest completion cutscenes
+        // TODO: Add quest timers displayed on quest board
     }
 }

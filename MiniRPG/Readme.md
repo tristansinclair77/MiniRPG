@@ -1,6 +1,179 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Dynamic Time-Based Music System
+## Latest Update: Quest Expiration System
+
+### Changes Made ✨
+
+#### Quest.cs - Quest Expiration Feature
+- **Added**: `int? ExpireDay` property
+  - **Purpose**: Tracks the day on which a quest expires (null = no expiry)
+  - **Type**: Nullable integer to support quests with and without time limits
+  - **Default**: null (no expiration)
+
+- **Added**: `IsExpired()` method
+  - **Implementation**: `ExpireDay.HasValue && TimeService.Day > ExpireDay.Value`
+  - **Returns**: True if quest has expired, false otherwise
+  - **Usage**: Checked during quest completion to determine reward eligibility
+
+- **Added**: TODO comment
+  - `// TODO: Add quest timers displayed on quest board`
+  - Planned feature: Visual countdown timers on quest board UI
+
+#### Player.cs - Quest Completion with Expiration Check
+- **Modified**: `CompleteQuest(Quest quest)` method
+  - **New Logic**: Checks if quest is expired before awarding rewards
+  - **Expired Quests**: No rewards given (gold, experience, or items)
+  - **Active Quests**: Full rewards awarded as normal
+  - **Logging**: Different debug messages for expired vs. active quest completion
+
+#### Requirements Fulfilled
+
+All requirements from Instructions.txt have been implemented:
+
+**Quest.cs:**
+- ✅ Added `int? ExpireDay` property (null = no expiry)
+- ✅ Added `IsExpired()` method: `ExpireDay.HasValue && TimeService.Day > ExpireDay.Value`
+- ✅ Added TODO: `// TODO: Add quest timers displayed on quest board`
+
+**Player.cs:**
+- ✅ Modified `CompleteQuest` to check if quest expired
+- ✅ If expired: reward reduced to none (no gold, no exp, no items)
+- ✅ If active: full rewards awarded
+
+#### Implementation Details
+
+**Quest Expiration Logic:**/// <summary>
+/// Checks if the quest has expired based on the current day.
+/// </summary>
+/// <returns>True if the quest has expired, false otherwise</returns>
+public bool IsExpired() => ExpireDay.HasValue && Services.TimeService.Day > ExpireDay.Value;
+**Player.CompleteQuest() with Expiration Check:**public void CompleteQuest(Quest quest)
+{
+    if (ActiveQuests.Contains(quest))
+    {
+        ActiveQuests.Remove(quest);
+        CompletedQuests.Add(quest);
+        
+        // Check if quest expired
+        if (quest.IsExpired())
+        {
+            // Award reduced or no rewards for expired quest
+            Debug.WriteLine($"Quest '{quest.Title}' completed but expired! No rewards given.");
+        }
+        else
+        {
+            // Award full rewards
+            AddGold(quest.RewardGold);
+            GainExperience(quest.RewardExp);
+            
+            if (quest.RewardItem != null)
+            {
+                AddItem(quest.RewardItem);
+            }
+            
+            Debug.WriteLine($"Quest '{quest.Title}' completed! Rewards: {quest.RewardGold} gold, {quest.RewardExp} experience" +
+                (quest.RewardItem != null ? $", {quest.RewardItem.Name}" : ""));
+        }
+    }
+}
+#### Gameplay Examples
+
+**Example 1: Quest with No Expiration**
+- **Quest Created**: Day 1, ExpireDay = null
+- **Quest Completed**: Day 10
+- **Result**: `IsExpired()` returns false → Full rewards awarded
+
+**Example 2: Quest Completed Before Expiration**
+- **Quest Created**: Day 1, ExpireDay = 5
+- **Quest Completed**: Day 3
+- **Result**: `IsExpired()` returns false (Day 3 ≤ Day 5) → Full rewards awarded
+
+**Example 3: Quest Completed After Expiration**
+- **Quest Created**: Day 1, ExpireDay = 5
+- **Quest Completed**: Day 7
+- **Result**: `IsExpired()` returns true (Day 7 > Day 5) → No rewards given
+
+**Example 4: Quest Completed on Expiration Day**
+- **Quest Created**: Day 1, ExpireDay = 5
+- **Quest Completed**: Day 5
+- **Result**: `IsExpired()` returns false (Day 5 not > Day 5) → Full rewards awarded
+
+#### Usage in Game
+
+**Creating Time-Limited Quests:**var urgentQuest = new Quest(
+    "Urgent Delivery", 
+    "Deliver this package within 3 days", 
+    requiredKills: 0, 
+    rewardGold: 100, 
+    rewardExp: 50
+);
+urgentQuest.ExpireDay = TimeService.Day + 3; // Expires in 3 days
+player.AddQuest(urgentQuest);
+**Creating Permanent Quests:**var mainQuest = new Quest(
+    "Defeat the Dragon", 
+    "Save the kingdom from the dragon", 
+    requiredKills: 1, 
+    rewardGold: 1000, 
+    rewardExp: 500
+);
+// ExpireDay remains null - quest never expires
+player.AddQuest(mainQuest);
+#### Time Progression Integration
+
+The quest expiration system integrates seamlessly with the existing TimeService:
+
+**Time Advances When:**
+1. **Resting at Inn**: `TimeService.AdvanceHours(8)` - may trigger day change
+2. **Traveling Between Regions**: Could advance time in future updates
+3. **Random Events**: Future time-based events
+
+**Expiration Checks:**
+- Automatic when calling `quest.IsExpired()`
+- Compares `TimeService.Day` (current day) with `quest.ExpireDay`
+- No manual tracking required
+
+#### Potential Future Enhancements
+
+Based on the new TODO comment:
+
+**Quest Timer Display:**
+- **Quest Board UI Enhancement**:
+  - Show "Days Remaining: X" next to time-limited quests
+  - Color coding: Green (3+ days), Yellow (1-2 days), Red (< 1 day)
+  - "No Time Limit" indicator for permanent quests
+- **Implementation**:
+  - Add converter: `ExpireDayToRemainingDaysConverter`
+  - Calculate: `quest.ExpireDay - TimeService.Day`
+  - Display in quest board list item template
+
+**Quest Notification System:**
+- **Expiration Warnings**:
+  - Alert when quest has 1 day remaining
+  - Notification when quest expires
+  - Option to abandon expired quests
+- **Auto-Cleanup**:
+  - Automatically remove expired quests from active list
+  - Move to separate "Failed Quests" collection
+
+**Partial Rewards for Late Completion:**
+- **Tiered Reward System**:
+  - On time: 100% rewards
+  - 1 day late: 50% rewards
+  - 2+ days late: 0% rewards
+- **Reputation Impact**:
+  - Completing on time: +reputation
+  - Completing late: no reputation change
+  - Failing quest: -reputation
+
+**Hour-Based Expiration:**
+- **More Precise Timing**:
+  - Instead of `int? ExpireDay`, use `int? ExpireHour`
+  - Track both day and hour for expiration
+  - Example: Quest expires at Day 3, Hour 18 (6 PM on Day 3)
+
+---
+
+## Previous Update: Dynamic Time-Based Music System
 
 ### Changes Made ✨
 
