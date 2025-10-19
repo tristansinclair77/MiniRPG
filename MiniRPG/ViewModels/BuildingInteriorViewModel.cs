@@ -91,6 +91,7 @@ namespace MiniRPG.ViewModels
 
         private void ExitBuilding()
         {
+            // TODO: Add fade-to-black transition between scenes
             OnExitBuilding?.Invoke();
         }
     }

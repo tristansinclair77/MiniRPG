@@ -1,16 +1,13 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit MapView.xaml.
+Modify BuildingInteriorViewModel.cs.
 
 Requirements:
-• Add Expander titled “Buildings”.
-• Inside, ListBox bound to RegionBuildings.
-• Display each building’s Name and Type.
-• Add Button labeled “Enter” bound to EnterBuildingCommand.
-• CommandParameter = SelectedItem.
+• Add event Action OnExitBuilding;
+• ExitBuildingCommand executes OnExitBuilding?.Invoke();
+• MainViewModel listens and switches back to MapViewModel(CurrentPlayer, currentRegion).
 • Add TODO:
-   <!-- TODO: Add clickable building icons on visual map -->
-   <!-- TODO: Add building entry animation -->
+   // Add fade-to-black transition between scenes
 
 ---
 

@@ -1,6 +1,93 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Buildings UI Integration in MapView
+## Latest Update: BuildingInteriorViewModel Exit Functionality Enhancement
+
+### Changes Made ✨
+
+#### BuildingInteriorViewModel.cs - Exit Building Event Implementation
+- **Updated**: `ExitBuilding()` method
+  - **Functionality**: Properly invokes `OnExitBuilding?.Invoke()` event
+  - **Purpose**: Signals MainViewModel to switch back to MapViewModel
+  - **TODO Comment Added**: `// TODO: Add fade-to-black transition between scenes`
+    - Foundation for smooth visual transitions
+    - Supports fade-out/fade-in animation when exiting buildings
+    - Future enhancement for better UX
+
+#### MainViewModel.cs - Event Listener Verification
+- **Verified**: MainViewModel properly listens to `OnExitBuilding` event
+  - **Handler**: `buildingVM.OnExitBuilding += () => ShowMap();`
+  - **Action**: Calls `ShowMap()` which creates new MapViewModel with CurrentPlayer and currentRegion
+  - **Result**: Seamless transition back to outdoor MapView after exiting building
+
+#### Requirements Fulfilled
+All requirements from Instructions.txt have been implemented:
+
+**BuildingInteriorViewModel.cs:**
+- ✅ Event: `Action OnExitBuilding` already declared
+- ✅ Command: `ExitBuildingCommand` executes `OnExitBuilding?.Invoke()`
+- ✅ TODO Comment: `// TODO: Add fade-to-black transition between scenes`
+
+**MainViewModel.cs:**
+- ✅ Listener: MainViewModel subscribes to `OnExitBuilding` event
+- ✅ Handler: Switches back to MapViewModel(CurrentPlayer, currentRegion) via ShowMap()
+
+#### Integration Flow
+The complete building exit system now works as follows:
+
+1. **BuildingInteriorView**: Player clicks "Exit" button
+2. **BuildingInteriorViewModel**: ExitBuildingCommand executes
+3. **ExitBuilding Method**: Invokes OnExitBuilding event
+4. **MainViewModel Handler**: Receives event notification
+5. **ShowMap Method**: Creates new MapViewModel with CurrentPlayer and current region
+6. **View Transition**: CurrentViewModel switches back to MapView
+7. **Player Location**: Returns to outdoor map in same region
+
+#### Code Flow Example// In BuildingInteriorViewModel
+private void ExitBuilding()
+{
+    // TODO: Add fade-to-black transition between scenes
+    OnExitBuilding?.Invoke();
+}
+
+// In MainViewModel.CreateMapViewModel()
+buildingVM.OnExitBuilding += () => ShowMap();
+
+// ShowMap() creates fresh MapViewModel
+private void ShowMap()
+{
+    var mapVM = CreateMapViewModel();
+    CurrentViewModel = mapVM;
+    try { AudioService.PlayMapTheme(); } catch { }
+    AddLog("Switched to MapView");
+}
+#### Potential Future Enhancements
+Based on the TODO comment:
+- **Fade-to-Black Transition**:
+  - Fade-out animation when exiting building
+  - Black screen transition effect
+  - Fade-in animation showing outdoor MapView
+  - Reverse of entry animation for consistency
+  - Duration: ~0.5-1.0 seconds for smooth experience
+  
+- **Exit Animation Variations**:
+  - Different transitions based on building type
+  - Door closing sound effects
+  - Character sprite walking out animation
+  - Time-of-day changes (e.g., enter during day, exit at night)
+  
+- **Context Preservation**:
+  - Save player position near building entrance
+  - Highlight exited building on map
+  - Show "You left [Building Name]" notification
+  - Brief cooldown before re-entering same building
+
+#### Files Modified
+- `MiniRPG\ViewModels\BuildingInteriorViewModel.cs`
+- `MiniRPG\Readme.md`
+
+---
+
+## Previous Update: Buildings UI Integration in MapView
 
 ### Changes Made ✨
 
@@ -173,122 +260,4 @@ The complete building entry system now works as follows:
 3. **MainViewModel**: Receives event, creates BuildingInteriorViewModel
 4. **BuildingInteriorView**: Displays building interior with NPCs and interactions
 5. **Exit Options**:
-   - Player can talk to NPCs (transitions to DialogueView, returns to BuildingInteriorView)
-   - Player can exit building (returns to MapView)
-
-#### Example Usage<!-- In MapView.xaml, bind to a button or list item: -->
-<Button Content="Enter" Command="{Binding EnterBuildingCommand}" 
-        CommandParameter="{Binding SelectedBuilding}" />// MapViewModel automatically handles the command:
-// EnterBuildingCommand -> OnEnterBuilding?.Invoke(selectedBuilding)
-
-// MainViewModel receives the event and creates the interior view:
-mapVM.OnEnterBuilding += selectedBuilding =>
-{
-    var buildingVM = new BuildingInteriorViewModel(selectedBuilding, CurrentPlayer);
-    buildingVM.OnExitBuilding += () => ShowMap();
-    CurrentViewModel = buildingVM;
-    // TODO: Add animated fade transition between outdoor and indoor views
-};#### Potential Future Enhancements
-Based on the TODO comment:
-- **Animated Fade Transitions**: Smooth visual transitions between views
-  - Fade-out outdoor MapView
-  - Brief transition animation (door opening, screen fade)
-  - Fade-in indoor BuildingInteriorView
-  - Reverse animation when exiting
-- **Building Entry Animations**: Visual feedback for entering/exiting
-  - Character sprite walking to building door
-  - Door opening animation
-  - Interior reveal animation
-- **Sound Effects**: Audio cues for immersion
-  - Door opening/closing sounds
-  - Footstep sounds while entering
-  - Different ambient sounds for interior vs exterior
-- **Loading Screens**: For larger buildings or complex interiors
-  - Show building name and description during load
-  - Tips or lore text during transition
-
-#### Files Modified
-- `MiniRPG\ViewModels\MapViewModel.cs`
-- `MiniRPG\ViewModels\MainViewModel.cs`
-- `MiniRPG\Readme.md`
-
----
-
-## Previous Update: BuildingInteriorViewModel Enhancement
-
-### Changes Made ✨
-
-#### BuildingInteriorViewModel.cs - Updated
-- **Updated**: `BuildingInteriorViewModel` class in ViewModels folder to match requirements
-  - **Properties Added**:
-    - `Player Player`: The player character (required for dialogue interactions)
-  - **Constructor Updated**:
-    - **Signature**: Now requires both `Building building` and `Player player` parameters
-    - **Example**: `new BuildingInteriorViewModel(building, player)`
-    - **Logging**: Automatically logs entry message when entering a building
-      - Format: `"Entered {building.Name}."`
-  - **TODO Comment Added**:
-    - `// Add room-based navigation and building-specific events`
-    - Foundation for multi-room buildings
-    - Support for building-specific gameplay mechanics
-
-#### Requirements Fulfilled
-All requirements from Instructions.txt have been implemented:
-- ✅ Inherits from BaseViewModel
-- ✅ Property: `Building CurrentBuilding`
-- ✅ Property: `Player Player`
-- ✅ Property: `NPC? SelectedNPC`
-- ✅ Command: `TalkToNPCCommand` - Opens DialogueViewModel with selected NPC and Player
-- ✅ Command: `ExitBuildingCommand` - Triggers OnExitBuilding event
-- ✅ Constructor: Accepts `Building building` and `Player player` parameters
-- ✅ Constructor: Logs entry message: `"Entered {building.Name}."`
-- ✅ TODO comment: `// Add room-based navigation and building-specific events`
-
-#### Integration with Existing System
-The updated BuildingInteriorViewModel now properly integrates with:
-- **Player Model**: Receives player reference for dialogue system
-- **DialogueViewModel**: Can pass both NPC and Player to DialogueViewModel constructor
-- **MainViewModel**: Can coordinate view transitions with full context
-- **Event System**: Uses events for clean separation of concerns
-
-#### Updated Example Usagevar building = currentRegion.Buildings.First(b => b.Name == "Mira's Home");
-var buildingVM = new BuildingInteriorViewModel(building, CurrentPlayer);
-
-buildingVM.OnTalkToNPC += selectedNPC =>
-{
-    var dialogueVM = new DialogueViewModel(selectedNPC, CurrentPlayer, GlobalLog);
-    dialogueVM.OnDialogueExit += () => ShowBuildingInterior(building, CurrentPlayer);
-    CurrentViewModel = dialogueVM;
-};
-
-buildingVM.OnExitBuilding += () => ShowMap();
-CurrentViewModel = buildingVM;#### Potential Future Enhancements
-Based on the new TODO comment:
-- **Room-Based Navigation**: Navigate between different rooms within a building
-  - Multi-room buildings (e.g., Inn with common room, bedrooms, kitchen)
-  - Room transitions with loading/fade animations
-  - Different NPCs and interactions per room
-  - Map of building interior
-- **Building-Specific Events**: Custom gameplay mechanics per building type
-  - **Shop Buildings**: Purchase interface, inventory management
-  - **Inn Buildings**: Rest/heal mechanics, room rental
-  - **Guild Buildings**: Quest board, guild contracts, reputation system
-  - **House Buildings**: NPC-specific story events, private conversations
-  - **Training Halls**: Skill training, stat upgrades
-  - **Libraries**: Lore books, research mechanics
-- **Dynamic Building States**: Buildings change based on time or story progress
-  - Time-of-day variations (NPCs move between rooms)
-  - Quest-triggered changes (shop gets new inventory after quest)
-  - Seasonal decorations and events
-
-#### Files Modified
-- `MiniRPG\ViewModels\BuildingInteriorViewModel.cs`
-- `MiniRPG\Readme.md`
-
----
-
-## Previous Update: Building Interior View System
-
-### New Features ✨
-
-// ...existing code...
+   - Player
