@@ -9,6 +9,8 @@
     <UserControl.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BoolToVis" />
         <converters:NPCQuestStatusConverter x:Key="NPCQuestStatus" />
+        <converters:QuestExpirationTextConverter x:Key="QuestExpirationText" />
+        <converters:QuestExpirationColorConverter x:Key="QuestExpirationColor" />
     </UserControl.Resources>
     <!-- TODO: Replace text with pixel-art status window -->
     <!-- TODO: Add animated portrait or player sprite here -->
@@ -22,6 +24,7 @@
     <!-- TODO: Replace with click-based town map interaction -->
     <!-- TODO: Add animated sun/moon icons -->
     <!-- TODO: Add day-night background tint -->
+    <!-- TODO: Add flashing warning or quest marker on minimap -->
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- Region Name row -->
@@ -200,7 +203,18 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
-                            <TextBlock Text="{Binding Title}" FontWeight="Bold" Foreground="White" />
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontWeight="Bold">
+                                    <TextBlock.Foreground>
+                                        <MultiBinding Converter="{StaticResource QuestExpirationColor}">
+                                            <Binding Path="ExpireDay" />
+                                            <Binding Path="DataContext.CurrentDay" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                        </MultiBinding>
+                                    </TextBlock.Foreground>
+                                    <Run Text="{Binding Title}" />
+                                    <Run Text="{Binding ExpireDay, Converter={StaticResource QuestExpirationText}}" />
+                                </TextBlock>
+                            </StackPanel>
                             <TextBlock Foreground="#CCCCCC">
                                 <Run Text="{Binding CurrentKills}" />
                                 <Run Text="/" />

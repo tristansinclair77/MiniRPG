@@ -1,14 +1,12 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify Quest.cs.
+Enhance MapView.xaml.
 
 Requirements:
-• Add int? ExpireDay (null = no expiry)
-• Method IsExpired() => ExpireDay.HasValue && TimeService.Day > ExpireDay.Value
-• Modify Player.CompleteQuest to check if quest expired:
-   - If expired, reward reduced or none.
+• In "Active Quests" list, show "(Expires Day X)" if ExpireDay != null.
+• Use red text if Day is within 1 of expiration.
 • Add TODO:
-   // Add quest timers displayed on quest board
+   <!-- TODO: Add flashing warning or quest marker on minimap -->
 
 ---
 

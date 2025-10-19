@@ -1,6 +1,200 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Quest Expiration System
+## Latest Update: Quest Expiration Display Enhancement
+
+### Changes Made ✨
+
+#### MapView.xaml - Quest Expiration UI Enhancement
+- **Added**: Visual display of quest expiration in "Active Quests" list
+  - **Feature**: Shows "(Expires Day X)" text next to quest titles if the quest has an ExpireDay set
+  - **Color Coding**: 
+    - Red text when the quest is within 1 day of expiration (expiring today or tomorrow)
+    - White text for quests with more time remaining or no expiration
+  - **Implementation**: Uses data binding with custom converters
+
+- **Added**: New converters for quest expiration display
+  - **QuestExpirationTextConverter**: Converts ExpireDay property to display text "(Expires Day X)" or empty string
+  - **QuestExpirationColorConverter**: Multi-value converter that determines text color based on days until expiration
+
+- **Added**: TODO comment for future enhancement
+  - `<!-- TODO: Add flashing warning or quest marker on minimap -->`
+  - Planned feature: Visual indicators on minimap for urgent quests
+
+#### QuestExpirationTextConverter.cs - New Converter
+- **Purpose**: Displays quest expiration information
+- **Functionality**: 
+  - If ExpireDay has a value: returns " (Expires Day X)"
+  - If ExpireDay is null: returns empty string (quest has no expiration)
+- **Type**: IValueConverter for single-value binding
+
+#### QuestExpirationColorConverter.cs - New Converter
+- **Purpose**: Determines text color based on urgency
+- **Functionality**:
+  - Receives two values: Quest.ExpireDay and CurrentDay from MapViewModel
+  - Calculates days until expiration: `expireDay - currentDay`
+  - Returns Red brush if within 1 day of expiration (0-1 days remaining)
+  - Returns White brush otherwise
+- **Type**: IMultiValueConverter for multi-value binding
+- **Integration**: Uses TimeService.Day through MapViewModel.CurrentDay property
+
+#### Requirements Fulfilled
+
+All requirements from Instructions.txt have been implemented:
+
+**MapView.xaml:**
+- ✅ In "Active Quests" list, shows "(Expires Day X)" if ExpireDay != null
+- ✅ Uses red text if Day is within 1 of expiration
+- ✅ Added TODO: `<!-- TODO: Add flashing warning or quest marker on minimap -->`
+
+**Readme.md:**
+- ✅ Updated with the changes
+
+#### Implementation Details
+
+**MapView.xaml - Active Quests List Template:**<ListBox ItemsSource="{Binding Player.ActiveQuests}" Background="#222233" Foreground="White" Height="100">
+    <ListBox.ItemTemplate>
+        <DataTemplate>
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontWeight="Bold">
+                        <TextBlock.Foreground>
+                            <MultiBinding Converter="{StaticResource QuestExpirationColor}">
+                                <Binding Path="ExpireDay" />
+                                <Binding Path="DataContext.CurrentDay" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                            </MultiBinding>
+                        </TextBlock.Foreground>
+                        <Run Text="{Binding Title}" />
+                        <Run Text="{Binding ExpireDay, Converter={StaticResource QuestExpirationText}}" />
+                    </TextBlock>
+                </StackPanel>
+                <TextBlock Foreground="#CCCCCC">
+                    <Run Text="{Binding CurrentKills}" />
+                    <Run Text="/" />
+                    <Run Text="{Binding RequiredKills}" />
+                    <Run Text=" defeated" />
+                </TextBlock>
+            </StackPanel>
+        </DataTemplate>
+    </ListBox.ItemTemplate>
+</ListBox>
+**QuestExpirationTextConverter - Text Display Logic:**public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+{
+    if (value is int expireDay)
+    {
+        return $" (Expires Day {expireDay})";
+    }
+    return string.Empty;
+}
+**QuestExpirationColorConverter - Color Logic:**public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+{
+    // values[0] = ExpireDay (int?)
+    // values[1] = CurrentDay (int)
+    
+    if (values.Length >= 2 && values[0] is int expireDay && values[1] is int currentDay)
+    {
+        int daysUntilExpiration = expireDay - currentDay;
+        
+        // Red if within 1 day of expiration (0 or 1 day remaining)
+        if (daysUntilExpiration <= 1)
+        {
+            return new SolidColorBrush(Colors.Red);
+        }
+    }
+    
+    // Default white color
+    return new SolidColorBrush(Colors.White);
+}
+#### Visual Examples
+
+**Example 1: Quest with No Expiration**
+- **Display**: "Defeat the Dragon"
+- **Color**: White (normal text)
+- **ExpireDay**: null (no expiration text shown)
+
+**Example 2: Quest with Safe Time Remaining**
+- **Current Day**: 3
+- **ExpireDay**: 7
+- **Display**: "Urgent Delivery (Expires Day 7)"
+- **Color**: White (4 days remaining, not urgent)
+
+**Example 3: Quest with 1 Day Remaining**
+- **Current Day**: 6
+- **ExpireDay**: 7
+- **Display**: "Urgent Delivery (Expires Day 7)"
+- **Color**: Red (1 day remaining, urgent!)
+
+**Example 4: Quest Expiring Today**
+- **Current Day**: 7
+- **ExpireDay**: 7
+- **Display**: "Urgent Delivery (Expires Day 7)"
+- **Color**: Red (0 days remaining, expires today!)
+
+**Example 5: Quest Already Expired (Still in Active List)**
+- **Current Day**: 8
+- **ExpireDay**: 7
+- **Display**: "Urgent Delivery (Expires Day 7)"
+- **Color**: White (negative days, past expiration)
+- **Note**: Quest should be completed/removed to claim any remaining value
+
+#### Integration with Existing Systems
+
+**Time Progression:**
+- Text color updates automatically when `CurrentDay` changes
+- MapViewModel exposes `CurrentDay` property bound to TimeService.Day
+- Color converter recalculates on property changes
+
+**Quest System Integration:**
+- Works with existing Quest.ExpireDay property (from previous update)
+- Displays alongside existing quest progress (CurrentKills/RequiredKills)
+- No changes needed to Quest model or Player class
+
+**Data Binding Flow:**
+1. Player.ActiveQuests provides the quest collection
+2. Each quest's ExpireDay property binds to QuestExpirationTextConverter
+3. Quest.ExpireDay + MapViewModel.CurrentDay bind to QuestExpirationColorConverter
+4. TextBlock foreground updates dynamically based on time
+
+#### Potential Future Enhancements
+
+Based on the new TODO comment:
+
+**Minimap Quest Markers:**
+- **Flashing Quest Indicator**:
+  - Add animated red marker on minimap for urgent quests
+  - Pulse/flash effect when within 1 day of expiration
+  - Different marker colors for quest types (main story, side quest, daily)
+- **Implementation**:
+  - Add Canvas overlay on map with quest location markers
+  - Use Storyboard animations for pulsing effect
+  - Bind marker visibility to quest urgency
+
+**Quest Board Visual Warnings:**
+- **Animated Warning Icons**:
+  - Clock icon next to time-limited quests
+  - Hourglass animation for urgent quests
+  - Red exclamation mark for quests expiring today
+- **Sound Effects**:
+  - Warning chime when viewing quests about to expire
+  - Different sound for accepting time-limited vs. permanent quests
+
+**Quest List Sorting:**
+- **Auto-Sort by Urgency**:
+  - Quests expiring soonest appear at the top
+  - Separate sections: "Urgent", "Active", "No Time Limit"
+  - Expired quests grayed out with "EXPIRED" label
+
+**Enhanced Color Coding:**
+- **Multi-Tier Warning System**:
+  - Red: 0-1 days remaining (critical)
+  - Yellow: 2-3 days remaining (warning)
+  - White: 4+ days or no expiration (normal)
+- **Implementation**:
+  - Extend QuestExpirationColorConverter with additional color tiers
+  - Add smooth color transitions based on remaining time percentage
+
+---
+
+## Previous Update: Quest Expiration System
 
 ### Changes Made ✨
 
