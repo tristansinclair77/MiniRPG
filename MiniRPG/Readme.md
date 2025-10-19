@@ -1,6 +1,44 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: World Map Travel System - Complete Testing Checklist & TODO Comments
+## Latest Update: Building Model Added
+
+### New Features ✨
+
+#### Building.cs Model Class
+- **Added**: New `Building.cs` class in the Models folder
+  - **Properties**:
+    - `string Name`: The name of the building
+    - `string Description`: A descriptive text about the building
+    - `string Type`: Building category (e.g., "Shop", "Inn", "House", "Guild")
+    - `ObservableCollection<NPC> Occupants`: NPCs residing in or managing the building
+  - **Constructor**: Accepts name, description, and type parameters
+    - Initializes all properties with defaults
+    - Creates empty Occupants collection
+  - **Example Usage**:```csharp
+new Building("Mira's Home", "A cozy cottage where Mira lives.", "House");
+```  - **TODO Comment**: Placeholder for future enhancements:
+    - Building art/graphics
+    - Entry coordinates for positioning
+    - Special functions (shop interface, rest mechanics, etc.)
+
+#### Purpose
+The Building model provides structure for locations within regions:
+- **Organizational**: Group NPCs by their workplace/residence
+- **Immersive**: Create distinct locations players can visit
+- **Extensible**: Foundation for interior views, shop systems, inns, guilds
+- **Modular**: Can be added to Region.Buildings collection in future updates
+
+#### Potential Integration Points
+- **Regions**: Buildings could be added to regions as points of interest
+- **NPCs**: Occupants link NPCs to specific buildings
+- **Shop System**: "Shop" type buildings can host merchant NPCs
+- **Inn System**: "Inn" type buildings for rest/healing mechanics
+- **Quest Hubs**: "Guild" type buildings for quest boards and contracts
+- **Housing**: "House" type buildings for NPC residences and story locations
+
+---
+
+## Previous Update: World Map Travel System - Complete Testing Checklist & TODO Comments
 
 ### New Features ✨
 

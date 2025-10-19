@@ -1,16 +1,18 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Testing checklist:
-1. Open World Map → see only unlocked regions.
-2. Travel to a region → sometimes trigger random battle.
-3. Complete “Goblin Problem” quest → unlock “Goblin Woods”.
-4. Use “Fast Travel” to return to earlier towns.
-5. Confirm gold decreases when traveling.
-6. Save, exit, reload → verify unlocked regions and last location persist.
-7. Add TODO placeholders:
-   <!-- TODO: Add dynamic enemy scaling per region -->
-   <!-- TODO: Add ambient music and travel animations -->
-   <!-- TODO: Add cutscenes for first arrival to new region -->
+Create Building.cs in the Models folder.
+
+Requirements:
+• public class Building
+   - string Name
+   - string Description
+   - string Type (e.g. "Shop", "Inn", "House", "Guild")
+   - ObservableCollection<NPC> Occupants
+• Constructor sets defaults and accepts name/type.
+• Example:
+   new Building("Mira’s Home", "A cozy cottage where Mira lives.", "House");
+• Add TODO:
+   // Add building art, entry coordinates, and special functions later
 
 ---
 
