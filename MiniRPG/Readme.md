@@ -1,6 +1,127 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Region Buildings Integration
+## Latest Update: Building Interior View System
+
+### New Features ✨
+
+#### BuildingInteriorView.xaml
+- **Added**: New `BuildingInteriorView.xaml` view in the Views folder
+  - **Purpose**: Displays building interior with NPCs and interactions
+  - **XAML Layout Components**:
+    - **Building Name Header**: Styled header displaying building name with yellow (#F9E97A) text
+    - **Building Description**: Text block showing building description
+    - **Occupants Expander**: Expandable section listing NPCs in the building
+      - List box displaying NPC names and roles
+      - NPC selection support with visual styling
+    - **Talk Button**: Interactive button bound to `TalkToNPCCommand`
+      - Enabled only when an NPC is selected
+      - Styled with hover and disabled states
+    - **Leave Building Button**: Button bound to `ExitBuildingCommand`
+      - Allows player to exit the building and return to map
+  - **TODO Comments Added**:
+    - `<!-- TODO: Add interior background art -->`
+    - `<!-- TODO: Add custom music per building type -->`
+    - `<!-- TODO: Add clickable NPC sprites -->`
+  - **Visual Styling**:
+    - Dark theme consistent with existing views (#222233 background)
+    - Purple-tinted UI elements (#292944, #444466)
+    - Yellow accent color for highlights (#F9E97A)
+    - Rounded corners and borders for modern look
+    - Hover effects on buttons
+
+#### BuildingInteriorView.xaml.cs
+- **Added**: Code-behind file for BuildingInteriorView
+  - Simple UserControl initialization
+  - Follows established pattern from other views
+
+#### BuildingInteriorViewModel.cs
+- **Added**: New `BuildingInteriorViewModel` class in ViewModels folder
+  - **Properties**:
+    - `Building CurrentBuilding`: The building being displayed
+    - `string BuildingName`: Read-only property for building name
+    - `string BuildingDescription`: Read-only property for building description
+    - `ObservableCollection<NPC> Occupants`: Collection of NPCs in the building
+    - `NPC? SelectedNPC`: Currently selected NPC for interactions
+  - **Commands**:
+    - `ICommand TalkToNPCCommand`: Initiates dialogue with selected NPC
+      - Can only execute when an NPC is selected
+      - Raises `OnTalkToNPC` event with selected NPC
+    - `ICommand ExitBuildingCommand`: Exits the building
+      - Raises `OnExitBuilding` event to return to map
+  - **Events**:
+    - `event Action<NPC>? OnTalkToNPC`: Triggered when player talks to an NPC
+    - `event Action? OnExitBuilding`: Triggered when player leaves the building
+  - **Constructor**: Accepts a `Building` parameter to initialize the view
+  - **Inherits**: `BaseViewModel` for INotifyPropertyChanged support
+
+#### Purpose & Benefits
+The Building Interior View System provides:
+- **Interior Navigation**: Players can enter buildings and explore interiors
+- **NPC Interaction**: View and interact with NPCs inside buildings
+- **Immersive Experience**: Dedicated view for building interiors creates depth
+- **Extensible Design**: Foundation for building-specific features (shops, inns, guilds)
+- **MVVM Pattern**: Proper separation of concerns with ViewModel and View
+- **Event-Driven**: Events allow MainViewModel to coordinate view transitions
+
+#### Integration Points
+The BuildingInteriorView integrates with:
+- **Building Model**: Displays building name, description, and occupants
+- **NPC Model**: Lists occupants and enables dialogue interactions
+- **DialogueView**: Can transition to dialogue when talking to NPCs
+- **MapView**: Return to map when exiting building
+- **MainViewModel**: Coordinates view transitions (future integration)
+
+#### Future Integration (Next Steps)
+To fully integrate the Building Interior View:
+1. **Add to MapView**: Create "Enter Building" button or building list
+2. **Update MapViewModel**: 
+   - Add `OnEnterBuilding` event
+   - Add command to enter selected building
+3. **Update MainViewModel**:
+   - Subscribe to `OnEnterBuilding` event from MapViewModel
+   - Create BuildingInteriorViewModel when player enters building
+   - Handle transitions between MapView and BuildingInteriorView
+   - Subscribe to BuildingInteriorViewModel events for NPC dialogue and exiting
+
+#### Potential Future Enhancements
+Based on the TODO comments:
+- **Interior Background Art**: Custom background images per building type
+  - Cozy cottage interior for houses
+  - Shop counter and shelves for stores
+  - Bar and beds for inns
+  - Guild hall with quest board for guilds
+- **Custom Music Per Building Type**: Unique ambient music
+  - Calm, warm music for homes
+  - Lively tavern music for inns
+  - Mysterious music for guild halls
+  - Upbeat shopping music for stores
+- **Clickable NPC Sprites**: Visual NPC representations
+  - Character portraits or pixel art sprites
+  - Click on sprite to initiate dialogue
+  - NPC animations (idle, walking, gestures)
+  - Visual quest markers above NPCs
+
+#### Example Usage// In MainViewModel, when player enters a building:
+var building = currentRegion.Buildings.First(b => b.Name == "Mira's Home");
+var buildingVM = new BuildingInteriorViewModel(building);
+
+buildingVM.OnTalkToNPC += selectedNPC =>
+{
+    var dialogueVM = new DialogueViewModel(selectedNPC, CurrentPlayer, GlobalLog);
+    dialogueVM.OnDialogueExit += () => ShowBuildingInterior(building);
+    CurrentViewModel = dialogueVM;
+};
+
+buildingVM.OnExitBuilding += () => ShowMap();
+CurrentViewModel = buildingVM;
+#### Files Added
+- `MiniRPG\Views\BuildingInteriorView.xaml`
+- `MiniRPG\Views\BuildingInteriorView.xaml.cs`
+- `MiniRPG\ViewModels\BuildingInteriorViewModel.cs`
+
+---
+
+## Previous Update: Region Buildings Integration
 
 ### New Features ✨
 
@@ -9,10 +130,8 @@
   - **Purpose**: Allows regions to contain a collection of buildings
   - **Initialization**: Automatically initialized as empty collection in constructor
   - **Integration**: Connects Building model with Region model for location hierarchy
-  - **Usage Example**:```csharp
-var region = new Region("Greenfield Town", "A quiet settlement surrounded by plains.");
-region.Buildings.Add(new Building("General Shop", "A shop selling supplies.", "Shop"));
-#### WorldMapService.cs Updates
+  - **Usage Example**:var region = new Region("Greenfield Town", "A quiet settlement surrounded by plains.");
+region.Buildings.Add(new Building("General Shop", "A shop selling supplies.", "Shop"));#### WorldMapService.cs Updates
 - **Updated**: Greenfield Town region now includes Buildings collection
   - **"General Shop"**:
     - Type: "Shop"
@@ -69,11 +188,10 @@ Based on the TODO comment:
   - **Constructor**: Accepts name, description, and type parameters
     - Initializes all properties with defaults
     - Creates empty Occupants collection
-  - **Example Usage**:```csharp
-new Building("Mira's Home", "A cozy cottage where Mira lives.", "House"); - **TODO Comment**: Placeholder for future enhancements:
-    - Building art/graphics
-    - Entry coordinates for positioning
-    - Special functions (shop interface, rest mechanics, etc.)
+  - **Example Usage**:new Building("Mira's Home", "A cozy cottage where Mira lives.", "House");- **TODO Comment**: Placeholder for future enhancements:
+  - Building art/graphics
+  - Entry coordinates for positioning
+  - Special functions (shop interface, rest mechanics, etc.)
 
 #### Purpose
 The Building model provides structure for locations within regions:
@@ -251,7 +369,8 @@ The system now supports all 7 testing scenarios from Instructions.txt:
 
 #### Technical Implementation Details
 
-**WorldMapViewModel.Travel() Method**:// Check travel cost before traveling
+**WorldMapViewModel.Travel() Method**:
+// Check travel cost before traveling
 int travelCost = 10;
 if (Player.Gold >= travelCost)
 {
@@ -282,7 +401,7 @@ else
     "hp": 30,
     "maxHp": 30,
     "gold": 150,
-    "lastRegionName": "Goblin Woods",
+    "lastRegionName": "Goblin Woods"
     // ... other player properties
   },
   "unlockedRegions": [
@@ -290,8 +409,8 @@ else
     "Slime Plains",
     "Goblin Woods"
   ]
-}
-**BattleViewModel Quest Completion**:// Special handling for quest-based region unlocks
+}**BattleViewModel Quest Completion**:
+// Special handling for quest-based region unlocks
 if (quest.Title == "Goblin Problem")
 {
     FastTravelService.UnlockRegion("Goblin Woods");
@@ -342,4 +461,7 @@ All 7 testing checklist items from Instructions.txt are fully supported:
 | 1 | Open World Map → see only unlocked regions | ✅ PASS |
 | 2 | Travel to a region → sometimes trigger random battle | ✅ PASS |
 | 3 | Complete "Goblin Problem" quest → unlock "Goblin Woods" | ✅ PASS |
-| 4 | Use
+| 4 | Use "Fast Travel" to Return to Earlier Towns | ✅ PASS |
+| 5 | Confirm Gold Decreases When Traveling | ✅ PASS |
+| 6 | Save, Exit, Reload → Verify Unlocked Regions and Last Location Persist | ✅ PASS |
+| 7 | Add TODO Placeholders | ✅ PASS |

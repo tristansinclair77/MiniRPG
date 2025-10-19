@@ -1,16 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify Region.cs.
+Create BuildingInteriorView.xaml.
 
-Requirements:
-• Add ObservableCollection<Building> Buildings { get; set; } = new();
-• Update sample regions in WorldMapService:
-   - "Greenfield Town" includes:
-       * "General Shop" (Type = "Shop")
-       * "Inn" (Type = "Inn")
-       * "Mira’s Home" (Type = "House")
+XAML layout:
+• TextBlock for building name and description.
+• Expander listing occupants (NPCs).
+• Button “Talk” bound to TalkToNPCCommand.
+• Button “Leave Building” bound to ExitBuildingCommand.
 • Add TODO:
-   // Add unlockable guilds or special event locations
+   <!-- TODO: Add interior background art -->
+   <!-- TODO: Add custom music per building type -->
+   <!-- TODO: Add clickable NPC sprites -->
 
 ---
 
