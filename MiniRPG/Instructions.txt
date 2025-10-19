@@ -1,18 +1,14 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Enhance MapViewModel.cs.
+Edit MapView.xaml.
 
 Requirements:
-• Add constructor MapViewModel(Player player, Region region)
-• Set:
-   - NearbyNPCs = region.NPCs
-   - RegionName = region.Name
-   - LocalEnemies = region.AvailableEnemies
-   - RegionQuests = region.LocalQuests
-• Display RegionName in MapView header.
+• Add a TextBlock at the top showing:
+   "Current Region: {Binding RegionName}"
+• Add subtle border or background highlight.
 • Add TODO:
-   // Add visual background per region
-   // Add weather or time-of-day changes
+   <!-- TODO: Replace with map banner UI -->
+   <!-- TODO: Add fast travel list -->
 
 ---
 

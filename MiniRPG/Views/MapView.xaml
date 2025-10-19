@@ -33,17 +33,31 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Region Name Header -->
-        <TextBlock Grid.Row="0" 
-                   Text="{Binding RegionName}" 
-                   FontSize="20" 
-                   FontWeight="Bold" 
-                   Foreground="#F9E97A" 
-                   HorizontalAlignment="Center" 
-                   Margin="0,0,0,10">
-            <!-- TODO: Add visual background per region -->
-            <!-- TODO: Add weather or time-of-day changes -->
-        </TextBlock>
+        <!-- Region Name Header with Border -->
+        <Border Grid.Row="0" 
+                Background="#292944" 
+                BorderBrush="#444466" 
+                BorderThickness="2" 
+                CornerRadius="6"
+                Padding="12,8"
+                Margin="0,0,0,10"
+                HorizontalAlignment="Center">
+            <!-- TODO: Replace with map banner UI -->
+            <!-- TODO: Add fast travel list -->
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Current Region: " 
+                           FontSize="18" 
+                           FontWeight="Bold" 
+                           Foreground="White" 
+                           VerticalAlignment="Center" />
+                <TextBlock Text="{Binding RegionName}" 
+                           FontSize="18" 
+                           FontWeight="Bold" 
+                           Foreground="#F9E97A" 
+                           VerticalAlignment="Center"
+                           Margin="4,0,0,0" />
+            </StackPanel>
+        </Border>
 
         <!-- Game Saved message -->
         <TextBlock Grid.Row="1" Text="Game Saved!" Foreground="LimeGreen" FontWeight="Bold" FontSize="16" Margin="0,0,0,8" HorizontalAlignment="Center"

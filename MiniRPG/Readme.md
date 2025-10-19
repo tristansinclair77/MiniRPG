@@ -1,6 +1,62 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Region-Aware MapViewModel Enhancement
+## Latest Update: MapView Region Banner UI Enhancement
+
+### New Features ✨
+
+#### Styled Region Display Banner
+- **Enhanced**: Region Name Header in MapView.xaml with prominent styling
+  - **Border Container**: Added styled Border element wrapping region display
+    - Background: #292944 (dark blue-gray theme)
+    - Border: #444466 (lighter blue-gray) with 2px thickness
+    - Corner Radius: 6px for smooth rounded edges
+    - Padding: 12px horizontal, 8px vertical for comfortable spacing
+    - Margin: 10px bottom for separation from content below
+  - **Center Alignment**: HorizontalAlignment set to Center for balanced appearance
+  - **Layout**: Horizontal StackPanel containing label and region name
+  - **"Current Region:" Label**:
+    - Font Size: 18pt (consistent with region name)
+    - Font Weight: Bold
+    - Foreground: White for clear contrast
+    - Text: "Current Region: " (with trailing space)
+  - **Region Name Display**:
+    - Binding: `{Binding RegionName}`
+    - Font Size: 18pt
+    - Font Weight: Bold
+    - Foreground: #F9E97A (gold accent color)
+    - Margin: 4px left for spacing from label
+  - **Visual Impact**: Creates a banner-like appearance that stands out at top of map
+- **Added TODO Comments**:
+  - `<!-- TODO: Replace with map banner UI -->`
+  - `<!-- TODO: Add fast travel list -->`
+- **Subtle Highlight**: Border and background create depth and visual hierarchy
+
+#### User Experience Improvements
+- **Clear Context**: Players immediately see which region they're in
+- **Professional Appearance**: Styled banner looks polished and intentional
+- **Theme Consistency**: Colors match overall game aesthetic (#292944, #444466, #F9E97A)
+- **Visual Hierarchy**: Banner draws attention without being overwhelming
+- **Improved Readability**: White label + gold region name creates excellent contrast
+
+#### Technical Details
+- **Replaced**: Simple TextBlock with Border-wrapped StackPanel structure
+- **Maintains**: Same Grid.Row="0" position at top of MapView
+- **Preserves**: All existing functionality and bindings
+- **Compatible**: Works seamlessly with existing MapViewModel RegionName property
+
+#### Future Enhancements
+- Replace text banner with pixel-art map banner UI with decorative elements
+- Add fast travel list dropdown or popup when clicking banner
+- Implement region icons/emblems next to region name
+- Add hover effects or animations to banner
+- Include region difficulty indicator or level recommendation
+- Add quick stats (NPCs count, quests available) to banner
+- Implement background image specific to region theme
+- Add animated weather effects overlay on banner
+
+---
+
+## Previous Update: Region-Aware MapViewModel Enhancement
 
 ### New Features ✨
 
