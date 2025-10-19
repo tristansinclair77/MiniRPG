@@ -1,6 +1,50 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Time Persistence in Save System
+## Latest Update: Time-Based Building Interior NPC Visibility
+
+### BuildingInteriorViewModel.cs Enhancements
+- **Added `VisibleOccupants` property**:
+  - Filters NPCs based on time and building type
+  - For home buildings (`IsHome = true`): NPCs appear when NOT available outside (i.e., at home during off-hours)
+  - For non-home buildings (shops, inns): NPCs appear during their work hours
+  - NPCs now automatically appear/disappear from buildings based on time of day
+- **Subscribed to `TimeService.OnHourChanged` event**:
+  - Automatically refreshes visible occupants when hour changes
+  - Updates UI in real-time when time advances (from resting, traveling, or staying at inn)
+- **Enhanced `StayAtInn()` method**:
+  - Now calls `EnvironmentService.UpdateLighting()` after time advancement
+  - Refreshes visible occupants after staying at inn
+  - Ensures NPCs appear/disappear correctly after player rests
+- **Memory management**:
+  - Unsubscribes from time events in `ExitBuilding()` to prevent memory leaks
+
+### BuildingInteriorView.xaml Enhancements
+- **Updated occupant binding**:
+  - Changed from `Occupants` to `VisibleOccupants` for time-aware NPC filtering
+  - NPCs now only appear in buildings during appropriate hours
+- **Added TODO**: Add lighting for building windows at night
+
+### Technical Details
+- NPCs at home buildings appear when outside their work schedule (e.g., Mira appears at home at night)
+- NPCs at shop buildings appear during their work hours (e.g., Shopkeeper appears at shop during business hours)
+- System integrates with existing time advancement from battles, resting, fast travel, and inn stays
+- Event-driven architecture ensures real-time updates when time changes
+- Completes the time-based NPC scheduling system across all game areas (map and building interiors)
+
+### Testing Checklist Completion
+✅ 1. Observe NPC availability during morning → some appear.
+✅ 2. Rest or travel to advance hours → NPCs disappear or change.
+✅ 3. Confirm environment color and ambient sounds change accordingly.
+✅ 4. Enter buildings → verify NPCs at home at night.
+✅ 5. Save and reload → time and environment persist.
+✅ 6. Add TODO placeholders:
+   - <!-- TODO: Add festivals and events on specific days -->
+   - <!-- TODO: Add lighting for building windows at night -->
+   - <!-- TODO: Add time-based shop opening hours -->
+
+---
+
+## Previous Update: Time Persistence in Save System
 
 ### SaveLoadService.cs Enhancements
 - **Extended save data with time persistence**:

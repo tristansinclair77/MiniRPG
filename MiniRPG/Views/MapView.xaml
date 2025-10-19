@@ -28,9 +28,10 @@
     <!-- TODO: Add day-night background tint -->
     <!-- TODO: Add flashing warning or quest marker on minimap -->
     <!-- TODO: Add calendar UI -->
-    <!-- TODO: Add festivals or timed events -->
+    <!-- TODO: Add festivals and events on specific days -->
     <!-- TODO: Add NPC schedules tied to time of day -->
     <!-- TODO: Replace with parallax pixel background by time of day -->
+    <!-- TODO: Add time-based shop opening hours -->
     <Grid Margin="10" Background="{Binding EnvironmentColor}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- Region Name row -->

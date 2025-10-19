@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MiniRPG.Models;
@@ -23,7 +24,7 @@ namespace MiniRPG.ViewModels
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(BuildingName));
                 OnPropertyChanged(nameof(BuildingDescription));
-                OnPropertyChanged(nameof(Occupants));
+                OnPropertyChanged(nameof(VisibleOccupants));
                 OnPropertyChanged(nameof(IsInn));
             }
         }
@@ -52,7 +53,35 @@ namespace MiniRPG.ViewModels
 
         public string BuildingName => CurrentBuilding?.Name ?? "Unknown Building";
         public string BuildingDescription => CurrentBuilding?.Description ?? "No description available.";
-        public ObservableCollection<NPC> Occupants => CurrentBuilding?.Occupants ?? new ObservableCollection<NPC>();
+        
+        /// <summary>
+        /// Returns occupants filtered by time - NPCs at home appear at night, others during their work hours.
+        /// </summary>
+        public ObservableCollection<NPC> VisibleOccupants
+        {
+            get
+            {
+                if (CurrentBuilding == null || CurrentBuilding.Occupants == null)
+                    return new ObservableCollection<NPC>();
+
+                // If this is a home building, show NPCs when they're NOT available outside (i.e., at home time)
+                if (CurrentBuilding.IsHome)
+                {
+                    // NPCs are home when they're outside their work hours
+                    return new ObservableCollection<NPC>(
+                        CurrentBuilding.Occupants.Where(npc => !npc.IsAvailableNow())
+                    );
+                }
+                else
+                {
+                    // For non-home buildings (shops, inns), show NPCs during their work hours
+                    return new ObservableCollection<NPC>(
+                        CurrentBuilding.Occupants.Where(npc => npc.IsAvailableNow())
+                    );
+                }
+            }
+        }
+        
         public bool IsInn => CurrentBuilding?.Type == "Inn";
 
         private NPC? _selectedNPC;
@@ -87,6 +116,9 @@ namespace MiniRPG.ViewModels
             
             Debug.WriteLine($"Entered {building.Name}.");
             
+            // Subscribe to time changes to update visible NPCs
+            TimeService.OnHourChanged += OnHourChanged;
+            
             TalkToNPCCommand = new RelayCommand(
                 param => TalkToNPC(param as NPC),
                 _ => SelectedNPC != null
@@ -101,6 +133,15 @@ namespace MiniRPG.ViewModels
             }
             
             // Add room-based navigation and building-specific events
+            // TODO: Add NPC bedtime dialogues and idle animations
+        }
+
+        /// <summary>
+        /// Handles hour changes and refreshes visible occupants.
+        /// </summary>
+        private void OnHourChanged(object? sender, int newHour)
+        {
+            OnPropertyChanged(nameof(VisibleOccupants));
         }
 
         private void TalkToNPC(NPC? npc)
@@ -113,6 +154,8 @@ namespace MiniRPG.ViewModels
 
         private void ExitBuilding()
         {
+            // Unsubscribe from time changes
+            TimeService.OnHourChanged -= OnHourChanged;
             // TODO: Add fade-to-black transition between scenes
             OnExitBuilding?.Invoke();
         }
@@ -134,12 +177,16 @@ namespace MiniRPG.ViewModels
                 // After delay, restore HP, advance time, and hide overlay
                 Player.HP = Player.MaxHP;
                 TimeService.AdvanceHours(8);
+                EnvironmentService.UpdateLighting();
                 IsSleeping = false;
                 
                 Debug.WriteLine("You rest at the inn and feel refreshed.");
                 
                 // Update music for new time of day after resting
                 try { AudioService.UpdateMusicForTime(); } catch { }
+                
+                // Refresh visible occupants after time change
+                OnPropertyChanged(nameof(VisibleOccupants));
             }
             else
             {

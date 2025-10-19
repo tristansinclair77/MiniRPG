@@ -15,6 +15,7 @@
     <!-- TODO: Add inn stay mechanic (rest for gold) -->
     <!-- TODO: Add visual interiors with pixel furniture -->
     <!-- TODO: Add multi-room buildings and upstairs/downstairs -->
+    <!-- TODO: Add lighting for building windows at night -->
     <Grid Margin="10" Background="#222233">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -66,7 +67,7 @@
                     Padding="10">
                 <StackPanel>
                     <ListBox x:Name="OccupantListBox" 
-                             ItemsSource="{Binding Occupants}" 
+                             ItemsSource="{Binding VisibleOccupants}" 
                              SelectedItem="{Binding SelectedNPC, Mode=TwoWay}" 
                              Background="#1A1A2E" 
                              Foreground="White" 

@@ -1,16 +1,15 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify SaveLoadService.cs.
-
-Requirements:
-• Extend player save data with Day and Hour fields from TimeService.
-• On SavePlayer:
-   - Serialize TimeService.Day and TimeService.Hour.
-• On LoadPlayer:
-   - Restore values to TimeService.
-   - Trigger EnvironmentService.UpdateLighting().
-• Add TODO:
-   // Add autosave on midnight or event triggers later
+Testing checklist:
+1. Observe NPC availability during morning → some appear.
+2. Rest or travel to advance hours → NPCs disappear or change.
+3. Confirm environment color and ambient sounds change accordingly.
+4. Enter buildings → verify NPCs at home at night.
+5. Save and reload → time and environment persist.
+6. Add TODO placeholders:
+   <!-- TODO: Add festivals and events on specific days -->
+   <!-- TODO: Add lighting for building windows at night -->
+   <!-- TODO: Add time-based shop opening hours -->
 
 ---
 
