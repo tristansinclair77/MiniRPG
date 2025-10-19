@@ -1,5 +1,179 @@
 ﻿# MiniRPG - Change Log
 
+## Latest Update: Save/Load System - Unlocked Regions Persistence
+
+### New Features ✨
+
+#### SaveLoadService - Extended Save File Format
+- **Enhanced**: Save file format to include unlocked regions list
+  - Added `SaveData` wrapper class containing:
+    - `Player` object (all player data including stats, inventory, quests)
+    - `UnlockedRegions` list (List<string> of region names unlocked for fast travel)
+  - Provides comprehensive save state including world progression
+- **Modified**: `SavePlayer()` method
+  - Now serializes `FastTravelService.UnlockedRegions` collection
+  - Creates `SaveData` object combining player and unlocked regions
+  - Serializes to JSON with WriteIndented formatting
+  - Debug output shows unlocked regions saved: `{string.Join(", ", saveData.UnlockedRegions)}`
+  - Maintains existing backup system for save failures
+  - Auto-saves unlocked regions on every save operation
+- **Modified**: `LoadPlayer()` method
+  - Attempts to deserialize new `SaveData` format first
+  - Falls back to legacy `Player`-only format for compatibility
+  - Rehydrates `FastTravelService.UnlockedRegions` from JSON:
+    - Clears existing UnlockedRegions collection
+    - Adds each saved region name to FastTravelService
+  - Debug output shows loaded unlocked regions
+  - Maintains stat recalculation and equipment bonus logic
+  - Legacy format logs: "Loaded from legacy save format (no unlocked regions)"
+- **Modified**: `ValidateSaveFile()` method
+  - Updated to support both new SaveData and legacy Player formats
+  - Validates new format first, falls back to legacy
+  - Ensures save file integrity for both formats
+- **Added TODO Comment**:
+  - `// TODO: Add multi-save-slot world-state synchronization later`
+  - Foundation for future multiple save slot system
+  - World state includes: unlocked regions, quest progress, NPC states
+
+#### Complete Save/Load Flow with Regions
+1. **During Gameplay - Unlocking Regions**:
+   - Player completes quests or visits new regions
+   - `FastTravelService.UnlockRegion(regionName)` is called
+   - Region added to `FastTravelService.UnlockedRegions` collection
+   - ObservableCollection automatically updates UI
+2. **Save Operation**:
+   - Player manually saves or auto-save triggers
+   - `SaveLoadService.SavePlayer(player)` called
+   - Creates `SaveData` object:
+     - `Player` = current player instance
+     - `UnlockedRegions` = `FastTravelService.UnlockedRegions.ToList()`
+   - Serializes SaveData to JSON with camelCase property names
+   - Writes to `player_save.json` with backup created
+   - Debug log shows all saved unlocked regions
+3. **Load Operation**:
+   - Application starts or player loads save
+   - `SaveLoadService.LoadPlayer()` called
+   - Deserializes JSON from `player_save.json`
+   - Attempts new SaveData format first:
+     - Extracts Player object
+     - Extracts UnlockedRegions list
+   - Clears `FastTravelService.UnlockedRegions`
+   - Iterates through loaded region names:
+     - Adds each to `FastTravelService.UnlockedRegions`
+   - Debug log shows all loaded unlocked regions
+   - Player object returned for game initialization
+4. **UI Synchronization**:
+   - Fast Travel ListBox bound to `FastTravelService.UnlockedRegions`
+   - World Map regions filter based on unlocked status
+   - UI automatically reflects loaded unlocked regions
+   - No manual refresh needed due to ObservableCollection binding
+
+#### Backward Compatibility with Legacy Saves
+- **Legacy Format Support**:
+  - Old saves contain only Player object (no SaveData wrapper)
+  - LoadPlayer() detects format and deserializes appropriately
+  - Legacy saves load successfully with no unlocked regions
+  - Player can continue game without issues
+  - Next save operation upgrades to new format automatically
+- **Graceful Degradation**:
+  - If new format deserialization fails, tries legacy format
+  - Backup system supports both formats
+  - Debug messages indicate format being loaded
+  - No data loss during format migration
+
+#### Integration Benefits
+- **Persistent Fast Travel Progress**: Unlocked regions saved between sessions
+- **Complete World State**: Save includes both player and world progression
+- **Seamless Load Experience**: Fast travel regions immediately available on load
+- **Quest Progression Preservation**: Region unlocks tied to quests persist
+- **No Re-Exploration Required**: Players don't re-unlock visited regions
+- **Auto-Save Integration**: Works with existing auto-save after battles/travel
+- **Backward Compatible**: Legacy saves load without errors
+- **Future-Proof**: Foundation for multi-save-slot system
+
+#### User Experience Improvements
+- **Progress Retention**: Players don't lose fast travel access on reload
+- **Seamless Continuity**: Game state fully restored from save file
+- **No Frustration**: Region unlock achievements preserved
+- **Quick Resume**: Load game and fast travel immediately
+- **Safe Experimentation**: Save/load system reliable for trying different paths
+- **Clear Feedback**: Debug logs help diagnose save/load issues
+
+#### Technical Details
+- **SaveLoadService.cs Changes**:
+  - Added `SaveData` class with Player and UnlockedRegions properties
+  - Modified `SavePlayer()`:
+    - Creates SaveData wrapper with player and regions
+    - Serializes SaveData instead of Player directly
+    - Logs unlocked regions being saved
+  - Modified `LoadPlayer()`:
+    - Try/catch for new format deserialization
+    - Falls back to legacy Player-only format
+    - Clears and repopulates FastTravelService.UnlockedRegions
+    - Logs format being loaded
+  - Modified `ValidateSaveFile()`:
+    - Validates both SaveData and Player formats
+    - Returns true if either format is valid
+  - Added TODO comment for multi-save-slot synchronization
+- **JSON Structure**:{
+  "player": {
+    "name": "Hero",
+    "hp": 30,
+    "maxHp": 30,
+    // ... other player properties
+  },
+  "unlockedRegions": [
+    "Greenfield Village",
+    "Goblin Woods",
+    "Mountain Pass"
+    ]
+  }- **Dependencies**:
+  - FastTravelService for UnlockedRegions collection
+  - System.Text.Json for serialization
+  - System.Linq for ToList() conversion
+  - System.Collections.Generic for List<string>
+
+#### Future Enhancements - Multi-Save-Slot System
+- **Multiple Save Slots**:
+  - Allow players to maintain multiple save files (e.g., "save_slot_1.json", "save_slot_2.json")
+  - Save slot selection screen at title menu
+  - Each slot stores independent Player and UnlockedRegions state
+  - Slot preview shows player name, level, last region, play time
+- **World-State Synchronization**:
+  - Track global world events that affect all save slots
+  - Shared unlocks (e.g., achievements, cosmetics)
+  - Per-slot world state (quest progress, NPC states, unlocked regions)
+  - Prevent save slot conflicts with timestamps
+- **Advanced Save Management**:
+  - Copy/delete save slots
+  - Export/import save files for sharing
+  - Cloud save synchronization
+  - Automatic save slot backups with restore functionality
+  - Save slot comparison tool
+- **Enhanced Save Data**:
+  - Save timestamps and play duration
+  - Region-specific checkpoint saves (auto-save per region)
+  - Quest milestone saves (major story points)
+  - Save file versioning for compatibility
+  - Compressed save files for space efficiency
+
+#### Testing Scenarios
+- Save game with multiple unlocked regions
+- Load game and verify all regions appear in Fast Travel list
+- Load game and verify regions appear unlocked on World Map
+- Save game, close application, reopen, and verify regions persist
+- Test saving with no unlocked regions
+- Test loading legacy save file (Player-only format)
+- Verify legacy save upgrades to new format on next save
+- Test backup restoration if save file corrupted
+- Verify auto-save includes unlocked regions
+- Test fast travel to loaded unlocked region
+- Verify quest completion unlocks and saves region
+- Test multiple save/load cycles to ensure consistency
+- Verify debug logs show correct region lists during save/load
+
+---
+
 ## Latest Update: Quest-Based Region Unlocking System
 
 ### New Features ✨

@@ -1,16 +1,15 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify DialogueViewModel.cs.
+Update SaveLoadService.cs.
 
 Requirements:
-• When AcceptQuestCommand executes:
-   - If CurrentNPC.OfferedQuest.Title == "Goblin Problem":
-       * After Player completes the quest, unlock new region:
-         FastTravelService.UnlockRegion("Goblin Woods");
-       * Append to GlobalLog: "New region unlocked: Goblin Woods!"
-• Save player progress afterward.
+• Extend save file format to include a list of unlocked regions.
+• On SavePlayer:
+   - Serialize FastTravelService.UnlockedRegions.
+• On LoadPlayer:
+   - Rehydrate FastTravelService.UnlockedRegions from JSON.
 • Add TODO:
-   // Tie region unlocking to cutscenes and story milestones later
+   // Add multi-save-slot world-state synchronization later
 
 ---
 

@@ -1,12 +1,23 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using MiniRPG.Models;
 
 namespace MiniRPG.Services
 {
+    /// <summary>
+    /// Wrapper class for save file data including player and world state.
+    /// </summary>
+    public class SaveData
+    {
+        public Player Player { get; set; } = new Player();
+        public List<string> UnlockedRegions { get; set; } = new List<string>();
+    }
+
     public static class SaveLoadService
     {
         private static readonly JsonSerializerOptions _jsonOptions = new()
@@ -28,13 +39,21 @@ namespace MiniRPG.Services
                     File.Copy(filePath, backupPath, true);
                 }
 
-                string json = JsonSerializer.Serialize(player, _jsonOptions);
+                // Create save data that includes player and unlocked regions
+                var saveData = new SaveData
+                {
+                    Player = player,
+                    UnlockedRegions = FastTravelService.UnlockedRegions.ToList()
+                };
+
+                string json = JsonSerializer.Serialize(saveData, _jsonOptions);
                 File.WriteAllText(filePath, json);
                 
                 Debug.WriteLine($"Player saved successfully to {filePath}");
                 Debug.WriteLine($"Equipped items - Weapon: {player.EquippedWeapon?.Name ?? "None"}, " +
                               $"Armor: {player.EquippedArmor?.Name ?? "None"}, " +
                               $"Accessory: {player.EquippedAccessory?.Name ?? "None"}");
+                Debug.WriteLine($"Unlocked regions saved: {string.Join(", ", saveData.UnlockedRegions)}");
             }
             catch (Exception ex)
             {
@@ -67,7 +86,41 @@ namespace MiniRPG.Services
                 }
 
                 string json = File.ReadAllText(filePath);
-                Player? player = JsonSerializer.Deserialize<Player>(json, _jsonOptions);
+                
+                // Try to load as new SaveData format first
+                SaveData? saveData = null;
+                try
+                {
+                    saveData = JsonSerializer.Deserialize<SaveData>(json, _jsonOptions);
+                }
+                catch
+                {
+                    // If new format fails, try legacy Player-only format
+                    Debug.WriteLine("Attempting to load legacy save format...");
+                }
+
+                Player? player = null;
+                
+                if (saveData?.Player != null)
+                {
+                    // New format with unlocked regions
+                    player = saveData.Player;
+                    
+                    // Rehydrate FastTravelService.UnlockedRegions from JSON
+                    FastTravelService.UnlockedRegions.Clear();
+                    foreach (var regionName in saveData.UnlockedRegions)
+                    {
+                        FastTravelService.UnlockedRegions.Add(regionName);
+                    }
+                    
+                    Debug.WriteLine($"Loaded unlocked regions: {string.Join(", ", saveData.UnlockedRegions)}");
+                }
+                else
+                {
+                    // Legacy format - just Player object
+                    player = JsonSerializer.Deserialize<Player>(json, _jsonOptions);
+                    Debug.WriteLine("Loaded from legacy save format (no unlocked regions)");
+                }
                 
                 if (player != null)
                 {
@@ -96,7 +149,36 @@ namespace MiniRPG.Services
                     {
                         Debug.WriteLine("Attempting to load from backup...");
                         string backupJson = File.ReadAllText(backupPath);
-                        Player? backupPlayer = JsonSerializer.Deserialize<Player>(backupJson, _jsonOptions);
+                        
+                        // Try new format first
+                        SaveData? backupSaveData = null;
+                        try
+                        {
+                            backupSaveData = JsonSerializer.Deserialize<SaveData>(backupJson, _jsonOptions);
+                        }
+                        catch
+                        {
+                            Debug.WriteLine("Backup is in legacy format");
+                        }
+
+                        Player? backupPlayer = null;
+                        
+                        if (backupSaveData?.Player != null)
+                        {
+                            backupPlayer = backupSaveData.Player;
+                            
+                            // Rehydrate FastTravelService.UnlockedRegions from backup
+                            FastTravelService.UnlockedRegions.Clear();
+                            foreach (var regionName in backupSaveData.UnlockedRegions)
+                            {
+                                FastTravelService.UnlockedRegions.Add(regionName);
+                            }
+                        }
+                        else
+                        {
+                            // Legacy format backup
+                            backupPlayer = JsonSerializer.Deserialize<Player>(backupJson, _jsonOptions);
+                        }
                         
                         if (backupPlayer != null)
                         {
@@ -129,10 +211,26 @@ namespace MiniRPG.Services
                     return false;
 
                 string json = File.ReadAllText(filePath);
-                Player? player = JsonSerializer.Deserialize<Player>(json, _jsonOptions);
                 
-                // Basic validation - ensure player loaded and critical data is present
-                return player != null && !string.IsNullOrEmpty(player.Name);
+                // Try new format first
+                SaveData? saveData = null;
+                try
+                {
+                    saveData = JsonSerializer.Deserialize<SaveData>(json, _jsonOptions);
+                }
+                catch { }
+
+                if (saveData?.Player != null)
+                {
+                    // Basic validation - ensure player loaded and critical data is present
+                    return !string.IsNullOrEmpty(saveData.Player.Name);
+                }
+                else
+                {
+                    // Try legacy format
+                    Player? player = JsonSerializer.Deserialize<Player>(json, _jsonOptions);
+                    return player != null && !string.IsNullOrEmpty(player.Name);
+                }
             }
             catch (Exception ex)
             {
@@ -144,5 +242,6 @@ namespace MiniRPG.Services
         // TODO: Add save versioning and item ID mapping later
         // TODO: Extend to save inventory, map progress, and settings later
         // TODO: Add region-specific checkpoint saves
+        // TODO: Add multi-save-slot world-state synchronization later
     }
 }
