@@ -1,20 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify MapViewModel.cs and MainViewModel.cs.
+Edit MapView.xaml.
 
-MapViewModel:
-• Add ObservableCollection<Building> RegionBuildings.
-• Populate from current Region.Buildings.
-• Add RelayCommand EnterBuildingCommand (parameter: Building).
-• When executed, trigger OnEnterBuilding(Building).
-
-MainViewModel:
-• Subscribe to OnEnterBuilding.
-• When triggered:
-   - Set CurrentViewModel = new BuildingInteriorViewModel(selectedBuilding, CurrentPlayer).
-• Subscribe to ExitBuilding event to return to MapViewModel.
+Requirements:
+• Add Expander titled “Buildings”.
+• Inside, ListBox bound to RegionBuildings.
+• Display each building’s Name and Type.
+• Add Button labeled “Enter” bound to EnterBuildingCommand.
+• CommandParameter = SelectedItem.
 • Add TODO:
-   // Add animated fade transition between outdoor and indoor views
+   <!-- TODO: Add clickable building icons on visual map -->
+   <!-- TODO: Add building entry animation -->
 
 ---
 

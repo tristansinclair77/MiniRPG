@@ -244,6 +244,27 @@
             </StackPanel>
         </Expander>
 
+        <!-- Buildings Expander -->
+        <Expander Grid.Row="7" Header="Buildings" Margin="0,0,0,10" Foreground="White" Background="#292944">
+            <!-- TODO: Add clickable building icons on visual map -->
+            <!-- TODO: Add building entry animation -->
+            <StackPanel>
+                <ListBox x:Name="BuildingListBox" ItemsSource="{Binding RegionBuildings}" SelectedItem="{Binding SelectedBuilding, Mode=TwoWay}" Background="#222233" Foreground="White" Height="100">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="White" Margin="0,0,8,0" />
+                                <TextBlock Text="(" Foreground="#CCCCCC" />
+                                <TextBlock Text="{Binding Type}" Foreground="#CCCCCC" />
+                                <TextBlock Text=")" Foreground="#CCCCCC" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <Button Content="Enter" Command="{Binding EnterBuildingCommand}" CommandParameter="{Binding SelectedItem, ElementName=BuildingListBox}" Margin="0,8,0,0" Foreground="#F9E97A" Background="#222233" FontWeight="Bold" />
+            </StackPanel>
+        </Expander>
+
         <Label Grid.Row="8" Content="Choose a Battle Location" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" Margin="0,0,0,10" Foreground="#F9E97A" />
 
         <ListBox Grid.Row="8" Name="LocationList" ItemsSource="{Binding Locations}" SelectedItem="{Binding SelectedLocation, Mode=TwoWay}" Margin="0,0,0,10" />

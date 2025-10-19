@@ -75,6 +75,18 @@ namespace MiniRPG.ViewModels
             set { _regionBuildings = value; OnPropertyChanged(); }
         }
 
+        private Building? _selectedBuilding;
+        public Building? SelectedBuilding
+        {
+            get => _selectedBuilding;
+            set
+            {
+                _selectedBuilding = value;
+                OnPropertyChanged();
+                (EnterBuildingCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            }
+        }
+
         private string? _selectedFastTravelRegion;
         public string? SelectedFastTravelRegion
         {
