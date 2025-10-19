@@ -2,12 +2,15 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:d="http://schemas.openxmlformats.org/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="500" d:DesignWidth="700">
     <!-- TODO: Replace with pixel-art overworld map -->
     <!-- TODO: Add animated travel routes and markers -->
     <!-- TODO: Add background music and fog-of-war for locked regions -->
+    <!-- TODO: Add random encounters on travel -->
+    <!-- TODO: Add unlockable regions and map fog -->
+    <!-- TODO: Add towns with interior navigation -->
     <Grid Margin="10" Background="#222233">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

@@ -1,6 +1,30 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Region Save/Load Persistence System
+## Latest Update: World Map TODO Placeholders for Future Features
+
+### New Features ✨
+
+#### WorldMapView TODO Comments Added
+- **Added**: Three TODO placeholders in WorldMapView.xaml for future enhancements
+  - `<!-- TODO: Add random encounters on travel -->` - Foundation for random enemy encounters when traveling between regions
+  - `<!-- TODO: Add unlockable regions and map fog -->` - Placeholder for region progression system and fog-of-war mechanics
+  - `<!-- TODO: Add towns with interior navigation -->` - Preparation for town interior maps with multiple buildings and NPCs
+
+#### Purpose of TODO Placeholders
+- **Random Encounters on Travel**: Future system to trigger battles or events while traveling between regions
+- **Unlockable Regions**: Progression system where players must complete quests or reach certain levels to access new regions
+- **Map Fog**: Visual fog-of-war system to hide unexplored or locked regions from view
+- **Towns with Interior Navigation**: Advanced navigation system allowing players to enter towns and explore interior building layouts
+
+#### Future Implementation Notes
+- **Random Encounters**: Could include special rare enemies, merchant encounters, or story events
+- **Region Unlocking**: May tie into quest completion, level requirements, or item possession
+- **Fog-of-War**: Visual overlay system that reveals regions as player explores or completes objectives
+- **Interior Navigation**: Separate view for town interiors with clickable buildings (shops, inns, quest halls, etc.)
+
+---
+
+## Previous Update: Region Save/Load Persistence System
 
 ### New Features ✨
 

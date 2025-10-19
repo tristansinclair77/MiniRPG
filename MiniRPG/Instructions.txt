@@ -1,13 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify SaveLoadService.cs.
-
-Requirements:
-• Extend Player save data to include string LastRegionName.
-• Save it whenever region changes.
-• On load, if region exists in WorldMapService, start game in that region.
-• Add TODO:
-   // Add region-specific checkpoint saves
+Testing checklist:
+1. From Map → click “World Map”.
+2. View all available regions and select one.
+3. Observe travel log entry.
+4. Verify MapView updates with new NPCs and enemies.
+5. Fight a battle → ensure regional enemies appear.
+6. Save and reload → confirm player starts in last visited region.
+7. Add TODO placeholders:
+   <!-- TODO: Add random encounters on travel -->
+   <!-- TODO: Add unlockable regions and map fog -->
+   <!-- TODO: Add towns with interior navigation -->
 
 ---
 
