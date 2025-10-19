@@ -1,18 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit WorldMapViewModel.cs.
-
-Requirements:
-• Before traveling:
-   - int travelCost = 10;
-   - If Player.Gold >= travelCost:
-       * Player.SpendGold(travelCost);
-       * Log $"You spend {travelCost} gold to travel.";
-   - Else:
-       * Log "Not enough gold to travel there."
-       * Cancel TravelCommand.
-• Add TODO:
-   // Add dynamic costs based on distance and vehicle type
+Testing checklist:
+1. Open World Map → see only unlocked regions.
+2. Travel to a region → sometimes trigger random battle.
+3. Complete “Goblin Problem” quest → unlock “Goblin Woods”.
+4. Use “Fast Travel” to return to earlier towns.
+5. Confirm gold decreases when traveling.
+6. Save, exit, reload → verify unlocked regions and last location persist.
+7. Add TODO placeholders:
+   <!-- TODO: Add dynamic enemy scaling per region -->
+   <!-- TODO: Add ambient music and travel animations -->
+   <!-- TODO: Add cutscenes for first arrival to new region -->
 
 ---
 

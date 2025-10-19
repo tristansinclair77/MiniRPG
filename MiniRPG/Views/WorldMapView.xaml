@@ -11,6 +11,9 @@
     <!-- TODO: Add random encounters on travel -->
     <!-- TODO: Add unlockable regions and map fog -->
     <!-- TODO: Add towns with interior navigation -->
+    <!-- TODO: Add dynamic enemy scaling per region -->
+    <!-- TODO: Add ambient music and travel animations -->
+    <!-- TODO: Add cutscenes for first arrival to new region -->
     <Grid Margin="10" Background="#222233">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
