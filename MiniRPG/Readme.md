@@ -1,6 +1,113 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: BuildingInteriorViewModel Enhancement
+## Latest Update: Building Entry System Integration
+
+### Changes Made ✨
+
+#### MapViewModel.cs - Building Entry Feature
+- **Added**: `ObservableCollection<Building> RegionBuildings` property
+  - **Purpose**: Display all buildings available in the current region
+  - **Population**: Automatically populated from `Region.Buildings` in constructor
+  - **Integration**: Allows UI to display and select buildings from the region
+  - **Default Behavior**: Initialized as empty collection in legacy constructor
+
+- **Added**: `ICommand EnterBuildingCommand`
+  - **Type**: RelayCommand accepting Building parameter
+  - **Purpose**: Command to enter a selected building
+  - **Binding**: Can be bound to buttons in MapView UI with building as parameter
+  - **Execution**: Triggers `OnEnterBuilding` event with selected building
+
+- **Added**: `event Action<Building>? OnEnterBuilding`
+  - **Purpose**: Event fired when player enters a building
+  - **Parameters**: Selected Building instance
+  - **Subscribers**: MainViewModel subscribes to coordinate view transition
+  - **Usage**: Signals transition from outdoor MapView to indoor BuildingInteriorView
+
+#### MainViewModel.cs - Building Entry Event Handling
+- **Updated**: `CreateMapViewModel()` method
+  - **Subscription Added**: Subscribe to `mapVM.OnEnterBuilding` event
+  - **Event Handler Logic**:
+    1. Create new `BuildingInteriorViewModel` with selected building and current player
+    2. Subscribe to `OnTalkToNPC` event from BuildingInteriorViewModel
+       - Create DialogueViewModel with NPC and player
+       - Handle return to building interior after dialogue
+       - Re-subscribe to building events after dialogue
+    3. Subscribe to `OnExitBuilding` event
+       - Returns to MapView via `ShowMap()` method
+    4. Set CurrentViewModel to BuildingInteriorViewModel
+    5. Add entry log message
+  - **TODO Comment Added**: `// TODO: Add animated fade transition between outdoor and indoor views`
+    - Foundation for smooth visual transitions
+    - Supports fade-out/fade-in animation between exterior and interior
+
+#### Requirements Fulfilled
+All requirements from Instructions.txt have been implemented:
+
+**MapViewModel:**
+- ✅ Property: `ObservableCollection<Building> RegionBuildings`
+- ✅ Population: Populated from `current Region.Buildings` in constructor
+- ✅ Command: `RelayCommand EnterBuildingCommand` (accepts Building parameter)
+- ✅ Event: `OnEnterBuilding(Building)` triggered when command is executed
+
+**MainViewModel:**
+- ✅ Subscription: Subscribed to `OnEnterBuilding` event from MapViewModel
+- ✅ View Transition: Sets `CurrentViewModel = new BuildingInteriorViewModel(selectedBuilding, CurrentPlayer)`
+- ✅ Subscription: Subscribed to `ExitBuilding` event to return to MapViewModel
+- ✅ TODO Comment: `// Add animated fade transition between outdoor and indoor views`
+
+#### Integration Flow
+The complete building entry system now works as follows:
+
+1. **MapView**: Player selects a building from RegionBuildings collection
+2. **MapViewModel**: EnterBuildingCommand executes, triggers OnEnterBuilding event
+3. **MainViewModel**: Receives event, creates BuildingInteriorViewModel
+4. **BuildingInteriorView**: Displays building interior with NPCs and interactions
+5. **Exit Options**:
+   - Player can talk to NPCs (transitions to DialogueView, returns to BuildingInteriorView)
+   - Player can exit building (returns to MapView)
+
+#### Example Usage// In MapView.xaml, bind to a button or list item:
+<Button Content="Enter" Command="{Binding EnterBuildingCommand}" 
+        CommandParameter="{Binding SelectedBuilding}" />
+
+// MapViewModel automatically handles the command:
+// EnterBuildingCommand -> OnEnterBuilding?.Invoke(selectedBuilding)
+
+// MainViewModel receives the event and creates the interior view:
+mapVM.OnEnterBuilding += selectedBuilding =>
+{
+    var buildingVM = new BuildingInteriorViewModel(selectedBuilding, CurrentPlayer);
+    buildingVM.OnExitBuilding += () => ShowMap();
+    CurrentViewModel = buildingVM;
+    // TODO: Add animated fade transition between outdoor and indoor views
+};
+#### Potential Future Enhancements
+Based on the TODO comment:
+- **Animated Fade Transitions**: Smooth visual transitions between views
+  - Fade-out outdoor MapView
+  - Brief transition animation (door opening, screen fade)
+  - Fade-in indoor BuildingInteriorView
+  - Reverse animation when exiting
+- **Building Entry Animations**: Visual feedback for entering/exiting
+  - Character sprite walking to building door
+  - Door opening animation
+  - Interior reveal animation
+- **Sound Effects**: Audio cues for immersion
+  - Door opening/closing sounds
+  - Footstep sounds while entering
+  - Different ambient sounds for interior vs exterior
+- **Loading Screens**: For larger buildings or complex interiors
+  - Show building name and description during load
+  - Tips or lore text during transition
+
+#### Files Modified
+- `MiniRPG\ViewModels\MapViewModel.cs`
+- `MiniRPG\ViewModels\MainViewModel.cs`
+- `MiniRPG\Readme.md`
+
+---
+
+## Previous Update: BuildingInteriorViewModel Enhancement
 
 ### Changes Made ✨
 
@@ -75,217 +182,6 @@ Based on the new TODO comment:
 ---
 
 ## Previous Update: Building Interior View System
-
-### New Features ✨
-
-#### BuildingInteriorView.xaml
-- **Added**: New `BuildingInteriorView.xaml` view in the Views folder
-  - **Purpose**: Displays building interior with NPCs and interactions
-  - **XAML Layout Components**:
-    - **Building Name Header**: Styled header displaying building name with yellow (#F9E97A) text
-    - **Building Description**: Text block showing building description
-    - **Occupants Expander**: Expandable section listing NPCs in the building
-      - List box displaying NPC names and roles
-      - NPC selection support with visual styling
-    - **Talk Button**: Interactive button bound to `TalkToNPCCommand`
-      - Enabled only when an NPC is selected
-      - Styled with hover and disabled states
-    - **Leave Building Button**: Button bound to `ExitBuildingCommand`
-      - Allows player to exit the building and return to map
-  - **TODO Comments Added**:
-    - `<!-- TODO: Add interior background art -->`
-    - `<!-- TODO: Add custom music per building type -->`
-    - `<!-- TODO: Add clickable NPC sprites -->`
-  - **Visual Styling**:
-    - Dark theme consistent with existing views (#222233 background)
-    - Purple-tinted UI elements (#292944, #444466)
-    - Yellow accent color for highlights (#F9E97A)
-    - Rounded corners and borders for modern look
-    - Hover effects on buttons
-
-#### BuildingInteriorView.xaml.cs
-- **Added**: Code-behind file for BuildingInteriorView
-  - Simple UserControl initialization
-  - Follows established pattern from other views
-
-#### BuildingInteriorViewModel.cs
-- **Added**: New `BuildingInteriorViewModel` class in ViewModels folder
-  - **Properties**:
-    - `Building CurrentBuilding`: The building being displayed
-    - `string BuildingName`: Read-only property for building name
-    - `string BuildingDescription`: Read-only property for building description
-    - `ObservableCollection<NPC> Occupants`: Collection of NPCs in the building
-    - `NPC? SelectedNPC`: Currently selected NPC for interactions
-  - **Commands**:
-    - `ICommand TalkToNPCCommand`: Initiates dialogue with selected NPC
-      - Can only execute when an NPC is selected
-      - Raises `OnTalkToNPC` event with selected NPC
-    - `ICommand ExitBuildingCommand`: Exits the building
-      - Raises `OnExitBuilding` event to return to map
-  - **Events**:
-    - `event Action<NPC>? OnTalkToNPC`: Triggered when player talks to an NPC
-    - `event Action? OnExitBuilding`: Triggered when player leaves the building
-  - **Constructor**: Accepts a `Building` parameter to initialize the view
-  - **Inherits**: `BaseViewModel` for INotifyPropertyChanged support
-
-#### Purpose & Benefits
-The Building Interior View System provides:
-- **Interior Navigation**: Players can enter buildings and explore interiors
-- **NPC Interaction**: View and interact with NPCs inside buildings
-- **Immersive Experience**: Dedicated view for building interiors creates depth
-- **Extensible Design**: Foundation for building-specific features (shops, inns, guilds)
-- **MVVM Pattern**: Proper separation of concerns with ViewModel and View
-- **Event-Driven**: Events allow MainViewModel to coordinate view transitions
-
-#### Integration Points
-The BuildingInteriorView integrates with:
-- **Building Model**: Displays building name, description, and occupants
-- **NPC Model**: Lists occupants and enables dialogue interactions
-- **DialogueView**: Can transition to dialogue when talking to NPCs
-- **MapView**: Return to map when exiting building
-- **MainViewModel**: Coordinates view transitions (future integration)
-
-#### Future Integration (Next Steps)
-To fully integrate the Building Interior View:
-1. **Add to MapView**: Create "Enter Building" button or building list
-2. **Update MapViewModel**: 
-   - Add `OnEnterBuilding` event
-   - Add command to enter selected building
-3. **Update MainViewModel**:
-   - Subscribe to `OnEnterBuilding` event from MapViewModel
-   - Create BuildingInteriorViewModel when player enters building
-   - Handle transitions between MapView and BuildingInteriorView
-   - Subscribe to BuildingInteriorViewModel events for NPC dialogue and exiting
-
-#### Potential Future Enhancements
-Based on the TODO comments:
-- **Interior Background Art**: Custom background images per building type
-  - Cozy cottage interior for houses
-  - Shop counter and shelves for stores
-  - Bar and beds for inns
-  - Guild hall with quest board for guilds
-- **Custom Music Per Building Type**: Unique ambient music
-  - Calm, warm music for homes
-  - Lively tavern music for inns
-  - Mysterious music for guild halls
-  - Upbeat shopping music for stores
-- **Clickable NPC Sprites**: Visual NPC representations
-  - Character portraits or pixel art sprites
-  - Click on sprite to initiate dialogue
-  - NPC animations (idle, walking, gestures)
-  - Visual quest markers above NPCs
-
-#### Example Usage// In MainViewModel, when player enters a building:
-var building = currentRegion.Buildings.First(b => b.Name == "Mira's Home");
-var buildingVM = new BuildingInteriorViewModel(building);
-
-buildingVM.OnTalkToNPC += selectedNPC =>
-{
-    var dialogueVM = new DialogueViewModel(selectedNPC, CurrentPlayer, GlobalLog);
-    dialogueVM.OnDialogueExit += () => ShowBuildingInterior(building);
-    CurrentViewModel = dialogueVM;
-};
-
-buildingVM.OnExitBuilding += () => ShowMap();
-CurrentViewModel = buildingVM;
-#### Files Added
-- `MiniRPG\Views\BuildingInteriorView.xaml`
-- `MiniRPG\Views\BuildingInteriorView.xaml.cs`
-- `MiniRPG\ViewModels\BuildingInteriorViewModel.cs`
-
----
-
-## Previous Update: Region Buildings Integration
-
-### New Features ✨
-
-#### Region.cs Model Updates
-- **Added**: `ObservableCollection<Building> Buildings { get; set; }` property
-  - **Purpose**: Allows regions to contain a collection of buildings
-  - **Initialization**: Automatically initialized as empty collection in constructor
-  - **Integration**: Connects Building model with Region model for location hierarchy
-  - **Usage Example**:var region = new Region("Greenfield Town", "A quiet settlement surrounded by plains.");
-region.Buildings.Add(new Building("General Shop", "A shop selling supplies.", "Shop"));
-#### WorldMapService.cs Updates
-- **Updated**: Greenfield Town region now includes Buildings collection
-  - **"General Shop"**:
-    - Type: "Shop"
-    - Description: "A well-stocked shop selling basic supplies and equipment."
-  - **"Inn"**:
-    - Type: "Inn"
-    - Description: "A cozy inn where travelers can rest and recover."
-  - **"Mira's Home"**:
-    - Type: "House"
-    - Description: "A cozy cottage where Mira lives."
-
-#### Region.cs TODO Comment
-- **Added**: New TODO comment for future enhancements:
-  - `// Add unlockable guilds or special event locations`
-  - Foundation for dynamic building unlocks
-  - Support for special event-triggered locations
-  - Guild system integration points
-
-#### Purpose & Benefits
-The Buildings integration provides:
-- **Hierarchical Structure**: Regions now contain buildings as sub-locations
-- **Content Organization**: NPCs, shops, and services can be organized by building
-- **Immersive World**: Players can visualize distinct locations within regions
-- **Extensible Design**: Foundation for building-specific interactions (shops, inns, guilds)
-- **Quest Integration**: Buildings can be quest objectives or contain quest NPCs
-
-#### Potential Future Enhancements
-Based on the TODO comment:
-- **Unlockable Guilds**: Player can join guilds housed in special buildings
-  - Warrior's Guild, Mage's Guild, Thieves' Guild
-  - Unlock after meeting requirements (level, quests, items)
-  - Access to guild-specific quests and rewards
-- **Special Event Locations**: Buildings that appear based on story progress
-  - Seasonal event buildings (Festival Hall during celebrations)
-  - Quest-triggered locations (Hidden Laboratory after completing quest chain)
-  - Time-limited buildings (Traveling Merchant's Tent)
-- **Building Interiors**: Navigate inside buildings to interact with NPCs and objects
-- **Building Upgrades**: Improve buildings with player investment
-- **Dynamic Availability**: Buildings appear/disappear based on game state
-
----
-
-## Previous Update: Building Model Added
-
-### New Features ✨
-
-#### Building.cs Model Class
-- **Added**: New `Building.cs` class in the Models folder
-  - **Properties**:
-    - `string Name`: The name of the building
-    - `string Description`: A descriptive text about the building
-    - `string Type`: Building category (e.g., "Shop", "Inn", "House", "Guild")
-    - `ObservableCollection<NPC> Occupants`: NPCs residing in or managing the building
-  - **Constructor**: Accepts name, description, and type parameters
-    - Initializes all properties with defaults
-    - Creates empty Occupants collection
-  - **Example Usage**:new Building("Mira's Home", "A cozy cottage where Mira lives.", "House");- **TODO Comment**: Placeholder for future enhancements:
-  - Building art/graphics
-  - Entry coordinates for positioning
-  - Special functions (shop interface, rest mechanics, etc.)
-
-#### Purpose
-The Building model provides structure for locations within regions:
-- **Organizational**: Group NPCs by their workplace/residence
-- **Immersive**: Create distinct locations players can visit
-- **Extensible**: Foundation for interior views, shop systems, inns, guilds
-- **Modular**: Can be added to Region.Buildings collection in future updates
-
-#### Potential Integration Points
-- **Regions**: Buildings could be added to regions as points of interest
-- **NPCs**: Occupants link NPCs to specific buildings
-- **Shop System**: "Shop" type buildings can host merchant NPCs
-- **Inn System**: "Inn" type buildings for rest/healing mechanics
-- **Quest Hubs**: "Guild" type buildings for quest boards and contracts
-- **Housing**: "House" type buildings for NPC residences and story locations
-
----
-
-## Previous Update: World Map Travel System - Complete Testing Checklist & TODO Comments
 
 ### New Features ✨
 

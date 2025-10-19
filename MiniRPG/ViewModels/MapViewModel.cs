@@ -68,6 +68,13 @@ namespace MiniRPG.ViewModels
             set { _regionQuests = value; OnPropertyChanged(); }
         }
 
+        private ObservableCollection<Building> _regionBuildings;
+        public ObservableCollection<Building> RegionBuildings
+        {
+            get => _regionBuildings;
+            set { _regionBuildings = value; OnPropertyChanged(); }
+        }
+
         private string? _selectedFastTravelRegion;
         public string? SelectedFastTravelRegion
         {
@@ -93,6 +100,7 @@ namespace MiniRPG.ViewModels
         public ICommand OpenWorldMapCommand { get; }
         public ICommand OpenFastTravelCommand { get; }
         public ICommand FastTravelCommand { get; }
+        public ICommand EnterBuildingCommand { get; }
         private ObservableCollection<string> _globalLog;
 
         private bool _isSaveConfirmed;
@@ -125,6 +133,9 @@ namespace MiniRPG.ViewModels
         // Event/callback for fast travel
         public event Action<string>? OnFastTravel;
 
+        // Event/callback for entering building
+        public event Action<Building>? OnEnterBuilding;
+
         /// <summary>
         /// Constructor for MapViewModel (legacy - uses default data).
         /// </summary>
@@ -145,6 +156,7 @@ namespace MiniRPG.ViewModels
             
             LocalEnemies = new ObservableCollection<string>();
             RegionQuests = new ObservableCollection<Quest>();
+            RegionBuildings = new ObservableCollection<Building>();
             
             StartBattleCommand = new RelayCommand(_ => StartBattle(), _ => !string.IsNullOrEmpty(this.SelectedLocation));
             RestCommand = new RelayCommand(_ => Rest());
@@ -157,6 +169,7 @@ namespace MiniRPG.ViewModels
             OpenWorldMapCommand = new RelayCommand(_ => OpenWorldMap());
             OpenFastTravelCommand = new RelayCommand(_ => OpenFastTravel());
             FastTravelCommand = new RelayCommand(param => FastTravel(param as string), _ => !string.IsNullOrEmpty(SelectedFastTravelRegion));
+            EnterBuildingCommand = new RelayCommand(param => EnterBuilding(param as Building));
         }
 
         /// <summary>
@@ -175,6 +188,7 @@ namespace MiniRPG.ViewModels
             NearbyNPCs = region.NPCs;
             LocalEnemies = region.AvailableEnemies;
             RegionQuests = region.LocalQuests;
+            RegionBuildings = region.Buildings;
             
             // Use region enemies as battle locations, fallback to default if none
             if (region.AvailableEnemies != null && region.AvailableEnemies.Any())
@@ -202,6 +216,7 @@ namespace MiniRPG.ViewModels
             OpenWorldMapCommand = new RelayCommand(_ => OpenWorldMap());
             OpenFastTravelCommand = new RelayCommand(_ => OpenFastTravel());
             FastTravelCommand = new RelayCommand(param => FastTravel(param as string), _ => !string.IsNullOrEmpty(SelectedFastTravelRegion));
+            EnterBuildingCommand = new RelayCommand(param => EnterBuilding(param as Building));
             
             // TODO: Add visual background per region
             // TODO: Add weather or time-of-day changes
@@ -253,6 +268,14 @@ namespace MiniRPG.ViewModels
             {
                 _globalLog?.Add($"Fast traveling to {regionName}...");
                 OnFastTravel?.Invoke(regionName);
+            }
+        }
+
+        private void EnterBuilding(Building? building)
+        {
+            if (building != null)
+            {
+                OnEnterBuilding?.Invoke(building);
             }
         }
 

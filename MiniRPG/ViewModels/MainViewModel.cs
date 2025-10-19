@@ -147,6 +147,47 @@ namespace MiniRPG.ViewModels
                 AddLog($"You approach {selectedNPC.Name}.");
             };
             
+            // Subscribe to EnterBuilding events
+            mapVM.OnEnterBuilding += selectedBuilding =>
+            {
+                var buildingVM = new BuildingInteriorViewModel(selectedBuilding, CurrentPlayer);
+                
+                // Subscribe to talk to NPC inside building
+                buildingVM.OnTalkToNPC += npc =>
+                {
+                    var dialogueVM = new DialogueViewModel(npc, CurrentPlayer, GlobalLog);
+                    dialogueVM.OnDialogueExit += () =>
+                    {
+                        // Return to building interior after dialogue
+                        CurrentViewModel = new BuildingInteriorViewModel(selectedBuilding, CurrentPlayer);
+                        AddLog($"Returned to {selectedBuilding.Name}.");
+                        
+                        // Re-subscribe to events
+                        var resubscribedBuildingVM = CurrentViewModel as BuildingInteriorViewModel;
+                        if (resubscribedBuildingVM != null)
+                        {
+                            resubscribedBuildingVM.OnTalkToNPC += npc =>
+                            {
+                                var innerDialogueVM = new DialogueViewModel(npc, CurrentPlayer, GlobalLog);
+                                innerDialogueVM.OnDialogueExit += () => ShowMap();
+                                CurrentViewModel = innerDialogueVM;
+                                AddLog($"You talk to {npc.Name}.");
+                            };
+                            resubscribedBuildingVM.OnExitBuilding += () => ShowMap();
+                        }
+                    };
+                    CurrentViewModel = dialogueVM;
+                    AddLog($"You talk to {npc.Name}.");
+                };
+                
+                // Subscribe to exit building event
+                buildingVM.OnExitBuilding += () => ShowMap();
+                
+                CurrentViewModel = buildingVM;
+                AddLog($"You enter {selectedBuilding.Name}.");
+                // TODO: Add animated fade transition between outdoor and indoor views
+            };
+            
             // Subscribe to OpenWorldMap events
             mapVM.OnOpenWorldMap += () =>
             {

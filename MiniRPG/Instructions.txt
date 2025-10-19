@@ -1,23 +1,20 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create BuildingInteriorViewModel.cs in the ViewModels folder.
+Modify MapViewModel.cs and MainViewModel.cs.
 
-Requirements:
-• Inherit from BaseViewModel.
-• Properties:
-   - Building CurrentBuilding
-   - Player Player
-   - NPC? SelectedNPC
-• Commands:
-   - TalkToNPCCommand
-   - ExitBuildingCommand
-• Constructor(Building building, Player player):
-   - Assign fields.
-   - Log $"Entered {building.Name}."
-• TalkToNPCCommand opens DialogueViewModel(CurrentNPC, Player).
-• ExitBuildingCommand triggers OnExitBuilding event.
+MapViewModel:
+• Add ObservableCollection<Building> RegionBuildings.
+• Populate from current Region.Buildings.
+• Add RelayCommand EnterBuildingCommand (parameter: Building).
+• When executed, trigger OnEnterBuilding(Building).
+
+MainViewModel:
+• Subscribe to OnEnterBuilding.
+• When triggered:
+   - Set CurrentViewModel = new BuildingInteriorViewModel(selectedBuilding, CurrentPlayer).
+• Subscribe to ExitBuilding event to return to MapViewModel.
 • Add TODO:
-   // Add room-based navigation and building-specific events
+   // Add animated fade transition between outdoor and indoor views
 
 ---
 
