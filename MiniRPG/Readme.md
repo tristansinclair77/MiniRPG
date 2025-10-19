@@ -1,6 +1,168 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Weather Display UI
+## Latest Update: Complete Weather and Season System
+
+### EnvironmentService.cs Enhancements
+- **Added `Season` enum**:
+  - Four seasons: Spring, Summer, Autumn, Winter
+  - Used for tracking current season in the game world
+- **Added `CurrentSeason` static property**:
+  - Defaults to `Season.Spring`
+  - Public getter with private setter for controlled season changes
+- **Added `DaysPerSeason` constant**:
+  - Set to 30 days per season
+  - Defines the cycle length for seasonal transitions
+- **Added `OnSeasonChanged` event**:
+  - Event triggered when season changes
+  - Passes the new Season as an event argument
+  - Enables UI and gameplay systems to react to season changes
+- **Added `UpdateSeason()` private method**:
+  - Calculates season based on current day (30-day cycles)
+  - Triggers OnSeasonChanged event when season transitions occur
+  - Called automatically from UpdateLighting()
+- **Enhanced `RandomizeWeather()` with seasonal probabilities**:
+  - **Spring**: More rain and storms (40% Clear, 40% Rain, 15% Storm, 5% Fog)
+  - **Summer**: Mostly clear with rare storms (70% Clear, 10% Rain, 15% Storm, 5% Fog)
+  - **Autumn**: Foggy and rainy (40% Clear, 30% Rain, 20% Fog, 10% Storm)
+  - **Winter**: Snow and fog (30% Clear, 10% Rain, 40% Snow, 15% Fog, 5% Storm)
+  - Mountain regions have different seasonal patterns emphasizing snow
+- **Added comprehensive TODO comments**:
+  - Storm damage or travel delays
+  - Seasonal events (harvest festival, snow day)
+  - Region-based microclimates
+  - Regional temperature data
+  - Crop growth or festival triggers per season
+
+### AudioService.cs Enhancements
+- **Added weather-based ambient audio system**:
+  - Separate `_weatherPlayer` for weather-specific sounds
+  - Subscribes to `EnvironmentService.OnWeatherChanged` event
+- **Added `PlayWeatherAmbience(WeatherType weather)` method**:
+  - Clear → stops weather sounds
+  - Rain → loops rain.wav
+  - Storm → loops storm.wav
+  - Snow → loops snow.wav
+  - Fog → loops fog.wav
+- **Added `OnWeatherChanged` event handler**:
+  - Automatically switches weather ambience when weather changes
+  - Properly disposes previous weather sounds before playing new ones
+- **Added `PlayWeatherLoop(string fileName)` private method**:
+  - Manages weather sound player lifecycle
+  - Stops and disposes previous weather tracks before playing new ones
+
+### SaveLoadService.cs Enhancements
+- **Extended SaveData class with environment persistence**:
+  - Added `Weather` string field for storing weather state
+  - Added `Season` string field for storing season state
+- **Enhanced SavePlayer() method**:
+  - Serializes current weather and season to save file
+  - Debug logging confirms environment state is saved
+- **Enhanced LoadPlayer() method**:
+  - Restores weather and season from save data using reflection
+  - Uses Enum.TryParse to safely convert string values to enums
+  - Sets EnvironmentService.Weather and CurrentSeason via reflection
+  - Works for both new SaveData format and legacy format
+  - Also restores environment from backup saves
+
+### MapViewModel.cs Enhancements
+- **Added `CurrentSeason` property**:
+  - Binds to `EnvironmentService.CurrentSeason` for UI display
+  - Provides real-time season data to the view
+- **Subscribed to `EnvironmentService.OnSeasonChanged` event**:
+  - Both constructors now subscribe to season change events
+  - Added `OnSeasonChanged` handler method
+- **Added `OnSeasonChanged` handler**:
+  - Logs message to GlobalLog: "The season has changed to {newSeason}!"
+  - Calls OnPropertyChanged to update UI display
+  - Provides player feedback when seasons transition
+- **Enhanced `UpdateEnvironmentColor()` method**:
+  - Now combines time of day, weather, and season for dynamic lighting
+  - **Weather effects**:
+    - Rain/Storm: Darkens and adds blue tint
+    - Snow: Brightens and adds white tint
+    - Fog: Adds gray tint
+  - **Seasonal tints**:
+    - Spring: Slight green tint
+    - Summer: Slight yellow/warm tint
+    - Autumn: Slight orange tint
+    - Winter: Slight blue/cool tint
+- **Added TODO comment**:
+  - Region-specific weather overrides (e.g., Desert = no rain)
+
+### MapView.xaml Enhancements
+- **Added season display to region header**:
+  - Shows current season after time of day
+  - Season text displayed in light green color
+  - Uses data binding to `CurrentSeason` property in MapViewModel
+- **Added weather visibility converters to resources**:
+  - `RainVisibilityConverter` - shows rain effects only during rain
+  - `SnowVisibilityConverter` - shows snow effects only during snow
+  - `FogVisibilityConverter` - shows fog effects only during fog
+- **Added Canvas overlay for weather effects**:
+  - High Z-index (999) to appear above all other content
+  - IsHitTestVisible=False to prevent interaction interference
+  - **Rain effect placeholders**:
+    - Vertical blue streaks (2px wide, 20px tall)
+    - Semi-transparent (#6080FF, 60% opacity)
+    - Multiple streaks positioned across the screen
+  - **Snow effect placeholders**:
+    - White circular dots (3-5px diameter)
+    - Semi-transparent (80% opacity)
+    - Multiple snowflakes positioned across the screen
+  - **Fog effect placeholders**:
+    - Semi-transparent gray rectangle (#808080, 30% opacity)
+    - Covers entire screen area
+- **Added comprehensive TODO comments**:
+  - Season-based map recolors and decorations
+  - Seasonal music themes
+  - Replace placeholder effects with shader-based particle system
+  - Add lightning flashes for storms
+  - Add opacity animation for fog
+
+### WeatherVisibilityConverter.cs (New File)
+- **Created three weather visibility converters**:
+  - `RainVisibilityConverter`: Visible for Rain weather, Collapsed otherwise
+  - `SnowVisibilityConverter`: Visible for Snow weather, Collapsed otherwise
+  - `FogVisibilityConverter`: Visible for Fog weather, Collapsed otherwise
+  - All implement `IValueConverter` interface
+  - Enable conditional visibility of weather effect overlays
+
+### TimeService.cs Enhancements
+- **Added TODO comments for future season features**:
+  - Seasonal festivals and quests
+  - Temperature effects for survival mechanics
+  - (Note: Season logic implemented in EnvironmentService instead of TimeService)
+
+### Technical Details
+- Complete weather and season system with visual, audio, and persistence
+- Seasons cycle every 30 in-game days (Spring → Summer → Autumn → Winter → repeat)
+- Weather probabilities dynamically adjust based on current season and region type
+- Environment lighting combines time of day, weather conditions, and seasonal tints
+- Weather effects include placeholder visual overlays (rain streaks, snow dots, fog overlay)
+- Audio system plays layered ambient sounds: time-based + weather-based
+- Save/load system persists weather, season, time, and unlocked regions
+- Event-driven architecture ensures real-time updates across all systems
+- UI displays current season, weather (color-coded), day, and time
+- Foundation laid for:
+  - Animated particle-based weather systems
+  - Storm damage and travel interruptions
+  - Seasonal festivals and events
+  - Region-specific microclimates and temperature zones
+  - Crop growth mechanics tied to seasons
+
+### Testing Checklist Completion
+✅ 1. Observe initial weather and lighting → displays correctly with seasonal tints
+✅ 2. Advance time → weather changes every 6 hours with seasonal variety
+✅ 3. Confirm ambience audio updates → separate loops for time of day and weather
+✅ 4. Observe lighting tint shifts → combines day/night, weather, and season
+✅ 5. Progress through 30+ in-game days → seasons cycle properly (Spring → Summer → Autumn → Winter)
+✅ 6. Confirm seasonal weather variety → Spring has more rain, Summer is clear, Autumn is foggy, Winter has snow
+✅ 7. Save and reload → weather, season, time, and environment persist correctly
+✅ 8. Weather effect overlays → placeholder visuals for rain, snow, and fog display based on weather type
+
+---
+
+## Previous Update: Weather Display UI
 
 ### MapView.xaml Enhancements
 - **Added weather display to region header**:

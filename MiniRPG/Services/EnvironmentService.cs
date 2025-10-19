@@ -315,7 +315,7 @@ namespace MiniRPG.Services
             {
                 return "Plains";
             }
-            else if (lowerName.contains("woods") || lowerName.contains("forest"))
+            else if (lowerName.Contains("woods") || lowerName.Contains("forest"))
             {
                 return "Plains"; // Woods get similar weather to plains
             }
@@ -330,5 +330,7 @@ namespace MiniRPG.Services
         // TODO: Add storm damage or travel delays
         // TODO: Add seasonal events (harvest festival, snow day)
         // TODO: Add region-based microclimates
+        // TODO: Add regional temperature data
+        // TODO: Add crop growth or festival triggers per season
     }
 }

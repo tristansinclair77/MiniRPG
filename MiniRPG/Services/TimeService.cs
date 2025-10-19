@@ -107,5 +107,7 @@ namespace MiniRPG.Services
 
         // TODO: Add moon phases, seasons, and weather events later
         // TODO: Add gradual weather transitions and forecast system
+        // TODO: Add seasonal festivals and quests
+        // TODO: Add temperature effects for survival mechanics
     }
 }

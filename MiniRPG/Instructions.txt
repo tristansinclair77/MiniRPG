@@ -1,4 +1,171 @@
-﻿You are GitHub Copilot inside Visual Studio 2022.
+﻿Step 152 — Link Weather to Time Progression
+
+File: Services/TimeService.cs
+Purpose: Trigger weather changes naturally as time advances.
+
+✏️ Editable Copilot Prompt
+You are GitHub Copilot inside Visual Studio 2022.
+
+Enhance TimeService.cs.
+
+Requirements:
+• Subscribe to OnHourChanged event.
+• Every 6 hours (Hour % 6 == 0):
+   - Call EnvironmentService.RandomizeWeather(CurrentRegionName or "Default").
+• Log message: $"The weather changes to {EnvironmentService.Weather}."
+• Add TODO:
+   // Add gradual weather transitions and forecast system
+
+🧩 Step 153 — Add Weather Display to MapView
+
+File: Views/MapView.xaml
+Purpose: Show the current weather visually and textually.
+
+✏️ Editable Copilot Prompt
+You are GitHub Copilot inside Visual Studio 2022.
+
+Edit MapView.xaml.
+
+Requirements:
+• Add TextBlock near region/time header showing:
+   "Weather: {Binding CurrentWeather}"
+• In MapViewModel, bind to EnvironmentService.Weather (via property CurrentWeather).
+• Change text color depending on weather:
+   - Blue for Rain, White for Snow, Gray for Fog, Yellow for Clear.
+• Add TODO:
+   <!-- TODO: Add weather icons or animated particle layers -->
+   <!-- TODO: Add ambient rain and snow overlays -->
+
+🧩 Step 154 — Update MapViewModel for Weather Binding
+
+File: ViewModels/MapViewModel.cs
+Purpose: Keep UI synchronized with EnvironmentService weather events.
+
+✏️ Editable Copilot Prompt
+You are GitHub Copilot inside Visual Studio 2022.
+
+Modify MapViewModel.cs.
+
+Requirements:
+• Add property string CurrentWeather => EnvironmentService.Weather.ToString();
+• Subscribe to EnvironmentService.OnWeatherChanged.
+• When triggered:
+   - Raise OnPropertyChanged(nameof(CurrentWeather))
+   - Update background lighting via EnvironmentService.UpdateLighting()
+• Add TODO:
+   // Add region-specific weather overrides (e.g., Desert = no rain)
+
+🧩 Step 155 — Create Weather Audio Integration
+
+File: Services/AudioService.cs
+Purpose: Play ambient loops based on current weather.
+
+✏️ Editable Copilot Prompt
+You are GitHub Copilot inside Visual Studio 2022.
+
+Enhance AudioService.cs.
+
+Requirements:
+• Add method PlayWeatherAmbience(EnvironmentService.WeatherType weather):
+   - Clear → stop weather sounds.
+   - Rain → loop rain.wav.
+   - Storm → loop thunderstorm.wav.
+   - Snow → play gentle wind.wav.
+   - Fog → play low hum.wav.
+• Subscribe to EnvironmentService.OnWeatherChanged.
+• On event, call PlayWeatherAmbience(EnvironmentService.Weather).
+• Add TODO:
+   // Add crossfades between weather loops
+   // Add region-specific weather themes
+
+🧩 Step 156 — Add Environmental Effects Layer
+
+File: Views/MapView.xaml
+Purpose: Visual overlay for rain, snow, fog, etc.
+
+✏️ Editable Copilot Prompt
+You are GitHub Copilot inside Visual Studio 2022.
+
+Enhance MapView.xaml.
+
+Requirements:
+• Add Canvas overlay (top Z-index) for weather effects.
+• Bind Visibility to CurrentWeather using BooleanToVisibilityConverter equivalents.
+• Add simple placeholders:
+   - Rain: vertical animated blue streaks.
+   - Snow: white falling dots.
+   - Fog: semi-transparent gray rectangle opacity animation.
+• Add TODO:
+   <!-- TODO: Replace with shader-based particle system -->
+   <!-- TODO: Add lightning flashes for storms -->
+
+🧩 Step 157 — Add Season Tracking
+
+File: Services/TimeService.cs
+Purpose: Divide days into four seasons for long-term environmental variety.
+
+✏️ Editable Copilot Prompt
+You are GitHub Copilot inside Visual Studio 2022.
+
+Modify TimeService.cs.
+
+Requirements:
+• Add enum Season { Spring, Summer, Autumn, Winter }
+• Add static property CurrentSeason = Season.Spring
+• Each 30 days advances season (Day % 30 == 0).
+• On day change, if season changes:
+   - Log $"The season shifts to {CurrentSeason}."
+   - Call EnvironmentService.RandomizeWeather() for seasonal refresh.
+• Add TODO:
+   // Add seasonal festivals and quests
+   // Add temperature effects for survival mechanics
+
+🧩 Step 158 — Reflect Seasons in EnvironmentService
+
+File: Services/EnvironmentService.cs
+Purpose: Alter weather likelihoods per season.
+
+✏️ Editable Copilot Prompt
+You are GitHub Copilot inside Visual Studio 2022.
+
+Enhance EnvironmentService.RandomizeWeather().
+
+Requirements:
+• Modify probabilities depending on TimeService.CurrentSeason:
+   - Spring → More rain, fog
+   - Summer → Mostly clear, rare storms
+   - Autumn → Mixed rain and fog
+   - Winter → Mostly snow, clear, some storms
+• Adjust lighting theme slightly (cooler in winter, warmer in summer).
+• Add TODO:
+   // Add regional temperature data
+   // Add crop growth or festival triggers per season
+
+🧩 Step 159 — Add Season Display
+
+File: Views/MapView.xaml
+Purpose: Show current season alongside day and time.
+
+✏️ Editable Copilot Prompt
+You are GitHub Copilot inside Visual Studio 2022.
+
+Edit MapView.xaml.
+
+Requirements:
+• Add TextBlock after time display:
+   "Season: {Binding CurrentSeason}"
+• In MapViewModel, bind to TimeService.CurrentSeason.
+• Subscribe to season changes and refresh via OnPropertyChanged.
+• Add TODO:
+   <!-- TODO: Add season-based map recolors and decorations -->
+   <!-- TODO: Add seasonal music themes -->
+
+🧩 Step 160 — Test Weather and Season Flow
+
+Purpose: Validate complete environment system with visual and audio changes.
+
+✏️ Editable Copilot Prompt
+You are GitHub Copilot inside Visual Studio 2022.
 
 Testing checklist:
 1. Observe initial weather and lighting.
@@ -12,6 +179,7 @@ Testing checklist:
    <!-- TODO: Add storm damage or travel delays -->
    <!-- TODO: Add seasonal events (harvest festival, snow day) -->
    <!-- TODO: Add region-based microclimates -->
+
 ---
 
 After you finish, update the Readme.md file with the changes.

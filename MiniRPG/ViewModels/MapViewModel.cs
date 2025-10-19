@@ -326,6 +326,8 @@ namespace MiniRPG.ViewModels
         {
             _globalLog?.Add($"The weather changes to {newWeather}.");
             OnPropertyChanged(nameof(CurrentWeather));
+            
+            // TODO: Add region-specific weather overrides (e.g., Desert = no rain)
         }
 
         /// <summary>
