@@ -8,6 +8,11 @@ namespace MiniRPG.Services
     public static class TimeService
     {
         /// <summary>
+        /// Event triggered when the hour changes.
+        /// </summary>
+        public static event EventHandler<int>? OnHourChanged;
+
+        /// <summary>
         /// The current day in the game world.
         /// </summary>
         public static int Day { get; set; } = 1;
@@ -24,11 +29,18 @@ namespace MiniRPG.Services
         /// <param name="amount">Number of hours to advance</param>
         public static void AdvanceHours(int amount)
         {
+            int oldHour = Hour;
             Hour += amount;
             if (Hour >= 24)
             {
                 Day++;
                 Hour %= 24;
+            }
+            
+            // Fire event if hour has changed
+            if (Hour != oldHour)
+            {
+                OnHourChanged?.Invoke(null, Hour);
             }
         }
 

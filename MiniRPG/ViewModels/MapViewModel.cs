@@ -203,6 +203,9 @@ namespace MiniRPG.ViewModels
             // Subscribe to lighting changes
             EnvironmentService.OnLightingChanged += OnLightingChanged;
             
+            // Subscribe to time changes
+            TimeService.OnHourChanged += OnHourChanged;
+            
             StartBattleCommand = new RelayCommand(_ => StartBattle(), _ => !string.IsNullOrEmpty(this.SelectedLocation));
             RestCommand = new RelayCommand(_ => Rest());
             SaveCommand = new RelayCommand(async _ => await SaveGame());
@@ -244,6 +247,9 @@ namespace MiniRPG.ViewModels
             // Subscribe to lighting changes
             EnvironmentService.OnLightingChanged += OnLightingChanged;
             
+            // Subscribe to time changes
+            TimeService.OnHourChanged += OnHourChanged;
+            
             // Use region enemies as battle locations, fallback to default if none
             if (region.AvailableEnemies != null && region.AvailableEnemies.Any())
             {
@@ -276,6 +282,42 @@ namespace MiniRPG.ViewModels
             // TODO: Add weather or time-of-day changes
             // TODO: Add time-based events and NPC schedules
             // TODO: Add NPC pathfinding or animated map icons later
+        }
+
+        /// <summary>
+        /// Handles hour changes from TimeService and refreshes NearbyNPCs.
+        /// </summary>
+        private void OnHourChanged(object? sender, int newHour)
+        {
+            RefreshTimeDisplay();
+            RefreshNearbyNPCs();
+            LogTimedEvents(newHour);
+        }
+
+        /// <summary>
+        /// Logs time-based events based on the current hour.
+        /// </summary>
+        private void LogTimedEvents(int hour)
+        {
+            // Log events at specific times of day
+            if (hour == 20)
+            {
+                _globalLog?.Add("Shops are closing for the night.");
+            }
+            else if (hour == 6)
+            {
+                _globalLog?.Add("The sun rises. Shops are opening for the day.");
+            }
+            else if (hour == 0)
+            {
+                _globalLog?.Add("Midnight strikes. The world grows quiet.");
+            }
+            else if (hour == 12)
+            {
+                _globalLog?.Add("It's noon. The sun is at its peak.");
+            }
+            
+            // TODO: Add fade-to-night transitions for NPC sprites later
         }
 
         /// <summary>

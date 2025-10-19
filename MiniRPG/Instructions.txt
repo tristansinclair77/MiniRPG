@@ -1,16 +1,17 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Enhance AudioService.cs.
+Update TimeService.cs and MapViewModel.cs.
 
-Requirements:
-• Add method PlayAmbientForLighting(string lighting):
-   - "Daylight" → birds.wav
-   - "Twilight" → crickets.wav
-   - "Night" → nightwind.wav
-• Subscribe to EnvironmentService.OnLightingChanged.
-• When triggered, switch ambient loop accordingly.
+TimeService:
+• Add event OnHourChanged.
+• Fire event each time AdvanceHours() modifies Hour.
+
+MapViewModel:
+• Subscribe to TimeService.OnHourChanged.
+• When triggered, refresh NearbyNPCs (using IsAvailableNow).
+• Log time-based events (e.g., "Shops are closing for the night.").
 • Add TODO:
-   // Add layered environmental tracks (rain, crowd chatter, wind)
+   // Add fade-to-night transitions for NPC sprites later
 
 ---
 
