@@ -1,16 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Enhance MapView.xaml.
+Enhance AudioService.cs.
 
 Requirements:
-• Add top-level Grid.Background bound to EnvironmentColor property in MapViewModel.
-• MapViewModel listens to EnvironmentService.OnLightingChanged:
-   - "Daylight" → LightSkyBlue
-   - "Twilight" → OrangeRed
-   - "Night" → DarkSlateBlue
-• Add smooth color transitions (optional via Storyboard).
+• Add method PlayAmbientForLighting(string lighting):
+   - "Daylight" → birds.wav
+   - "Twilight" → crickets.wav
+   - "Night" → nightwind.wav
+• Subscribe to EnvironmentService.OnLightingChanged.
+• When triggered, switch ambient loop accordingly.
 • Add TODO:
-   <!-- TODO: Replace with parallax pixel background by time of day -->
+   // Add layered environmental tracks (rain, crowd chatter, wind)
 
 ---
 

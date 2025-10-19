@@ -6,6 +6,60 @@ namespace MiniRPG.Services
 {
     public static class AudioService
     {
+        private static SoundPlayer? _ambientPlayer;
+
+        static AudioService()
+        {
+            // Subscribe to lighting changes for dynamic ambient sound switching
+            EnvironmentService.OnLightingChanged += OnLightingChanged;
+        }
+
+        /// <summary>
+        /// Event handler for lighting changes. Switches ambient loop accordingly.
+        /// </summary>
+        private static void OnLightingChanged(object? sender, string lighting)
+        {
+            PlayAmbientForLighting(lighting);
+        }
+
+        /// <summary>
+        /// Plays ambient sound based on the current lighting condition.
+        /// </summary>
+        /// <param name="lighting">The lighting state: "Daylight", "Twilight", or "Night"</param>
+        public static void PlayAmbientForLighting(string lighting)
+        {
+            string ambientFile = lighting switch
+            {
+                "Daylight" => "birds.wav",
+                "Twilight" => "crickets.wav",
+                "Night" => "nightwind.wav",
+                _ => "birds.wav"
+            };
+
+            PlayAmbientLoop(ambientFile);
+        }
+
+        /// <summary>
+        /// Plays an ambient sound in a loop.
+        /// </summary>
+        private static void PlayAmbientLoop(string fileName)
+        {
+            try
+            {
+                if (File.Exists(fileName))
+                {
+                    _ambientPlayer?.Stop();
+                    _ambientPlayer?.Dispose();
+                    _ambientPlayer = new SoundPlayer(fileName);
+                    _ambientPlayer.PlayLooping();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Optionally log or ignore
+            }
+        }
+
         public static void PlayTitleTheme()
         {
             PlayWavIfExists("title_theme.wav");
@@ -103,5 +157,6 @@ namespace MiniRPG.Services
         // TODO: // Replace with cross-fade audio engine later.
         // TODO: // Add smooth crossfade and environmental sound effects later
         // TODO: Add dynamic volume crossfades and weather ambience later
+        // TODO: Add layered environmental tracks (rain, crowd chatter, wind)
     }
 }
