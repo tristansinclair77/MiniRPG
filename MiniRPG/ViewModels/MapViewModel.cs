@@ -203,6 +203,9 @@ namespace MiniRPG.ViewModels
             // Subscribe to lighting changes
             EnvironmentService.OnLightingChanged += OnLightingChanged;
             
+            // Subscribe to weather changes
+            EnvironmentService.OnWeatherChanged += OnWeatherChanged;
+            
             // Subscribe to time changes
             TimeService.OnHourChanged += OnHourChanged;
             
@@ -233,6 +236,9 @@ namespace MiniRPG.ViewModels
             RegionName = region.Name;
             _region = region;
             
+            // Set the current region name in TimeService for weather calculations
+            TimeService.CurrentRegionName = region.Name;
+            
             // Load region-specific content with NPC filtering by availability
             NearbyNPCs = new ObservableCollection<NPC>(region.NPCs.Where(npc => npc.IsAvailableNow()));
             LocalEnemies = region.AvailableEnemies;
@@ -246,6 +252,9 @@ namespace MiniRPG.ViewModels
             
             // Subscribe to lighting changes
             EnvironmentService.OnLightingChanged += OnLightingChanged;
+            
+            // Subscribe to weather changes
+            EnvironmentService.OnWeatherChanged += OnWeatherChanged;
             
             // Subscribe to time changes
             TimeService.OnHourChanged += OnHourChanged;
@@ -292,6 +301,14 @@ namespace MiniRPG.ViewModels
             RefreshTimeDisplay();
             RefreshNearbyNPCs();
             LogTimedEvents(newHour);
+        }
+
+        /// <summary>
+        /// Handles weather changes from EnvironmentService and logs the change.
+        /// </summary>
+        private void OnWeatherChanged(object? sender, WeatherType newWeather)
+        {
+            _globalLog?.Add($"The weather changes to {newWeather}.");
         }
 
         /// <summary>

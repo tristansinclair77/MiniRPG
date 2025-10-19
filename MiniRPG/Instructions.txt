@@ -1,20 +1,14 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify EnvironmentService.cs.
+Enhance TimeService.cs.
 
 Requirements:
-• Add enum WeatherType { Clear, Rain, Storm, Snow, Fog }
-• Add static property Weather = WeatherType.Clear
-• Add static event OnWeatherChanged
-• Add method RandomizeWeather(string regionName):
-   - Use Random to pick weather depending on region type:
-       * Plains/Town: 60% Clear, 25% Rain, 10% Fog, 5% Storm
-       * Mountain: 40% Clear, 40% Snow, 20% Fog
-   - Set Weather and trigger OnWeatherChanged.
-• Call RandomizeWeather() every few in-game hours (e.g. every 6 hours).
+• Subscribe to OnHourChanged event.
+• Every 6 hours (Hour % 6 == 0):
+   - Call EnvironmentService.RandomizeWeather(CurrentRegionName or "Default").
+• Log message: $"The weather changes to {EnvironmentService.Weather}."
 • Add TODO:
-   // Add localized weather (per-region tracking)
-   // Add weather-based enemy effects
+   // Add gradual weather transitions and forecast system
 
 ---
 

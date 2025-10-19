@@ -1,6 +1,47 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Dynamic Weather System
+## Latest Update: TimeService Weather Integration
+
+### TimeService.cs Enhancements
+- **Added `CurrentRegionName` static property**:
+  - Tracks the current region name for weather calculations
+  - Defaults to "Default"
+  - Set externally by MapViewModel when region changes
+  - Enables region-aware weather changes every 6 hours
+- **Subscribed to `OnHourChanged` event**:
+  - Static constructor subscribes to the service's own OnHourChanged event
+  - Enables automatic weather change handling
+- **Added `HandleWeatherChanges` event handler**:
+  - Checks if the current hour is divisible by 6 (0, 6, 12, 18)
+  - Calls `EnvironmentService.RandomizeWeather()` with CurrentRegionName or "Default"
+  - Automatically triggers weather changes every 6 hours as time advances
+- **Added TODO comment**:
+  - // TODO: Add gradual weather transitions and forecast system
+
+### MapViewModel.cs Enhancements
+- **Sets `TimeService.CurrentRegionName`**:
+  - Updated region-specific constructor to set the current region name in TimeService
+  - Ensures weather changes are region-appropriate
+- **Subscribed to `EnvironmentService.OnWeatherChanged` event**:
+  - Both constructors now subscribe to weather change events
+  - Added `OnWeatherChanged` handler method
+- **Added `OnWeatherChanged` handler**:
+  - Logs message to GlobalLog: "The weather changes to {newWeather}."
+  - Provides player feedback when weather changes occur
+  - Integrates with existing event-driven architecture
+
+### Technical Details
+- Weather changes now fully automated through TimeService's event subscription
+- Every 6 hours (at hours 0, 6, 12, 18), weather randomizes based on current region
+- Region-aware weather patterns ensure appropriate weather for the player's location
+- Event-driven architecture allows multiple systems to react to weather changes
+- Weather log messages appear in the game's GlobalLog for player awareness
+- System integrates seamlessly with existing time advancement from battles, resting, fast travel, and inn stays
+- Foundation laid for gradual weather transitions and forecast systems in future updates
+
+---
+
+## Previous Update: Dynamic Weather System
 
 ### EnvironmentService.cs Enhancements
 - **Added `WeatherType` enum**:

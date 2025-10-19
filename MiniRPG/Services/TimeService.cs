@@ -23,6 +23,38 @@ namespace MiniRPG.Services
         public static int Hour { get; set; } = 8;
 
         /// <summary>
+        /// The current region name for weather calculations. Defaults to "Default".
+        /// </summary>
+        public static string CurrentRegionName { get; set; } = "Default";
+
+        /// <summary>
+        /// Static constructor to initialize event subscriptions.
+        /// </summary>
+        static TimeService()
+        {
+            // Subscribe to our own OnHourChanged event to handle weather changes
+            OnHourChanged += HandleWeatherChanges;
+        }
+
+        /// <summary>
+        /// Handles weather changes every 6 hours.
+        /// </summary>
+        private static void HandleWeatherChanges(object? sender, int newHour)
+        {
+            // Check if hour is divisible by 6 (0, 6, 12, 18)
+            if (newHour % 6 == 0)
+            {
+                // Use CurrentRegionName or "Default" as fallback
+                string regionName = string.IsNullOrEmpty(CurrentRegionName) ? "Default" : CurrentRegionName;
+                
+                EnvironmentService.RandomizeWeather(regionName);
+                
+                // Log the weather change
+                System.Diagnostics.Debug.WriteLine($"The weather changes to {EnvironmentService.Weather}.");
+            }
+        }
+
+        /// <summary>
         /// Advances the game time by the specified number of hours.
         /// Automatically increments the day when hour reaches 24 or more.
         /// </summary>
@@ -74,5 +106,6 @@ namespace MiniRPG.Services
         }
 
         // TODO: Add moon phases, seasons, and weather events later
+        // TODO: Add gradual weather transitions and forecast system
     }
 }
