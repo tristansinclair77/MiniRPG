@@ -1,6 +1,66 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Time System Testing & Persistence
+## Latest Update: NPC Availability & Scheduling System
+
+### Changes Made ✨
+
+#### NPC.cs - Time-Based NPC Availability
+- **Added**: `AvailableStartHour` property (int)
+  - **Purpose**: Define when an NPC becomes available during the day (0-23 hour format)
+  - **Usage**: Set during NPC initialization to control daily schedules
+
+- **Added**: `AvailableEndHour` property (int)
+  - **Purpose**: Define when an NPC becomes unavailable during the day (0-23 hour format)
+  - **Usage**: Works with AvailableStartHour to create availability windows
+
+- **Added**: `CurrentLocation` property (string)
+  - **Purpose**: Track where the NPC is currently located in the game world
+  - **Examples**: "Town Square", "Home", "Shop", "Market Square"
+  - **Usage**: Can be used for location-based NPC interactions and pathfinding
+
+- **Added**: `IsAvailableNow()` method
+  - **Purpose**: Check if the NPC is currently available based on game time
+  - **Implementation**: Returns true if `TimeService.Hour >= AvailableStartHour && TimeService.Hour < AvailableEndHour`
+  - **Integration**: Can be used in dialogue systems, quest givers, and shop interactions
+
+- **Added**: TODO comment for future features
+  - `// TODO: Add weekly schedules and holiday routines later`
+  - **Purpose**: Placeholder for more complex scheduling systems
+
+#### Example NPC Initializationnew NPC("Mira", "QuestGiver", "Good to see you!")
+{
+    AvailableStartHour = 8,
+    AvailableEndHour = 20,
+    CurrentLocation = "Market Square",
+    DialogueLines = new() { "Slimes have been attacking!", "Please defeat 3 of them." },
+    OfferedQuest = new Quest("Slime Hunt", "Defeat 3 Slimes for Mira.", 3, 50, 20)
+};
+#### Implementation Details
+
+**NPC Availability Logic:**
+- NPCs can now have specific hours of operation
+- `IsAvailableNow()` checks against `TimeService.Hour` for real-time availability
+- Example schedules:
+  - Shop keeper: 8:00 - 20:00 (12 hours)
+  - Inn keeper: 18:00 - 24:00 (evening/night only)
+  - Quest giver: 6:00 - 22:00 (most of the day)
+  - Guard: 0:00 - 24:00 (always available)
+
+**Use Cases:**
+1. **Dialogue Systems**: Check `IsAvailableNow()` before allowing NPC interaction
+2. **Quest Givers**: Only offer quests during available hours
+3. **Shops**: Open/close based on NPC availability
+4. **Dynamic World**: NPCs appear/disappear based on time of day
+
+**Future Enhancements (TODOs):**
+- Weekly schedules (e.g., closed on specific days)
+- Holiday routines (special schedules for festivals/events)
+- Location transitions (NPCs move between locations throughout the day)
+- Relationship-based availability (NPCs may avoid/seek player based on reputation)
+
+---
+
+## Previous Update: Time System Testing & Persistence
 
 ### Changes Made ✨
 

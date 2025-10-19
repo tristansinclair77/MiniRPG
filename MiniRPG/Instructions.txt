@@ -1,16 +1,22 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Testing checklist:
-1. Observe current Day and Time in MapView.
-2. Travel or battle → time advances correctly.
-3. Enter Inn → pay gold and rest → HP restored, time advanced 8 hours.
-4. Confirm music and background update for morning/evening/night.
-5. Test quest expiration system by advancing days.
-6. Save and reload → verify time persists correctly.
-7. Add TODO placeholders:
-   <!-- TODO: Add calendar UI -->
-   <!-- TODO: Add festivals or timed events -->
-   <!-- TODO: Add NPC schedules tied to time of day -->
+Modify NPC.cs.
+
+Requirements:
+• Add properties:
+   - int AvailableStartHour
+   - int AvailableEndHour
+   - string CurrentLocation   // e.g., "Town Square", "Home", "Shop"
+• Add method IsAvailableNow():
+   - return TimeService.Hour >= AvailableStartHour && TimeService.Hour < AvailableEndHour;
+• Example NPC initialization:
+   new NPC("Mira", "QuestGiver", "Good to see you!") {
+       AvailableStartHour = 8,
+       AvailableEndHour = 20,
+       CurrentLocation = "Market Square"
+   };
+• Add TODO:
+   // Add weekly schedules and holiday routines later
 
 ---
 
