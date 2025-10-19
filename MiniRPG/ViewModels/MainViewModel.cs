@@ -35,6 +35,8 @@ namespace MiniRPG.ViewModels
         public ICommand ShowBattleCommand { get; }
         public ICommand SaveCommand { get; }
 
+        private Region? _currentRegion;
+
         public MainViewModel()
         {
             // Show title screen on startup
@@ -119,6 +121,23 @@ namespace MiniRPG.ViewModels
                 AddLog($"You approach {selectedNPC.Name}.");
             };
             
+            // Subscribe to OpenWorldMap events
+            mapVM.OnOpenWorldMap += () =>
+            {
+                var worldMapVM = new WorldMapViewModel(CurrentPlayer);
+                worldMapVM.OnRegionSelected += selectedRegion =>
+                {
+                    _currentRegion = selectedRegion;
+                    AddLog($"Traveling to {selectedRegion.Name}...");
+                    // TODO: Add animated fade-out/fade-in transitions between regions
+                    // TODO: Add music change and environment effect system
+                    ShowMap();
+                };
+                worldMapVM.OnExitWorldMap += () => ShowMap();
+                CurrentViewModel = worldMapVM;
+                AddLog("You open the world map.");
+            };
+            
             return mapVM;
         }
 
@@ -163,5 +182,7 @@ namespace MiniRPG.ViewModels
         // TODO: Later - add save/load player data to file system
         // TODO: Later - trigger auto-save after each battle or major event
         // TODO: Replace with smooth fade transitions between tracks
+        // TODO: Add animated fade-out/fade-in transitions between regions
+        // TODO: Add music change and environment effect system
     }
 }

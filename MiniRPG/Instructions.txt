@@ -1,25 +1,19 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create WorldMapViewModel.cs in the ViewModels folder.
+Modify MapViewModel.cs and MainViewModel.cs.
 
-Requirements:
-• Inherit from BaseViewModel.
-• Properties:
-   - ObservableCollection<Region> Regions
-   - Region? SelectedRegion
-   - Player Player
-• Commands:
-   - TravelCommand
-   - ExitWorldMapCommand
-• Constructor(Player player):
-   - Load Regions = new ObservableCollection(WorldMapService.GetRegions())
-   - Set Player
-• TravelCommand logic:
-   - If SelectedRegion != null:
-       * Trigger OnRegionSelected event with region info
-       * Log $"Traveling to {SelectedRegion.Name}..."
+MapViewModel:
+• Add RelayCommand named OpenWorldMapCommand.
+• When executed, trigger event OnOpenWorldMap.
+
+MainViewModel:
+• Subscribe to OnOpenWorldMap.
+• When triggered:
+   - Set CurrentViewModel = new WorldMapViewModel(CurrentPlayer)
+• Subscribe to WorldMapViewModel.OnRegionSelected → load selected Region into MapViewModel.
 • Add TODO:
-   // Add travel cost, animation, and random encounter system
+   // Add animated fade-out/fade-in transitions between regions
+   // Add music change and environment effect system
 
 ---
 

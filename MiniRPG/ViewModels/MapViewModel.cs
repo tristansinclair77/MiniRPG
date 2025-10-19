@@ -54,6 +54,7 @@ namespace MiniRPG.ViewModels
         public ICommand OpenShopCommand { get; }
         public ICommand OpenQuestBoardCommand { get; }
         public ICommand TalkToNPCCommand { get; }
+        public ICommand OpenWorldMapCommand { get; }
         private ObservableCollection<string> _globalLog;
 
         private bool _isSaveConfirmed;
@@ -76,6 +77,9 @@ namespace MiniRPG.ViewModels
         
         // Event/callback for talking to NPC
         public event Action<NPC>? OnTalkToNPC;
+        
+        // Event/callback for opening world map
+        public event Action? OnOpenWorldMap;
 
         public MapViewModel(ObservableCollection<string> globalLog, Player player)
         {
@@ -99,6 +103,7 @@ namespace MiniRPG.ViewModels
             OpenShopCommand = new RelayCommand(_ => OpenShop());
             OpenQuestBoardCommand = new RelayCommand(_ => OpenQuestBoard());
             TalkToNPCCommand = new RelayCommand(param => TalkToNPC(param as NPC));
+            OpenWorldMapCommand = new RelayCommand(_ => OpenWorldMap());
         }
 
         private void StartBattle()
@@ -126,6 +131,11 @@ namespace MiniRPG.ViewModels
             {
                 OnTalkToNPC?.Invoke(npc);
             }
+        }
+
+        private void OpenWorldMap()
+        {
+            OnOpenWorldMap?.Invoke();
         }
 
         private async void Rest()
