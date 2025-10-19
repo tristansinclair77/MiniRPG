@@ -1,19 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create Region.cs in the Models folder.
+Create WorldMapService.cs in the Services folder.
 
 Requirements:
-• public class Region
-   - string Name
-   - string Description
-   - ObservableCollection<NPC> NPCs
-   - ObservableCollection<string> AvailableEnemies
-   - ObservableCollection<Quest> LocalQuests
-• Constructor initializes all collections.
-• Example:
-   new Region("Greenfield Town", "A quiet settlement surrounded by plains.")
+• Static class WorldMapService
+• Static method GetRegions() returning List<Region>
+• Example regions:
+   - "Greenfield Town" (NPCs: Mira, Shopkeeper)
+   - "Slime Plains" (Enemies: Slime, Big Slime)
+   - "Goblin Woods" (Enemies: Goblin, Goblin Chief)
 • Add TODO:
-   // Add travel cost, difficulty, background art, and music theme later
+   // Add fast travel, region unlocks, and area difficulty scaling later
 
 ---
 

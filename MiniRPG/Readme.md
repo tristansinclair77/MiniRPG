@@ -1,6 +1,38 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Region Class Implementation
+## Latest Update: WorldMapService Implementation
+
+### New Features ✨
+
+#### WorldMapService Class Added
+- **Added**: `WorldMapService.cs` in the Services folder
+- **Features**:
+  - Static service for centralized region and world map management
+  - `GetRegions()` method returns `List<Region>` containing all game regions
+  - Three predefined regions with distinct characteristics
+- **Regions Included**:
+  - **Greenfield Town**: Starting settlement with NPCs (Mira and Shopkeeper)
+    - Description: "A quiet settlement surrounded by plains."
+    - Contains key NPCs for quests and trading
+  - **Slime Plains**: Low-level combat area
+    - Description: "Open grasslands infested with slimes of all sizes."
+    - Available Enemies: Slime, Big Slime
+  - **Goblin Woods**: Mid-level combat area
+    - Description: "A dark forest inhabited by hostile goblin tribes."
+    - Available Enemies: Goblin, Goblin Chief
+- **Integration**:
+  - Leverages `DialogueService.GetAllNPCs()` to populate town NPCs
+  - Seamlessly connects regions with existing NPC and enemy systems
+  - Foundation for world exploration and travel mechanics
+- **Future Enhancements**:
+  - Fast travel system between unlocked regions
+  - Region unlock progression based on player level or quest completion
+  - Area difficulty scaling and recommended level indicators
+  - Dynamic region events and seasonal changes
+
+---
+
+## Previous Update: Region Class Implementation
 
 ### New Features ✨
 
