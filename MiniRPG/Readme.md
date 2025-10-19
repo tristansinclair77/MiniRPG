@@ -1,6 +1,223 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Time Advancement Integration
+## Latest Update: Inn Stay Mechanic
+
+### Changes Made ✨
+
+#### BuildingInteriorViewModel.cs - Inn Rest Functionality Added
+- **Added**: Inn stay mechanic with gold payment and HP restoration
+  - **New Property**: `IsInn` - Boolean property that returns true when `CurrentBuilding.Type == "Inn"`
+    - Used for conditional UI visibility in BuildingInteriorView
+    - Enables inn-specific features only in inn buildings
+  - **New Command**: `StayAtInnCommand` - RelayCommand for resting at inn
+    - Only created when building type is "Inn"
+    - Executes `StayAtInn()` method when invoked
+  - **Cost**: Fixed cost of 20 gold per stay
+  - **Effects**:
+    - Checks if player has enough gold (>= 20)
+    - If affordable: Spends 20 gold, restores HP to MaxHP, advances time by 8 hours
+    - If not affordable: Displays "You can't afford a room." message
+  - **Log Messages**:
+    - Success: "You rest at the inn and feel refreshed."
+    - Failure: "You can't afford a room."
+
+- **Added**: Property Change Notification for IsInn
+  - When `CurrentBuilding` is set, `OnPropertyChanged(nameof(IsInn))` is called
+  - Ensures UI bindings update correctly when building changes
+
+- **Added**: TODO Comment for Future Features
+  - `// TODO: Add choice of standard/luxury rooms and longer rest durations`
+  - Foundation for expanded inn mechanics:
+    - **Standard Room**: 20 gold, 8 hours rest, full HP restoration
+    - **Luxury Room**: 50 gold, 8 hours rest, full HP/MP restoration + status effect removal
+    - **Extended Rest**: 30 gold, 12 hours rest, full HP + temporary stat buff
+
+#### Requirements Fulfilled
+
+All requirements from Instructions.txt have been implemented:
+
+**BuildingInteriorViewModel.cs:**
+- ✅ If `CurrentBuilding.Type == "Inn"`:
+  - ✅ Added `StayAtInnCommand` as RelayCommand
+  - ✅ When executed:
+    - ✅ `const int cost = 20;` defined
+    - ✅ If `Player.Gold >= cost`:
+      - ✅ `Player.SpendGold(cost)` called
+      - ✅ `Player.HP = Player.MaxHP` set
+      - ✅ `TimeService.AdvanceHours(8)` called
+      - ✅ Log: "You rest at the inn and feel refreshed."
+    - ✅ Else:
+      - ✅ Log: "You can't afford a room."
+- ✅ TODO comment added: `// TODO: Add choice of standard/luxury rooms and longer rest durations`
+
+#### Integration Flow
+
+**Entering an Inn:**
+1. **Player at Region**: Clicks on inn building (e.g., "Cozy Inn")
+2. **Enter Building**: BuildingInteriorView loads with BuildingInteriorViewModel
+3. **Check Building Type**: `IsInn` property evaluates to true
+4. **Command Created**: `StayAtInnCommand` is initialized
+5. **UI Displays**: "Stay at Inn" button appears (bound to StayAtInnCommand)
+6. **Player Clicks**: StayAtInnCommand executes
+
+**Staying at Inn (Success):**
+1. **Check Gold**: Player has 50 gold, cost is 20 gold
+2. **Spend Gold**: `Player.SpendGold(20)` reduces gold to 30
+3. **Restore HP**: `Player.HP = Player.MaxHP` (e.g., 30/30)
+4. **Advance Time**: `TimeService.AdvanceHours(8)` (e.g., Morning → Afternoon)
+5. **Log Message**: "You rest at the inn and feel refreshed." (Debug.WriteLine)
+6. **UI Updates**: Player stats refresh, gold reduced, HP full
+7. **Time Updates**: Game time advances by 8 hours
+
+**Staying at Inn (Failure):**
+1. **Check Gold**: Player has 15 gold, cost is 20 gold
+2. **Gold Insufficient**: Condition fails
+3. **Log Message**: "You can't afford a room." (Debug.WriteLine)
+4. **No Effects**: HP remains unchanged, time doesn't advance, gold not spent
+5. **Player Feedback**: Message displayed in debug output
+
+#### Code Examples
+
+**IsInn Property:**```csharp
+public bool IsInn => CurrentBuilding?.Type == "Inn";
+**StayAtInnCommand Initialization:**```csharp
+// Add StayAtInnCommand if this is an inn
+if (CurrentBuilding.Type == "Inn")
+{
+    StayAtInnCommand = new RelayCommand(_ => StayAtInn());
+}
+**StayAtInn Method:**```csharp
+private void StayAtInn()
+{
+    const int cost = 20;
+    if (Player.Gold >= cost)
+    {
+        Player.SpendGold(cost);
+        Player.HP = Player.MaxHP;
+        TimeService.AdvanceHours(8);
+        Debug.WriteLine("You rest at the inn and feel refreshed.");
+    }
+    else
+    {
+        Debug.WriteLine("You can't afford a room.");
+    }
+}
+**UI Binding Example (BuildingInteriorView.xaml):**```xaml
+<Button Content="Stay at Inn (20 Gold)" 
+        Command="{Binding StayAtInnCommand}" 
+        Visibility="{Binding IsInn, Converter={StaticResource BoolToVisibilityConverter}}"
+        Margin="5" />
+#### Gameplay Examples
+
+**Example 1: Successful Inn Stay**
+- **Player Status**: 100 gold, 15/30 HP, Day 1 Morning (8:00 AM)
+- **Action**: Click "Stay at Inn (20 Gold)" button
+- **Result**: 
+  - Gold: 100 → 80
+  - HP: 15/30 → 30/30
+  - Time: Day 1, Morning (8:00 AM) → Day 1, Afternoon (4:00 PM)
+  - Message: "You rest at the inn and feel refreshed."
+
+**Example 2: Insufficient Gold**
+- **Player Status**: 10 gold, 15/30 HP, Day 1 Morning (8:00 AM)
+- **Action**: Click "Stay at Inn (20 Gold)" button
+- **Result**:
+  - Gold: 10 (unchanged)
+  - HP: 15/30 (unchanged)
+  - Time: Day 1, Morning (unchanged)
+  - Message: "You can't afford a room."
+
+**Example 3: Day Transition**
+- **Player Status**: 50 gold, 20/30 HP, Day 1 Evening (10:00 PM)
+- **Action**: Click "Stay at Inn (20 Gold)" button
+- **Result**:
+  - Gold: 50 → 30
+  - HP: 20/30 → 30/30
+  - Time: Day 1, Evening (10:00 PM) → Day 2, Morning (6:00 AM)
+  - Message: "You rest at the inn and feel refreshed."
+
+#### Potential Future Enhancements
+
+Based on the new TODO comment:
+
+**Standard/Luxury Room Options:**
+- **Standard Room** (20 gold, 8 hours):
+  - Restores HP to max
+  - Basic bed and amenities
+  - Default option for budget travelers
+- **Luxury Room** (50 gold, 8 hours):
+  - Restores HP and MP to max
+  - Removes all status effects (poison, curse, etc.)
+  - Temporary +10% EXP gain buff for 24 hours
+  - Luxurious bed, hot bath, gourmet meal
+- **Royal Suite** (100 gold, 8 hours):
+  - Restores HP and MP to max
+  - Removes all status effects
+  - +20% EXP gain buff for 48 hours
+  - +5 temporary stat boost (Attack, Defense) for 12 hours
+  - VIP treatment, private chef, massage
+
+**Extended Rest Durations:**
+- **Quick Nap** (10 gold, 2 hours):
+  - Restores 25% HP
+  - Minimal time advancement
+  - Good for mid-adventure recovery
+- **Full Night's Rest** (20 gold, 8 hours):
+  - Current implementation
+  - Full HP restoration
+- **Extended Stay** (30 gold, 12 hours):
+  - Full HP + MP restoration
+  - Remove minor status effects
+  - Better for exhausted adventurers
+- **Week-Long Vacation** (100 gold, 168 hours / 7 days):
+  - Full HP + MP restoration
+  - Remove all status effects
+  - Permanent +1 to random stat
+  - Special event cutscenes
+
+**UI Enhancements:**
+- **Room Selection Dialog**:
+  - Display available rooms with prices and benefits
+  - Show preview images of room types
+  - Compare features side-by-side
+- **Innkeeper NPC**:
+  - Talk to innkeeper to get room options
+  - Negotiate prices based on reputation
+  - Unlock special rooms through quests
+- **Time Selection**:
+  - Choose rest duration (2, 4, 8, 12 hours)
+  - See time advancement preview
+  - Set wake-up alarm for specific time
+- **Status Preview**:
+  - Show before/after stats comparison
+  - Display which status effects will be removed
+  - Calculate total cost and benefits
+
+**Additional Inn Features:**
+- **Meal Service**: 
+  - Order food for HP/MP restoration without full rest
+  - Temporary stat buffs from gourmet meals
+- **Save Point**: 
+  - Auto-save when resting at inn
+  - Manual save option at innkeeper's desk
+- **Rumors & Information**:
+  - Talk to innkeeper for local rumors and quest hints
+  - Overhear conversations from other guests
+- **Item Storage**:
+  - Store excess items at inn for small fee
+  - Retrieve items when returning to same inn
+- **Membership System**:
+  - Frequent guest discounts
+  - VIP membership unlocks special perks
+  - Chain inn membership across multiple towns
+
+#### Files Modified
+- `MiniRPG\ViewModels\BuildingInteriorViewModel.cs`
+- `MiniRPG\Readme.md`
+
+---
+
+## Previous Update: Time Advancement Integration
 
 ### Changes Made ✨
 

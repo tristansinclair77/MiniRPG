@@ -1,19 +1,20 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify MapViewModel.cs.
+Modify BuildingInteriorViewModel.cs.
 
 Requirements:
-• Add properties:
-   - int CurrentDay => TimeService.Day
-   - string TimeOfDay => TimeService.GetTimeOfDay()
-• Raise OnPropertyChanged when time advances.
-• After any RestCommand, Travel, or Battle → call TimeService.AdvanceHours(x)
-   - Rest = 8 hours
-   - Battle = 1 hour
-   - Travel = 2 hours
-• Call OnPropertyChanged(nameof(CurrentDay)) and OnPropertyChanged(nameof(TimeOfDay)).
+• If CurrentBuilding.Type == "Inn":
+   - Add RelayCommand named StayAtInnCommand.
+   - When executed:
+       * const int cost = 20;
+       * If Player.Gold >= cost:
+           Player.SpendGold(cost);
+           Player.HP = Player.MaxHP;
+           TimeService.AdvanceHours(8);
+           Log "You rest at the inn and feel refreshed."
+       * Else Log "You can't afford a room."
 • Add TODO:
-   // Add time-based events and NPC schedules
+   // Add choice of standard/luxury rooms and longer rest durations
 
 ---
 

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Input;
 using MiniRPG.Models;
+using MiniRPG.Services;
 
 namespace MiniRPG.ViewModels
 {
@@ -22,6 +23,7 @@ namespace MiniRPG.ViewModels
                 OnPropertyChanged(nameof(BuildingName));
                 OnPropertyChanged(nameof(BuildingDescription));
                 OnPropertyChanged(nameof(Occupants));
+                OnPropertyChanged(nameof(IsInn));
             }
         }
 
@@ -39,6 +41,7 @@ namespace MiniRPG.ViewModels
         public string BuildingName => CurrentBuilding?.Name ?? "Unknown Building";
         public string BuildingDescription => CurrentBuilding?.Description ?? "No description available.";
         public ObservableCollection<NPC> Occupants => CurrentBuilding?.Occupants ?? new ObservableCollection<NPC>();
+        public bool IsInn => CurrentBuilding?.Type == "Inn";
 
         private NPC? _selectedNPC;
         public NPC? SelectedNPC
@@ -54,6 +57,7 @@ namespace MiniRPG.ViewModels
 
         public ICommand TalkToNPCCommand { get; }
         public ICommand ExitBuildingCommand { get; }
+        public ICommand? StayAtInnCommand { get; }
 
         // Event callbacks
         public event Action<NPC>? OnTalkToNPC;
@@ -78,6 +82,12 @@ namespace MiniRPG.ViewModels
             
             ExitBuildingCommand = new RelayCommand(_ => ExitBuilding());
             
+            // Add StayAtInnCommand if this is an inn
+            if (CurrentBuilding.Type == "Inn")
+            {
+                StayAtInnCommand = new RelayCommand(_ => StayAtInn());
+            }
+            
             // Add room-based navigation and building-specific events
         }
 
@@ -94,5 +104,23 @@ namespace MiniRPG.ViewModels
             // TODO: Add fade-to-black transition between scenes
             OnExitBuilding?.Invoke();
         }
+
+        private void StayAtInn()
+        {
+            const int cost = 20;
+            if (Player.Gold >= cost)
+            {
+                Player.SpendGold(cost);
+                Player.HP = Player.MaxHP;
+                TimeService.AdvanceHours(8);
+                Debug.WriteLine("You rest at the inn and feel refreshed.");
+            }
+            else
+            {
+                Debug.WriteLine("You can't afford a room.");
+            }
+        }
+
+        // TODO: Add choice of standard/luxury rooms and longer rest durations
     }
 }
