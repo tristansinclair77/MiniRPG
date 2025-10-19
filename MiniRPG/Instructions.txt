@@ -1,18 +1,15 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Enhance MapViewModel.cs.
+Edit MapView.xaml.
 
 Requirements:
-• When constructing or refreshing NPCs:
-   - NearbyNPCs = new ObservableCollection(region.NPCs
-       .Where(npc => npc.IsAvailableNow()));
-• Whenever TimeService.Hour changes significantly (e.g. after AdvanceHours),
-   - Refresh NearbyNPCs list.
-• Add log message when NPCs appear/disappear:
-   - "Mira has gone home for the night."
-   - "The shopkeeper has opened for the morning."
+• In the "NPCs" ListBox, show each NPC.Name and append:
+   - "(Available)" in green if active
+   - "(Away)" in gray if not available
+• Bind availability via NPC.IsAvailableNow() (use ValueConverter if needed).
 • Add TODO:
-   // Add NPC pathfinding or animated map icons later
+   <!-- TODO: Replace with day/night portrait lighting -->
+   <!-- TODO: Add animated 'open/closed' shop icons -->
 
 ---
 

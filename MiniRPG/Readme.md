@@ -1,6 +1,178 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Dynamic NPC Scheduling & Time-Based Appearance System
+## Latest Update: NPC Availability UI Display with Value Converters
+
+### Changes Made ✨
+
+#### NPCAvailabilityConverter.cs - New Value Converters
+- **Added**: `NPCAvailabilityConverter` class
+  - **Purpose**: Convert NPC availability status to display text
+  - **Implementation**: Returns " (Available)" if `NPC.IsAvailableNow()` is true, " (Away)" otherwise
+  - **Type**: IValueConverter
+  - **Usage**: Binds to NPC objects in the ListBox to show availability status
+
+- **Added**: `NPCAvailabilityColorConverter` class
+  - **Purpose**: Convert NPC availability status to display color
+  - **Implementation**: Returns "LimeGreen" if available, "Gray" if away, "White" as fallback
+  - **Type**: IValueConverter
+  - **Usage**: Binds to NPC objects to colorize availability status text
+
+#### MapView.xaml - NPC Availability Display
+- **Enhanced**: NPCs ListBox ItemTemplate
+  - **Added**: Availability status display with colored text
+  - **Binding**: Uses `NPCAvailabilityConverter` to show "(Available)" or "(Away)"
+  - **Color**: Uses `NPCAvailabilityColorConverter` to display in green or gray
+  - **Integration**: Works alongside existing quest status indicator
+
+- **Added**: Converter resources
+  - `<converters:NPCAvailabilityConverter x:Key="NPCAvailability" />`
+  - `<converters:NPCAvailabilityColorConverter x:Key="NPCAvailabilityColor" />`
+
+- **Added**: TODO comments for future features
+  - `<!-- TODO: Replace with day/night portrait lighting -->` - Dynamic portrait lighting based on time
+  - `<!-- TODO: Add animated 'open/closed' shop icons -->` - Visual shop status indicators
+
+#### Implementation Details
+
+**NPC List Display Format:**[NPC Name] ([Role]) ([Availability]) ([Quest Status])
+**Example Display:**
+- **Available NPC with Quest**: "Mira (QuestGiver) (Available) (Quest!)" 
+  - Name: White/Bold
+  - Role: Gray
+  - Availability: Green/Bold
+  - Quest Status: Yellow/Bold
+  
+- **Away Merchant**: "The Shopkeeper (Merchant) (Away)"
+  - Name: White/Bold
+  - Role: Gray
+  - Availability: Gray/Bold
+
+**Converter Logic:**// NPCAvailabilityConverter
+public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+{
+    if (value is NPC npc)
+    {
+        return npc.IsAvailableNow() ? " (Available)" : " (Away)";
+    }
+    return string.Empty;
+}
+
+// NPCAvailabilityColorConverter
+public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+{
+    if (value is NPC npc)
+    {
+        return npc.IsAvailableNow() ? "LimeGreen" : "Gray";
+    }
+    return "White";
+}
+**XAML Binding:**<StackPanel Orientation="Horizontal">
+    <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="White" />
+    <TextBlock Text="(" Foreground="#CCCCCC" />
+    <TextBlock Text="{Binding Role}" Foreground="#CCCCCC" />
+    <TextBlock Text=")" Foreground="#CCCCCC" />
+    
+    <!-- Availability Status with Color -->
+    <TextBlock Text="{Binding Converter={StaticResource NPCAvailability}}" FontWeight="Bold">
+        <TextBlock.Foreground>
+            <Binding Converter="{StaticResource NPCAvailabilityColor}" />
+        </TextBlock.Foreground>
+    </TextBlock>
+    
+    <!-- Quest Status -->
+    <TextBlock Foreground="#F9E97A" FontWeight="Bold">
+        <TextBlock.Text>
+            <MultiBinding Converter="{StaticResource NPCQuestStatus}">
+                <Binding />
+                <Binding Path="DataContext.Player" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+            </MultiBinding>
+        </TextBlock.Text>
+    </TextBlock>
+</StackPanel>
+#### Example Usage Scenarios
+
+**Scenario 1: NPC Opens Shop in Morning**
+1. **Initial**: Day 1, Night (6:00 AM), Merchant has AvailableStartHour = 8
+2. **Display**: "Merchant (Shopkeeper) (Away)" in gray
+3. **Action**: Rest for 8 hours
+4. **Result**: Day 1, Afternoon (14:00)
+5. **Display**: "Merchant (Shopkeeper) (Available)" in green
+6. **Log**: "Merchant has opened for the morning."
+
+**Scenario 2: Quest Giver with Available Quest**
+1. **Time**: Day 1, Morning (10:00), Mira available (8-20)
+2. **Display**: "Mira (QuestGiver) (Available) (Quest!)"
+  - Name: White
+  - Role: Gray
+  - Available: Green
+  - Quest!: Yellow
+3. **Player Action**: Accept quest from Mira
+4. **Display**: "Mira (QuestGiver) (Available)"
+5. **Player Action**: Complete quest and turn in
+6. **Display**: "Mira (QuestGiver) (Available) (Thanks!)"
+
+**Scenario 3: NPC Goes Home at Night**
+1. **Time**: Day 1, Evening (19:00), Shopkeeper available (8-20)
+2. **Display**: "Shopkeeper (Merchant) (Available)" in green
+3. **Action**: Battle (1 hour advance)
+4. **Result**: Day 1, Evening (20:00)
+5. **Display**: "Shopkeeper (Merchant) (Away)" in gray
+6. **Log**: "Shopkeeper has closed shop for the day."
+
+**Scenario 4: Mixed NPC Availability**
+1. **Time**: Day 1, Night (2:00 AM)
+2. **NPCs in List**:
+   - "Night Guard (Guard) (Available)" - Green (Available 20-6)
+   - "Mira (QuestGiver) (Away)" - Gray (Available 8-20)
+   - "Shopkeeper (Merchant) (Away) (Quest!)" - Gray availability, Yellow quest marker (Available 8-20)
+3. **Action**: Rest for 8 hours
+4. **Result**: Day 1, Morning (10:00)
+5. **Updated List**:
+   - "Mira (QuestGiver) (Available) (Quest!)" - Green (now available)
+   - "Shopkeeper (Merchant) (Available) (Quest!)" - Green (now available)
+   - Night Guard no longer in list (not available)
+
+#### Integration with Existing Systems
+
+**Value Converter Flow:**
+1. **Data Binding**: MapView.xaml binds to `NearbyNPCs` collection
+2. **ItemTemplate**: Each NPC in ListBox uses DataTemplate
+3. **Availability Check**: `NPCAvailabilityConverter` calls `npc.IsAvailableNow()`
+4. **Time Service**: `IsAvailableNow()` checks `TimeService.Hour` against NPC schedule
+5. **Color Binding**: `NPCAvailabilityColorConverter` determines text color
+6. **UI Update**: TextBlock displays colored status text
+
+**Automatic Updates:**
+- When `RefreshNearbyNPCs()` is called (time changes), the collection updates
+- WPF data binding automatically refreshes the UI
+- Converters are re-evaluated for each NPC in the updated list
+- Display text and colors update accordingly
+
+#### Future Enhancements (TODOs)
+
+- `<!-- TODO: Replace with day/night portrait lighting -->`
+  - Dynamic NPC portrait lighting effects based on time of day
+  - Morning: bright/warm lighting
+  - Afternoon: neutral lighting
+  - Evening: warm/orange lighting
+  - Night: cool/blue lighting or dim effects
+
+- `<!-- TODO: Add animated 'open/closed' shop icons -->`
+  - Visual indicators for shop status (open/closed signs)
+  - Animated transitions when shops open/close
+  - Custom icons for different building types (shops, inns, etc.)
+  - Flashing or glowing effects for available quest givers
+
+- **Potential Improvements**:
+  - Tooltip on hover showing NPC schedule details
+  - Visual indicators for NPC location on map
+  - Availability countdown timer for upcoming NPCs
+  - Custom availability icons instead of text
+  - Sound effects when NPCs become available/unavailable
+
+---
+
+## Previous Update: Dynamic NPC Scheduling & Time-Based Appearance System
 
 ### Changes Made ✨
 

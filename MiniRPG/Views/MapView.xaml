@@ -11,6 +11,8 @@
         <converters:NPCQuestStatusConverter x:Key="NPCQuestStatus" />
         <converters:QuestExpirationTextConverter x:Key="QuestExpirationText" />
         <converters:QuestExpirationColorConverter x:Key="QuestExpirationColor" />
+        <converters:NPCAvailabilityConverter x:Key="NPCAvailability" />
+        <converters:NPCAvailabilityColorConverter x:Key="NPCAvailabilityColor" />
     </UserControl.Resources>
     <!-- TODO: Replace text with pixel-art status window -->
     <!-- TODO: Add animated portrait or player sprite here -->
@@ -250,6 +252,8 @@
         <Expander Grid.Row="7" Header="NPCs" Margin="0,0,0,10" Foreground="White" Background="#292944">
             <!-- TODO: Replace with NPC portrait and quest marker icons -->
             <!-- TODO: Add friendship/relationship meter -->
+            <!-- TODO: Replace with day/night portrait lighting -->
+            <!-- TODO: Add animated 'open/closed' shop icons -->
             <StackPanel>
                 <ListBox x:Name="NPCListBox" ItemsSource="{Binding NearbyNPCs}" SelectedItem="{Binding SelectedNPC, Mode=TwoWay}" Background="#222233" Foreground="White" Height="100">
                     <ListBox.ItemTemplate>
@@ -259,6 +263,11 @@
                                 <TextBlock Text="(" Foreground="#CCCCCC" />
                                 <TextBlock Text="{Binding Role}" Foreground="#CCCCCC" />
                                 <TextBlock Text=")" Foreground="#CCCCCC" />
+                                <TextBlock Text="{Binding Converter={StaticResource NPCAvailability}}" FontWeight="Bold">
+                                    <TextBlock.Foreground>
+                                        <Binding Converter="{StaticResource NPCAvailabilityColor}" />
+                                    </TextBlock.Foreground>
+                                </TextBlock>
                                 <TextBlock Foreground="#F9E97A" FontWeight="Bold">
                                     <TextBlock.Text>
                                         <MultiBinding Converter="{StaticResource NPCQuestStatus}">
