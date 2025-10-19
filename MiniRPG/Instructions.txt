@@ -1,15 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Enhance Building.cs and Region.cs.
+Modify SaveLoadService.cs.
 
-Building.cs:
-• Add property bool IsHome = false.
-
-Region.cs:
-• Assign certain buildings as homes for specific NPCs.
-• Update NPC initialization: npc.CurrentLocation = homeBuilding.Name;
+Requirements:
+• Extend player save data with Day and Hour fields from TimeService.
+• On SavePlayer:
+   - Serialize TimeService.Day and TimeService.Hour.
+• On LoadPlayer:
+   - Restore values to TimeService.
+   - Trigger EnvironmentService.UpdateLighting().
 • Add TODO:
-   // Add NPC bedtime dialogues and idle animations
+   // Add autosave on midnight or event triggers later
 
 ---
 

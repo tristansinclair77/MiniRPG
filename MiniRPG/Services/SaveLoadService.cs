@@ -122,6 +122,9 @@ namespace MiniRPG.Services
                     TimeService.Day = saveData.Day;
                     TimeService.Hour = saveData.Hour;
                     
+                    // Update lighting based on restored time
+                    EnvironmentService.UpdateLighting();
+                    
                     Debug.WriteLine($"Loaded unlocked regions: {string.Join(", ", saveData.UnlockedRegions)}");
                     Debug.WriteLine($"Time loaded - Day {TimeService.Day}, Hour {TimeService.Hour} ({TimeService.GetTimeOfDay()})");
                 }
@@ -131,6 +134,7 @@ namespace MiniRPG.Services
                     player = JsonSerializer.Deserialize<Player>(json, _jsonOptions);
                     Debug.WriteLine("Loaded from legacy save format (no unlocked regions or time data)");
                     // Keep default time values (Day 1, Hour 8)
+                    EnvironmentService.UpdateLighting();
                 }
                 
                 if (player != null)
@@ -188,11 +192,15 @@ namespace MiniRPG.Services
                             // Restore time from backup
                             TimeService.Day = backupSaveData.Day;
                             TimeService.Hour = backupSaveData.Hour;
+                            
+                            // Update lighting based on restored time
+                            EnvironmentService.UpdateLighting();
                         }
                         else
                         {
                             // Legacy format backup
                             backupPlayer = JsonSerializer.Deserialize<Player>(backupJson, _jsonOptions);
+                            EnvironmentService.UpdateLighting();
                         }
                         
                         if (backupPlayer != null)
@@ -259,5 +267,6 @@ namespace MiniRPG.Services
         // TODO: Add region-specific checkpoint saves
         // TODO: Add multi-save-slot world-state synchronization later
         // TODO: Add per-building interior coordinates later
+        // TODO: Add autosave on midnight or event triggers later
     }
 }

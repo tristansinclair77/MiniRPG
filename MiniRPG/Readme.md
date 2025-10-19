@@ -1,6 +1,30 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: NPC Home Assignment System
+## Latest Update: Time Persistence in Save System
+
+### SaveLoadService.cs Enhancements
+- **Extended save data with time persistence**:
+  - `SaveData` class already includes `Day` and `Hour` fields for time tracking
+  - `SavePlayer()` serializes current `TimeService.Day` and `TimeService.Hour` to save file
+  - Debug logging confirms time is saved with each save operation
+- **Enhanced LoadPlayer() with time restoration**:
+  - Restores `TimeService.Day` and `TimeService.Hour` from save data
+  - **Triggers `EnvironmentService.UpdateLighting()`** after restoring time values
+  - Ensures lighting state (Daylight/Twilight/Night) matches the loaded game time
+  - Works for both new SaveData format and legacy Player-only format
+  - Also triggers lighting update when loading from backup saves
+- **Added TODO**: Add autosave on midnight or event triggers later
+
+### Technical Details
+- Time data is persisted in the `SaveData` wrapper class alongside Player and UnlockedRegions
+- When loading, the time is restored first, then `UpdateLighting()` is called to sync the environment
+- The lighting update ensures the visual state matches the loaded time (e.g., Night lighting at midnight)
+- Backup save restoration also includes time recovery and lighting sync
+- Foundation laid for future autosave triggers on time events (midnight, dawn, etc.)
+
+---
+
+## Previous Update: NPC Home Assignment System
 
 ### Building.cs Enhancements
 - **Added `IsHome` property**: 
