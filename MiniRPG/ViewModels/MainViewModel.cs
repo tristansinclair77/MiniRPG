@@ -203,6 +203,63 @@ namespace MiniRPG.ViewModels
                 AddLog("You open the world map.");
             };
             
+            // Subscribe to OpenFastTravel events
+            mapVM.OnOpenFastTravel += () =>
+            {
+                // TODO: Replace temporary menu with town gate NPC or airship terminal UI
+                var worldMapVM = new WorldMapViewModel(CurrentPlayer);
+                
+                // Subscribe to random encounter event
+                worldMapVM.OnRandomEncounter += regionName =>
+                {
+                    // Store the target region for after battle
+                    var regions = WorldMapService.GetRegions();
+                    _targetRegion = regions.FirstOrDefault(r => r.Name == regionName);
+                    
+                    // Create battle with region-specific enemy
+                    var battleVM = new BattleViewModel(GlobalLog, CurrentPlayer, regionName);
+                    battleVM.BattleEnded += async result =>
+                    {
+                        AddLog($"Battle ended with result: {result}");
+                        await Task.Delay(1000);
+                        
+                        // After battle ends, proceed to target region
+                        if (_targetRegion != null)
+                        {
+                            _currentRegion = _targetRegion;
+                            CurrentPlayer.LastRegionName = _targetRegion.Name;
+                            SaveLoadService.SavePlayer(CurrentPlayer);
+                            AddLog($"Continuing journey to {_targetRegion.Name}...");
+                            _targetRegion = null; // Clear target region
+                        }
+                        
+                        ShowMap();
+                    };
+                    
+                    CurrentViewModel = battleVM;
+                    try { AudioService.PlayBattleTheme(); } catch { }
+                    AddLog("A wild enemy appears during travel!");
+                    // TODO: Add encounter animations and travel interruption visuals
+                };
+                
+                worldMapVM.OnRegionSelected += selectedRegion =>
+                {
+                    _currentRegion = selectedRegion;
+                    
+                    // Save the region name to player and trigger auto-save
+                    CurrentPlayer.LastRegionName = selectedRegion.Name;
+                    SaveLoadService.SavePlayer(CurrentPlayer);
+                    
+                    AddLog($"Traveling to {selectedRegion.Name}...");
+                    // TODO: Add animated fade-out/fade-in transitions between regions
+                    // TODO: Add music change and environment effect system
+                    ShowMap();
+                };
+                worldMapVM.OnExitWorldMap += () => ShowMap();
+                CurrentViewModel = worldMapVM;
+                AddLog("You open the fast travel menu.");
+            };
+            
             // Subscribe to fast travel events
             mapVM.OnFastTravel += regionName =>
             {

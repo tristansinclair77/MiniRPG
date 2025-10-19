@@ -1,15 +1,15 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit MapView.xaml.
+Modify MapViewModel.cs.
 
 Requirements:
-• Add Button labeled “Fast Travel”.
-• Bind Command to OpenFastTravelCommand (to be created).
-• Add Expander or popup ListBox showing UnlockedRegions from FastTravelService.
-• Selecting a region triggers TravelCommand in WorldMapViewModel.
+• Add RelayCommand named OpenFastTravelCommand.
+• When executed, raise event OnOpenFastTravel.
+• In MainViewModel, subscribe to this event.
+• When triggered, set CurrentViewModel = new WorldMapViewModel(CurrentPlayer)
+  filtered to show only unlocked regions.
 • Add TODO:
-   <!-- TODO: Replace popup with pixel map fast travel overlay -->
-   <!-- TODO: Add travel cost confirmation dialogue -->
+   // Replace temporary menu with town gate NPC or airship terminal UI
 
 ---
 

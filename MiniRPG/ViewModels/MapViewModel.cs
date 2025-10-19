@@ -119,6 +119,9 @@ namespace MiniRPG.ViewModels
         // Event/callback for opening world map
         public event Action? OnOpenWorldMap;
 
+        // Event/callback for opening fast travel
+        public event Action? OnOpenFastTravel;
+
         // Event/callback for fast travel
         public event Action<string>? OnFastTravel;
 
@@ -240,8 +243,8 @@ namespace MiniRPG.ViewModels
         private void OpenFastTravel()
         {
             _globalLog?.Add("Opening fast travel menu...");
-            // The Expander will be toggled by the user in the UI
-            // This command can be used if we want a popup instead
+            // TODO: Replace temporary menu with town gate NPC or airship terminal UI
+            OnOpenFastTravel?.Invoke();
         }
 
         private void FastTravel(string? regionName)
