@@ -1,17 +1,14 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Enhance AudioService.cs.
+Update SaveLoadService.cs.
 
 Requirements:
-• Add method PlayBuildingTheme(string buildingType):
-   - Switch(buildingType):
-       * "Inn" → play inn.wav
-       * "Shop" → play shop.wav
-       * default → play interior.wav
-• Call AudioService.PlayBuildingTheme(Building.Type) when entering building.
-• Call AudioService.PlayMapTheme() when exiting.
+• Extend Player save with string? LastBuildingName.
+• Save when entering a building.
+• On load:
+   - If LastBuildingName != null, auto-load that building’s interior view.
 • Add TODO:
-   // Add smooth crossfade and environmental sound effects later
+   // Add per-building interior coordinates later
 
 ---
 

@@ -1,6 +1,216 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Building Audio Theme System
+## Latest Update: Building Save/Load System
+
+### Changes Made ✨
+
+#### Player.cs - LastBuildingName Property Added
+- **Added**: `string? LastBuildingName` property
+  - **Purpose**: Track the last building the player was in for save/load persistence
+  - **Getter/Setter**: Standard property with OnPropertyChanged notification
+  - **Nullable**: Allows null when player is not in a building
+  - **Integration**: Automatically saved to player save file via SaveLoadService
+  - **Location**: Added after LastRegionName property in Player model
+
+#### SaveLoadService.cs - Building State Persistence
+- **Updated**: SaveData class now includes LastBuildingName
+  - **Automatic Serialization**: Property is automatically serialized with existing Player data
+  - **Backward Compatibility**: Null values ignored during serialization (DefaultIgnoreCondition.WhenWritingNull)
+  - **Load Support**: LastBuildingName restored from save file when player loads game
+
+- **Added**: TODO Comment
+  - `// TODO: Add per-building interior coordinates later`
+  - Foundation for future feature
+  - Supports saving player position within building interiors
+  - Enables exact positioning when re-entering buildings
+
+#### MainViewModel.cs - Building Auto-Load on Game Load
+- **Updated**: `OnTitleSelectionMade()` method - Continue Game Flow
+  - **Building Detection**: After loading saved region, checks if LastBuildingName is set
+  - **Building Lookup**: Searches for building in saved region's Buildings collection
+  - **Auto-Load Logic**:
+    1. If LastBuildingName != null and building found in region
+    2. Creates BuildingInteriorViewModel with saved building
+    3. Plays appropriate building audio theme
+    4. Sets CurrentViewModel to building interior
+    5. Adds log message indicating player location
+    6. Exits early to avoid loading MapView
+  - **Fallback**: If building not found, loads normal MapView
+
+- **Added**: `CreateBuildingInteriorViewModel(Building)` helper method
+  - **Purpose**: Centralized method for creating BuildingInteriorViewModel with all event subscriptions
+  - **Parameters**: Building instance to create interior for
+  - **Event Subscriptions**:
+    - OnTalkToNPC: Handles NPC dialogue within building
+    - OnExitBuilding: Clears LastBuildingName and returns to MapView
+    - Nested dialogue handlers with proper exit flow
+  - **Return**: Fully configured BuildingInteriorViewModel
+  - **Reusability**: Used in both game load and building entry scenarios
+
+- **Updated**: Building Entry Event Handler
+  - **Save on Entry**: Sets `CurrentPlayer.LastBuildingName = selectedBuilding.Name`
+  - **Auto-Save**: Calls `SaveLoadService.SavePlayer(CurrentPlayer)` when entering building
+  - **Refactored**: Uses CreateBuildingInteriorViewModel helper method
+  - **Log Message**: Adds entry log message
+
+- **Updated**: Building Exit Event Handlers
+  - **Clear on Exit**: Sets `CurrentPlayer.LastBuildingName = null`
+  - **Auto-Save**: Calls `SaveLoadService.SavePlayer(CurrentPlayer)` when exiting building
+  - **Multiple Exit Paths**: Handles exit via:
+    - Direct Exit button click
+    - Exiting through dialogue chains
+    - Nested dialogue completion
+  - **Audio Restoration**: Plays MapTheme when returning to outdoor map
+
+#### Requirements Fulfilled
+All requirements from Instructions.txt have been implemented:
+
+**Player.cs:**
+- ✅ Property: `string? LastBuildingName` added to Player model
+- ✅ Serialization: Automatically included in save data
+
+**SaveLoadService.cs:**
+- ✅ Save: LastBuildingName saved with player data when entering building
+- ✅ Load: LastBuildingName restored from save file
+- ✅ Auto-Load: If LastBuildingName != null on load, auto-loads building interior view
+- ✅ TODO Comment: `// Add per-building interior coordinates later`
+
+**MainViewModel.cs:**
+- ✅ Entry Save: Player saved when entering a building (LastBuildingName set)
+- ✅ Exit Clear: LastBuildingName cleared when exiting building
+- ✅ Auto-Load: Building interior automatically loaded on game continue if LastBuildingName set
+- ✅ Helper Method: CreateBuildingInteriorViewModel for code reuse
+
+#### Integration Flow
+The complete building save/load system now works as follows:
+
+**Entering a Building:**
+1. **User Action**: Player selects building and clicks Enter
+2. **MapViewModel**: EnterBuildingCommand triggers OnEnterBuilding event
+3. **MainViewModel**: Receives event, creates BuildingInteriorViewModel
+4. **Save State**: Sets LastBuildingName = building.Name
+5. **Auto-Save**: Calls SaveLoadService.SavePlayer(CurrentPlayer)
+6. **View Switch**: CurrentViewModel = BuildingInteriorViewModel
+7. **Audio**: Plays building-specific theme
+
+**Exiting a Building:**
+1. **User Action**: Player clicks Exit button or completes dialogue
+2. **BuildingInteriorViewModel**: OnExitBuilding event fires
+3. **MainViewModel**: Receives event
+4. **Clear State**: Sets LastBuildingName = null
+5. **Auto-Save**: Calls SaveLoadService.SavePlayer(CurrentPlayer)
+6. **View Switch**: CurrentViewModel = MapViewModel
+7. **Audio**: Plays map theme
+
+**Loading a Game with Building State:**
+1. **User Action**: Player selects "Continue" from title screen
+2. **Load Player**: SaveLoadService.LoadPlayer() restores player data
+3. **Check Region**: If LastRegionName set, loads saved region
+4. **Check Building**: If LastBuildingName != null, searches for building in region
+5. **Auto-Load Building**: If found, creates BuildingInteriorViewModel
+6. **Set View**: CurrentViewModel = BuildingInteriorViewModel (skips MapView)
+7. **Audio**: Plays building theme
+8. **Fallback**: If building not found, loads MapView normally
+
+#### Code Flow Example// In OnTitleSelectionMade - Continue Game
+if (!string.IsNullOrEmpty(CurrentPlayer.LastBuildingName))
+{
+    var savedBuilding = savedRegion.Buildings?.FirstOrDefault(b => b.Name == CurrentPlayer.LastBuildingName);
+    if (savedBuilding != null)
+    {
+        var buildingVM = CreateBuildingInteriorViewModel(savedBuilding);
+        CurrentViewModel = buildingVM;
+        try { AudioService.PlayBuildingTheme(savedBuilding.Type); } catch { }
+        AddLog($"You are in {savedBuilding.Name}.");
+        return; // Exit early
+    }
+}
+
+// In CreateBuildingInteriorViewModel helper
+private BuildingInteriorViewModel CreateBuildingInteriorViewModel(Building selectedBuilding)
+{
+    var buildingVM = new BuildingInteriorViewModel(selectedBuilding, CurrentPlayer);
+    
+    buildingVM.OnExitBuilding += () =>
+    {
+        CurrentPlayer.LastBuildingName = null;
+        SaveLoadService.SavePlayer(CurrentPlayer);
+        ShowMap();
+        try { AudioService.PlayMapTheme(); } catch { }
+    };
+    
+    // ... other event subscriptions ...
+    
+    return buildingVM;
+}
+
+// In Building Entry Event
+mapVM.OnEnterBuilding += selectedBuilding =>
+{
+    var buildingVM = CreateBuildingInteriorViewModel(selectedBuilding);
+    CurrentViewModel = buildingVM;
+    
+    CurrentPlayer.LastBuildingName = selectedBuilding.Name;
+    SaveLoadService.SavePlayer(CurrentPlayer);
+    
+    AddLog($"You enter {selectedBuilding.Name}.");
+};
+#### Save File Example
+The player save file now includes LastBuildingName:
+{
+  "player": {
+    "name": "Hero",
+    "lastRegionName": "Greenfield Town",
+    "lastBuildingName": "Mira's Home",
+    "hp": 30,
+    "maxHP": 30,
+    "level": 1,
+    "gold": 100
+    // ... other player properties ...
+  },
+  "unlockedRegions": ["Greenfield Town"]
+}
+#### User Experience Improvements
+- **Seamless Continuation**: Players resume exactly where they left off
+- **No Navigation Required**: Skip map navigation when loading inside building
+- **Context Preservation**: Maintains player location state across sessions
+- **Auto-Save**: Eliminates risk of losing building location progress
+- **Proper Cleanup**: LastBuildingName cleared on exit prevents stale state
+
+#### Potential Future Enhancements
+Based on the TODO comment:
+- **Per-Building Interior Coordinates**:
+  - Save player X/Y position within building
+  - Restore exact position when re-entering
+  - Supports larger building interiors with movement
+  - Grid-based positioning system
+  - Coordinate validation on load
+  
+- **Building State Persistence**:
+  - Save NPC conversation progress within buildings
+  - Track items collected in building
+  - Remember chest/container open states
+  - Store building-specific quest progress
+  
+- **Multi-Floor Buildings**:
+  - Save current floor/level within building
+  - Support staircase navigation state
+  - Restore floor on game load
+  
+- **Building Interaction History**:
+  - Track visited buildings
+  - Save first-visit flags for cutscenes
+  - Persistent NPC relationship states within buildings
+
+#### Files Modified
+- `MiniRPG\Models\Player.cs`
+- `MiniRPG\Services\SaveLoadService.cs`
+- `MiniRPG\ViewModels\MainViewModel.cs`
+- `MiniRPG\Readme.md`
+
+---
+
+## Previous Update: Building Audio Theme System
 
 ### Changes Made ✨
 
@@ -95,8 +305,7 @@ public static void PlayBuildingTheme(string buildingType)
             PlayWavIfExists("interior.wav");
             break;
     }
-}
-#### Audio File Requirements
+}#### Audio File Requirements
 The system expects the following audio files in the application directory:
 - **inn.wav**: Cozy, relaxing music for inn buildings
 - **shop.wav**: Upbeat, commercial music for shop buildings
@@ -302,15 +511,13 @@ The complete buildings UI integration now works as follows:
 7. **View Transition**: MainViewModel creates BuildingInteriorViewModel and switches view
 
 #### UI Layout
-The Buildings Expander appears in the MapView with the following structure:
-Buildings ▼
+The Buildings Expander appears in the MapView with the following structure:Buildings ▼
 ┌─────────────────────────────────────┐
 │ Building Name 1 (Type1)             │
 │ Building Name 2 (Type2)             │
 │ Building Name 3 (Type3)             │
 └─────────────────────────────────────┘
-[        Enter        ]
-#### Example Data Display
+[        Enter        ]#### Example Data Display
 When a region has buildings, they appear as:
 - "Mira's Home (House)"
 - "General Store (Shop)"
@@ -404,4 +611,45 @@ The complete building entry system now works as follows:
 3. **MainViewModel**: Receives event, creates BuildingInteriorViewModel
 4. **BuildingInteriorView**: Displays building interior with NPCs and interactions
 5. **Exit Options**:
-   - Player
+   - Player exits building via Exit button
+   - Completes dialogue chain and exits
+6. **MainViewModel**: Handles exit event, switches back to MapViewModel
+7. **MapView**: Displays outdoor map with player near building
+
+#### Code Flow Example// In MapViewModel
+public ObservableCollection<Building> RegionBuildings { get; private set; }
+
+public ICommand EnterBuildingCommand => new RelayCommand<Building>(building =>
+{
+    OnEnterBuilding?.Invoke(building);
+});
+
+// In MainViewModel.CreateMapViewModel()
+mapVM.OnEnterBuilding += selectedBuilding =>
+{
+    var buildingVM = new BuildingInteriorViewModel(selectedBuilding, CurrentPlayer);
+    buildingVM.OnExitBuilding += () => ShowMap();
+    CurrentViewModel = buildingVM;
+    AddLog($"You enter {selectedBuilding.Name}.");
+};
+#### Potential Future Enhancements
+Based on the TODO comment:
+- **Animated Fade Transition**:
+  - Smooth fade-out/fade-in effect when entering/exiting buildings
+  - Consistent with other transitions (e.g., region changes)
+  - Configurable duration for smooth experience
+  
+- **Building-Specific Entry Effects**:
+  - Door opening animation
+  - Sound effects for door creak, bell chime, etc.
+  - Character sprite walking into building
+  
+- **Dynamic Building Interactions**:
+  - Context-sensitive actions based on building type
+  - Unique entry/exit animations for special buildings
+  - NPC greetings or cutscenes on first entry
+
+#### Files Modified
+- `MiniRPG\ViewModels\MapViewModel.cs`
+- `MiniRPG\ViewModels\MainViewModel.cs`
+- `MiniRPG\Readme.md`

@@ -19,6 +19,14 @@ namespace MiniRPG.Models
             set { _lastRegionName = value; OnPropertyChanged(); }
         }
 
+        // Building tracking for save/load
+        private string? _lastBuildingName;
+        public string? LastBuildingName
+        {
+            get => _lastBuildingName;
+            set { _lastBuildingName = value; OnPropertyChanged(); }
+        }
+
         // Inventory management
         private int _maxInventoryCapacity = 40;
         public int MaxInventoryCapacity

@@ -76,6 +76,21 @@ namespace MiniRPG.ViewModels
                     {
                         _currentRegion = savedRegion;
                         AddLog($"Resuming adventure in {savedRegion.Name}...");
+                        
+                        // If player has a saved building, auto-load that building's interior view
+                        if (!string.IsNullOrEmpty(CurrentPlayer.LastBuildingName))
+                        {
+                            var savedBuilding = savedRegion.Buildings?.FirstOrDefault(b => b.Name == CurrentPlayer.LastBuildingName);
+                            if (savedBuilding != null)
+                            {
+                                // Load building interior
+                                var buildingVM = CreateBuildingInteriorViewModel(savedBuilding);
+                                CurrentViewModel = buildingVM;
+                                try { AudioService.PlayBuildingTheme(savedBuilding.Type); } catch { }
+                                AddLog($"You are in {savedBuilding.Name}.");
+                                return; // Exit early to avoid loading map view
+                            }
+                        }
                     }
                 }
                 
@@ -150,53 +165,14 @@ namespace MiniRPG.ViewModels
             // Subscribe to EnterBuilding events
             mapVM.OnEnterBuilding += selectedBuilding =>
             {
-                var buildingVM = new BuildingInteriorViewModel(selectedBuilding, CurrentPlayer);
-                
-                // Subscribe to talk to NPC inside building
-                buildingVM.OnTalkToNPC += npc =>
-                {
-                    var dialogueVM = new DialogueViewModel(npc, CurrentPlayer, GlobalLog);
-                    dialogueVM.OnDialogueExit += () =>
-                    {
-                        // Return to building interior after dialogue
-                        CurrentViewModel = new BuildingInteriorViewModel(selectedBuilding, CurrentPlayer);
-                        AddLog($"Returned to {selectedBuilding.Name}.");
-                        
-                        // Re-subscribe to events
-                        var resubscribedBuildingVM = CurrentViewModel as BuildingInteriorViewModel;
-                        if (resubscribedBuildingVM != null)
-                        {
-                            resubscribedBuildingVM.OnTalkToNPC += npc =>
-                            {
-                                var innerDialogueVM = new DialogueViewModel(npc, CurrentPlayer, GlobalLog);
-                                innerDialogueVM.OnDialogueExit += () =>
-                                {
-                                    ShowMap();
-                                    try { AudioService.PlayMapTheme(); } catch { }
-                                };
-                                CurrentViewModel = innerDialogueVM;
-                                AddLog($"You talk to {npc.Name}.");
-                            };
-                            resubscribedBuildingVM.OnExitBuilding += () =>
-                            {
-                                ShowMap();
-                                try { AudioService.PlayMapTheme(); } catch { }
-                            };
-                        }
-                    };
-                    CurrentViewModel = dialogueVM;
-                    AddLog($"You talk to {npc.Name}.");
-                };
-                
-                // Subscribe to exit building event
-                buildingVM.OnExitBuilding += () =>
-                {
-                    ShowMap();
-                    try { AudioService.PlayMapTheme(); } catch { }
-                };
-                
+                var buildingVM = CreateBuildingInteriorViewModel(selectedBuilding);
                 CurrentViewModel = buildingVM;
                 try { AudioService.PlayBuildingTheme(selectedBuilding.Type); } catch { }
+                
+                // Save player state when entering building
+                CurrentPlayer.LastBuildingName = selectedBuilding.Name;
+                SaveLoadService.SavePlayer(CurrentPlayer);
+                
                 AddLog($"You enter {selectedBuilding.Name}.");
                 // TODO: Add animated fade transition between outdoor and indoor views
             };
@@ -335,6 +311,68 @@ namespace MiniRPG.ViewModels
             };
             
             return mapVM;
+        }
+
+        private BuildingInteriorViewModel CreateBuildingInteriorViewModel(Building selectedBuilding)
+        {
+            var buildingVM = new BuildingInteriorViewModel(selectedBuilding, CurrentPlayer);
+            
+            // Subscribe to talk to NPC inside building
+            buildingVM.OnTalkToNPC += npc =>
+            {
+                var dialogueVM = new DialogueViewModel(npc, CurrentPlayer, GlobalLog);
+                dialogueVM.OnDialogueExit += () =>
+                {
+                    // Return to building interior after dialogue
+                    CurrentViewModel = new BuildingInteriorViewModel(selectedBuilding, CurrentPlayer);
+                    AddLog($"Returned to {selectedBuilding.Name}.");
+                    
+                    // Re-subscribe to events
+                    var resubscribedBuildingVM = CurrentViewModel as BuildingInteriorViewModel;
+                    if (resubscribedBuildingVM != null)
+                    {
+                        resubscribedBuildingVM.OnTalkToNPC += npc =>
+                        {
+                            var innerDialogueVM = new DialogueViewModel(npc, CurrentPlayer, GlobalLog);
+                            innerDialogueVM.OnDialogueExit += () =>
+                            {
+                                // Clear building when exiting via dialogue
+                                CurrentPlayer.LastBuildingName = null;
+                                SaveLoadService.SavePlayer(CurrentPlayer);
+                                
+                                ShowMap();
+                                try { AudioService.PlayMapTheme(); } catch { }
+                            };
+                            CurrentViewModel = innerDialogueVM;
+                            AddLog($"You talk to {npc.Name}.");
+                        };
+                        resubscribedBuildingVM.OnExitBuilding += () =>
+                        {
+                            // Clear building when exiting
+                            CurrentPlayer.LastBuildingName = null;
+                            SaveLoadService.SavePlayer(CurrentPlayer);
+                            
+                            ShowMap();
+                            try { AudioService.PlayMapTheme(); } catch { }
+                        };
+                    }
+                };
+                CurrentViewModel = dialogueVM;
+                AddLog($"You talk to {npc.Name}.");
+            };
+            
+            // Subscribe to exit building event
+            buildingVM.OnExitBuilding += () =>
+            {
+                // Clear building when exiting
+                CurrentPlayer.LastBuildingName = null;
+                SaveLoadService.SavePlayer(CurrentPlayer);
+                
+                ShowMap();
+                try { AudioService.PlayMapTheme(); } catch { }
+            };
+            
+            return buildingVM;
         }
 
         public void AddLog(string message)

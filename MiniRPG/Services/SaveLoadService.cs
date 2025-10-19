@@ -243,5 +243,6 @@ namespace MiniRPG.Services
         // TODO: Extend to save inventory, map progress, and settings later
         // TODO: Add region-specific checkpoint saves
         // TODO: Add multi-save-slot world-state synchronization later
+        // TODO: Add per-building interior coordinates later
     }
 }
