@@ -124,6 +124,12 @@ namespace MiniRPG.ViewModels
         public ICommand FastTravelCommand { get; }
         public ICommand EnterBuildingCommand { get; }
         private ObservableCollection<string> _globalLog;
+        
+        // Store the full region reference to filter NPCs
+        private Region? _region;
+        
+        // Store the last hour to detect significant time changes
+        private int _lastHour;
 
         private bool _isSaveConfirmed;
         public bool IsSaveConfirmed
@@ -173,12 +179,15 @@ namespace MiniRPG.ViewModels
                 "Ruins"
             };
             
-            // Populate NearbyNPCs with all NPCs from DialogueService
-            NearbyNPCs = new ObservableCollection<NPC>(DialogueService.GetAllNPCs());
+            // Populate NearbyNPCs with all NPCs from DialogueService (filtered by availability)
+            var allNPCs = DialogueService.GetAllNPCs();
+            NearbyNPCs = new ObservableCollection<NPC>(allNPCs.Where(npc => npc.IsAvailableNow()));
             
             LocalEnemies = new ObservableCollection<string>();
             RegionQuests = new ObservableCollection<Quest>();
             RegionBuildings = new ObservableCollection<Building>();
+            
+            _lastHour = TimeService.Hour;
             
             StartBattleCommand = new RelayCommand(_ => StartBattle(), _ => !string.IsNullOrEmpty(this.SelectedLocation));
             RestCommand = new RelayCommand(_ => Rest());
@@ -205,12 +214,15 @@ namespace MiniRPG.ViewModels
             _globalLog = globalLog;
             Player = player;
             RegionName = region.Name;
+            _region = region;
             
-            // Load region-specific content
-            NearbyNPCs = region.NPCs;
+            // Load region-specific content with NPC filtering by availability
+            NearbyNPCs = new ObservableCollection<NPC>(region.NPCs.Where(npc => npc.IsAvailableNow()));
             LocalEnemies = region.AvailableEnemies;
             RegionQuests = region.LocalQuests;
             RegionBuildings = region.Buildings;
+            
+            _lastHour = TimeService.Hour;
             
             // Use region enemies as battle locations, fallback to default if none
             if (region.AvailableEnemies != null && region.AvailableEnemies.Any())
@@ -243,6 +255,7 @@ namespace MiniRPG.ViewModels
             // TODO: Add visual background per region
             // TODO: Add weather or time-of-day changes
             // TODO: Add time-based events and NPC schedules
+            // TODO: Add NPC pathfinding or animated map icons later
         }
 
         /// <summary>
@@ -252,6 +265,113 @@ namespace MiniRPG.ViewModels
         {
             OnPropertyChanged(nameof(CurrentDay));
             OnPropertyChanged(nameof(TimeOfDay));
+            
+            // Check if hour has changed significantly and refresh NPCs
+            if (TimeService.Hour != _lastHour)
+            {
+                RefreshNearbyNPCs();
+                _lastHour = TimeService.Hour;
+            }
+        }
+        
+        /// <summary>
+        /// Refreshes the NearbyNPCs list based on current time, adding log messages for changes.
+        /// </summary>
+        private void RefreshNearbyNPCs()
+        {
+            if (_region == null)
+            {
+                // Legacy mode: filter all NPCs from DialogueService
+                var allNPCs = DialogueService.GetAllNPCs();
+                var previousNPCs = NearbyNPCs.ToList();
+                var availableNPCs = allNPCs.Where(npc => npc.IsAvailableNow()).ToList();
+                
+                // Find NPCs that disappeared
+                var disappeared = previousNPCs.Where(prev => !availableNPCs.Any(curr => curr.Name == prev.Name)).ToList();
+                foreach (var npc in disappeared)
+                {
+                    _globalLog?.Add(GetNPCDisappearanceMessage(npc));
+                }
+                
+                // Find NPCs that appeared
+                var appeared = availableNPCs.Where(curr => !previousNPCs.Any(prev => prev.Name == curr.Name)).ToList();
+                foreach (var npc in appeared)
+                {
+                    _globalLog?.Add(GetNPCAppearanceMessage(npc));
+                }
+                
+                NearbyNPCs = new ObservableCollection<NPC>(availableNPCs);
+            }
+            else
+            {
+                // Region mode: filter NPCs from the region
+                var previousNPCs = NearbyNPCs.ToList();
+                var availableNPCs = _region.NPCs.Where(npc => npc.IsAvailableNow()).ToList();
+                
+                // Find NPCs that disappeared
+                var disappeared = previousNPCs.Where(prev => !availableNPCs.Any(curr => curr.Name == prev.Name)).ToList();
+                foreach (var npc in disappeared)
+                {
+                    _globalLog?.Add(GetNPCDisappearanceMessage(npc));
+                }
+                
+                // Find NPCs that appeared
+                var appeared = availableNPCs.Where(curr => !previousNPCs.Any(prev => prev.Name == curr.Name)).ToList();
+                foreach (var npc in appeared)
+                {
+                    _globalLog?.Add(GetNPCAppearanceMessage(npc));
+                }
+                
+                NearbyNPCs = new ObservableCollection<NPC>(availableNPCs);
+            }
+        }
+        
+        /// <summary>
+        /// Generates an appropriate log message when an NPC disappears.
+        /// </summary>
+        private string GetNPCDisappearanceMessage(NPC npc)
+        {
+            // Generate context-aware messages based on NPC role and time of day
+            if (npc.Role == "Merchant" || npc.Role == "Shopkeeper")
+            {
+                return $"{npc.Name} has closed shop for the day.";
+            }
+            else if (TimeService.Hour >= 20 || TimeService.Hour < 6)
+            {
+                return $"{npc.Name} has gone home for the night.";
+            }
+            else if (TimeService.Hour >= 6 && TimeService.Hour < 12)
+            {
+                return $"{npc.Name} has left for the morning.";
+            }
+            else
+            {
+                return $"{npc.Name} is no longer around.";
+            }
+        }
+        
+        /// <summary>
+        /// Generates an appropriate log message when an NPC appears.
+        /// </summary>
+        private string GetNPCAppearanceMessage(NPC npc)
+        {
+            // Generate context-aware messages based on NPC role and time of day
+            if (npc.Role == "Merchant" || npc.Role == "Shopkeeper")
+            {
+                return $"{npc.Name} has opened for the morning.";
+            }
+            else if (TimeService.Hour >= 6 && TimeService.Hour < 12)
+            {
+                return $"{npc.Name} has arrived for the morning.";
+            }
+            else if (TimeService.Hour >= 12 && TimeService.Hour < 18)
+            {
+                return $"{npc.Name} has appeared for the afternoon.";
+            }
+            else
+            {
+                return $"{npc.Name} has arrived.";
+            }
         }
 
         private void StartBattle()

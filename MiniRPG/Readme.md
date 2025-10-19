@@ -1,6 +1,188 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: NPC Availability & Scheduling System
+## Latest Update: Dynamic NPC Scheduling & Time-Based Appearance System
+
+### Changes Made ✨
+
+#### MapViewModel.cs - Dynamic NPC Refresh on Time Changes
+- **Enhanced**: Constructor methods now filter NPCs by availability
+  - **Legacy Constructor**: Filters `DialogueService.GetAllNPCs()` using `IsAvailableNow()`
+  - **Region Constructor**: Filters `region.NPCs` using `IsAvailableNow()`
+  - **Purpose**: Only show NPCs that are currently available based on their schedules
+
+- **Added**: `_region` private field (Region?)
+  - **Purpose**: Store reference to region for refreshing NPCs when time changes
+  - **Usage**: Used in `RefreshNearbyNPCs()` to access full NPC list
+
+- **Added**: `_lastHour` private field (int)
+  - **Purpose**: Track the last hour to detect significant time changes
+  - **Usage**: Compared in `RefreshTimeDisplay()` to trigger NPC refresh
+
+- **Enhanced**: `RefreshTimeDisplay()` method
+  - **New Behavior**: Now checks if hour has changed and calls `RefreshNearbyNPCs()`
+  - **Purpose**: Automatically update NPC list when time advances
+  - **Usage**: Called after battle, travel, rest, or any time-advancing action
+
+- **Added**: `RefreshNearbyNPCs()` private method
+  - **Purpose**: Refresh the NearbyNPCs list based on current time
+  - **Implementation**: 
+    - Compares previous NPCs with currently available NPCs
+    - Logs appearance/disappearance messages for each change
+    - Updates NearbyNPCs collection with filtered list
+  - **Supports**: Both legacy mode (DialogueService) and region mode
+
+- **Added**: `GetNPCDisappearanceMessage(NPC npc)` private method
+  - **Purpose**: Generate context-aware log messages when NPCs leave
+  - **Examples**:
+    - "Mira has gone home for the night." (evening/night)
+    - "The shopkeeper has closed shop for the day." (merchants)
+    - "Guard has left for the morning." (morning departures)
+  - **Implementation**: Uses NPC role and current time to create appropriate messages
+
+- **Added**: `GetNPCAppearanceMessage(NPC npc)` private method
+  - **Purpose**: Generate context-aware log messages when NPCs arrive
+  - **Examples**:
+    - "The shopkeeper has opened for the morning." (merchants)
+    - "Mira has arrived for the afternoon." (afternoon arrivals)
+    - "Guard has arrived." (generic arrivals)
+  - **Implementation**: Uses NPC role and current time to create appropriate messages
+
+- **Added**: TODO comment for future features
+  - `// TODO: Add NPC pathfinding or animated map icons later`
+  - **Purpose**: Placeholder for visual NPC movement system
+
+#### Implementation Details
+
+**NPC Filtering Flow:**// When constructing MapViewModel with region
+NearbyNPCs = new ObservableCollection<NPC>(
+    region.NPCs.Where(npc => npc.IsAvailableNow())
+);
+**Time Change Detection:**public void RefreshTimeDisplay()
+{
+    OnPropertyChanged(nameof(CurrentDay));
+    OnPropertyChanged(nameof(TimeOfDay));
+    
+    // Check if hour has changed significantly
+    if (TimeService.Hour != _lastHour)
+    {
+        RefreshNearbyNPCs();
+        _lastHour = TimeService.Hour;
+    }
+}
+**NPC Refresh Logic:**private void RefreshNearbyNPCs()
+{
+    var previousNPCs = NearbyNPCs.ToList();
+    var availableNPCs = _region.NPCs.Where(npc => npc.IsAvailableNow()).ToList();
+    
+    // Find NPCs that disappeared
+    var disappeared = previousNPCs.Where(prev => 
+        !availableNPCs.Any(curr => curr.Name == prev.Name)
+    ).ToList();
+    foreach (var npc in disappeared)
+    {
+        _globalLog?.Add(GetNPCDisappearanceMessage(npc));
+    }
+    
+    // Find NPCs that appeared
+    var appeared = availableNPCs.Where(curr => 
+        !previousNPCs.Any(prev => prev.Name == curr.Name)
+    ).ToList();
+    foreach (var npc in appeared)
+    {
+        _globalLog?.Add(GetNPCAppearanceMessage(npc));
+    }
+    
+    NearbyNPCs = new ObservableCollection<NPC>(availableNPCs);
+}
+**Context-Aware Message Generation:**
+
+| Time of Day | NPC Role | Appearance Message | Disappearance Message |
+|------------|----------|-------------------|----------------------|
+| Morning (6-12) | Merchant/Shopkeeper | "X has opened for the morning." | "X has left for the morning." |
+| Morning (6-12) | Any | "X has arrived for the morning." | "X has left for the morning." |
+| Afternoon (12-18) | Any | "X has appeared for the afternoon." | "X is no longer around." |
+| Evening/Night (18-6) | Any | "X has arrived." | "X has gone home for the night." |
+| Any | Merchant/Shopkeeper | "X has opened for the morning." | "X has closed shop for the day." |
+
+#### Example Usage Scenarios
+
+**Scenario 1: Shop Opens in the Morning**
+1. **Initial**: Day 1, Night (2:00 AM), Shopkeeper not available (AvailableStartHour = 8)
+2. **Action**: Rest for 8 hours
+3. **Result**: Day 1, Morning (10:00 AM)
+4. **Log Message**: "The shopkeeper has opened for the morning."
+5. **UI Update**: Shopkeeper appears in NearbyNPCs list
+
+**Scenario 2: Quest Giver Goes Home at Night**
+1. **Initial**: Day 1, Evening (19:00), Mira available (AvailableEndHour = 20)
+2. **Action**: Battle (1 hour advance)
+3. **Result**: Day 1, Evening (20:00)
+4. **Log Message**: "Mira has gone home for the night."
+5. **UI Update**: Mira removed from NearbyNPCs list
+
+**Scenario 3: Multiple NPCs Change During Long Rest**
+1. **Initial**: Day 1, Evening (19:00)
+   - Mira available (8-20)
+   - Shopkeeper available (8-20)
+   - Night Guard available (20-6)
+2. **Action**: Rest for 8 hours
+3. **Result**: Day 2, Morning (3:00 AM)
+4. **Log Messages**:
+   - "Mira has gone home for the night."
+   - "The shopkeeper has closed shop for the day."
+   - "Night Guard has arrived."
+5. **UI Update**: NearbyNPCs shows only Night Guard
+
+**Scenario 4: Fast Travel Between Time Zones**
+1. **Initial**: Day 1, Morning (10:00), Location A
+   - Merchant available (8-18)
+2. **Action**: Fast travel to Location B (2 hours)
+3. **Result**: Day 1, Afternoon (12:00), Location B
+   - Different merchant with schedule (14-22)
+4. **Log Message**: "Merchant is no longer around." (from Location A context)
+5. **Log Message**: (No appearance yet, merchant starts at 14:00)
+6. **Action**: Battle (1 hour)
+7. **Result**: Day 1, Afternoon (13:00)
+8. **Action**: Battle again (1 hour)
+9. **Result**: Day 1, Afternoon (14:00)
+10. **Log Message**: "Merchant has appeared for the afternoon."
+
+#### Integration Points
+
+**Time Advancement Triggers → NPC Refresh:**
+
+| Action | Time Change | RefreshTimeDisplay() Called | NPCs Refreshed |
+|--------|-------------|---------------------------|----------------|
+| Battle | +1 hour | ✅ Yes | ✅ If hour changed |
+| Fast Travel | +2 hours | ✅ Yes | ✅ If hour changed |
+| Map Rest | +8 hours | ✅ Yes | ✅ If hour changed |
+| Inn Sleep | +8 hours | (BuildingInteriorViewModel) | (After returning to map) |
+| Save Game | No change | ❌ No | ❌ No |
+| Use Item | No change | ❌ No | ❌ No |
+
+**NPC Availability Check Points:**
+1. **MapViewModel Construction**: Initial filtering when entering region
+2. **RefreshTimeDisplay()**: After any time advancement
+3. **RefreshNearbyNPCs()**: When hour changes (automatic)
+
+#### Future Enhancements (TODOs)
+
+- `// TODO: Add NPC pathfinding or animated map icons later`
+  - Visual representation of NPC movement on map
+  - Animated transitions when NPCs appear/disappear
+  - Path visualization for NPC schedules
+  
+- **Potential Improvements**:
+  - Week-based schedules (NPCs off on certain days)
+  - Holiday/festival special schedules
+  - Weather-dependent availability
+  - Relationship-based availability changes
+  - Location transitions (NPCs move between map locations)
+  - Custom audio cues for NPC arrivals/departures
+
+---
+
+## Previous Update: NPC Availability & Scheduling System
 
 ### Changes Made ✨
 
@@ -159,8 +341,7 @@ All requirements from Instructions.txt have been verified:
 | Inn Sleep | 8 hours | StayAtInn() in BuildingInteriorViewModel |
 | World Map Travel | 0 hours | But may trigger random encounter |
 
-**Time Persistence Flow:**
-// Saving
+**Time Persistence Flow:**// Saving
 var saveData = new SaveData
 {
     Player = player,
@@ -174,8 +355,7 @@ JsonSerializer.Serialize(saveData);
 TimeService.Day = saveData.Day;     // Restore day
 TimeService.Hour = saveData.Hour;   // Restore hour
 Debug.WriteLine($"Time loaded - Day {TimeService.Day}, Hour {TimeService.Hour}");
-**Time Display Binding:**
-<TextBlock HorizontalAlignment="Center" Margin="0,4,0,0">
+**Time Display Binding:**<TextBlock HorizontalAlignment="Center" Margin="0,4,0,0">
     <Run Text="Day " />
     <Run Text="{Binding CurrentDay, Mode=OneWay}" />
     <Run Text=", " />

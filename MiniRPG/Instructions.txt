@@ -1,22 +1,18 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify NPC.cs.
+Enhance MapViewModel.cs.
 
 Requirements:
-• Add properties:
-   - int AvailableStartHour
-   - int AvailableEndHour
-   - string CurrentLocation   // e.g., "Town Square", "Home", "Shop"
-• Add method IsAvailableNow():
-   - return TimeService.Hour >= AvailableStartHour && TimeService.Hour < AvailableEndHour;
-• Example NPC initialization:
-   new NPC("Mira", "QuestGiver", "Good to see you!") {
-       AvailableStartHour = 8,
-       AvailableEndHour = 20,
-       CurrentLocation = "Market Square"
-   };
+• When constructing or refreshing NPCs:
+   - NearbyNPCs = new ObservableCollection(region.NPCs
+       .Where(npc => npc.IsAvailableNow()));
+• Whenever TimeService.Hour changes significantly (e.g. after AdvanceHours),
+   - Refresh NearbyNPCs list.
+• Add log message when NPCs appear/disappear:
+   - "Mira has gone home for the night."
+   - "The shopkeeper has opened for the morning."
 • Add TODO:
-   // Add weekly schedules and holiday routines later
+   // Add NPC pathfinding or animated map icons later
 
 ---
 
