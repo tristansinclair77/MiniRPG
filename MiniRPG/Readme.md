@@ -1,6 +1,37 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Player Skill System Integration
+## Latest Update: Skill Tree Service
+
+### SkillTreeService.cs (New File)
+- **Created static `SkillTreeService` class in Services folder**:
+  - Provides centralized skill tree data management
+  - Static class for easy access throughout the application
+- **Added `GetAllSkills()` static method**:
+  - Returns `List<Skill>` containing all available skills in the game
+  - Includes three example skills:
+    - **Power Strike**: Attack skill, +5 Power, Level 2, Cost 1 SP, "Attack" effect type
+    - **Iron Skin**: Passive defense skill, +5 Power, Level 3, Cost 1 SP, "Defense" effect type
+    - **Healing Light**: Healing skill, 15 HP restoration, Level 4, Cost 2 SP, "Heal" effect type
+  - All skills initialized as unlocked=false by default
+- **Added TODO comment**:
+  - // TODO: Add skill tree tier data and class specialization later
+
+### Technical Details
+- Centralizes skill data for use by UI, player systems, and skill trainers
+- Skills can be retrieved and added to player's AvailableSkills collection
+- Foundation laid for:
+  - Skill tree UI displaying available skills
+  - Skill dependencies and prerequisites (e.g., "Requires Power Strike")
+  - Class-specific skill branches (Warrior, Mage, Rogue)
+  - Skill tier systems (Basic, Advanced, Master)
+  - Skill trainers offering region-specific skills
+  - Quest rewards granting unique skills
+- Integrates seamlessly with existing Player.UnlockSkill() and Skill.cs systems
+- Can be expanded to include dynamic skill generation or modding support
+
+---
+
+## Previous Update: Player Skill System Integration
 
 ### Player.cs Enhancements
 - **Added skill system properties**:

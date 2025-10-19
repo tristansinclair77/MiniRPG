@@ -1,25 +1,17 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify Player.cs.
+Create SkillTreeService.cs in the Services folder.
 
 Requirements:
-• Add properties:
-   - int SkillPoints { get; set; }
-   - ObservableCollection<Skill> LearnedSkills { get; set; } = new();
-   - ObservableCollection<Skill> AvailableSkills { get; set; } = new();
-
-• Add method GainSkillPoints(int amount) => SkillPoints += amount;
-• Add method UnlockSkill(Skill skill):
-   - If SkillPoints >= skill.CostSP && !skill.IsUnlocked:
-       * SkillPoints -= skill.CostSP
-       * skill.IsUnlocked = true
-       * LearnedSkills.Add(skill)
-       * Log "Unlocked skill: {skill.Name}"
-• In level-up logic (inside GainExperience or wherever applicable):
-   - Add 1 SkillPoint per level gained.
-
+• Static class SkillTreeService
+• Static method GetAllSkills() returning List<Skill>
+   - Include example entries:
+       * "Power Strike" – Attack +5, Level 2, Cost 1, EffectType "Attack"
+       * "Iron Skin" – Defense +5, Level 3, Cost 1, EffectType "Defense"
+       * "Healing Light" – Restores HP, Level 4, Cost 2, EffectType "Heal"
+• Later: link skill dependencies (e.g. "Requires Power Strike").
 • Add TODO:
-   // Add skill respec (reset) feature later
+   // Add skill tree tier data and class specialization later
 
 ---
 
