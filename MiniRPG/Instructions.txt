@@ -1,16 +1,23 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create BuildingInteriorView.xaml.
+Create BuildingInteriorViewModel.cs in the ViewModels folder.
 
-XAML layout:
-• TextBlock for building name and description.
-• Expander listing occupants (NPCs).
-• Button “Talk” bound to TalkToNPCCommand.
-• Button “Leave Building” bound to ExitBuildingCommand.
+Requirements:
+• Inherit from BaseViewModel.
+• Properties:
+   - Building CurrentBuilding
+   - Player Player
+   - NPC? SelectedNPC
+• Commands:
+   - TalkToNPCCommand
+   - ExitBuildingCommand
+• Constructor(Building building, Player player):
+   - Assign fields.
+   - Log $"Entered {building.Name}."
+• TalkToNPCCommand opens DialogueViewModel(CurrentNPC, Player).
+• ExitBuildingCommand triggers OnExitBuilding event.
 • Add TODO:
-   <!-- TODO: Add interior background art -->
-   <!-- TODO: Add custom music per building type -->
-   <!-- TODO: Add clickable NPC sprites -->
+   // Add room-based navigation and building-specific events
 
 ---
 

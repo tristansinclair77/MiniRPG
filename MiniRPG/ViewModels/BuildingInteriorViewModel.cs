@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows.Input;
 using MiniRPG.Models;
 
@@ -21,6 +22,17 @@ namespace MiniRPG.ViewModels
                 OnPropertyChanged(nameof(BuildingName));
                 OnPropertyChanged(nameof(BuildingDescription));
                 OnPropertyChanged(nameof(Occupants));
+            }
+        }
+
+        private Player _player;
+        public Player Player
+        {
+            get => _player;
+            set
+            {
+                _player = value;
+                OnPropertyChanged();
             }
         }
 
@@ -51,9 +63,13 @@ namespace MiniRPG.ViewModels
         /// Constructor for BuildingInteriorViewModel.
         /// </summary>
         /// <param name="building">The building to display interior for</param>
-        public BuildingInteriorViewModel(Building building)
+        /// <param name="player">The player character</param>
+        public BuildingInteriorViewModel(Building building, Player player)
         {
             CurrentBuilding = building;
+            Player = player;
+            
+            Debug.WriteLine($"Entered {building.Name}.");
             
             TalkToNPCCommand = new RelayCommand(
                 param => TalkToNPC(param as NPC),
@@ -61,6 +77,8 @@ namespace MiniRPG.ViewModels
             );
             
             ExitBuildingCommand = new RelayCommand(_ => ExitBuilding());
+            
+            // Add room-based navigation and building-specific events
         }
 
         private void TalkToNPC(NPC? npc)
