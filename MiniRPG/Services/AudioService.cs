@@ -7,11 +7,15 @@ namespace MiniRPG.Services
     public static class AudioService
     {
         private static SoundPlayer? _ambientPlayer;
+        private static SoundPlayer? _weatherPlayer;
 
         static AudioService()
         {
             // Subscribe to lighting changes for dynamic ambient sound switching
             EnvironmentService.OnLightingChanged += OnLightingChanged;
+            
+            // Subscribe to weather changes for weather-specific ambience
+            EnvironmentService.OnWeatherChanged += OnWeatherChanged;
         }
 
         /// <summary>
@@ -20,6 +24,63 @@ namespace MiniRPG.Services
         private static void OnLightingChanged(object? sender, string lighting)
         {
             PlayAmbientForLighting(lighting);
+        }
+
+        /// <summary>
+        /// Event handler for weather changes. Switches weather ambience accordingly.
+        /// </summary>
+        private static void OnWeatherChanged(object? sender, WeatherType weather)
+        {
+            PlayWeatherAmbience(weather);
+        }
+
+        /// <summary>
+        /// Plays weather-specific ambient sounds.
+        /// </summary>
+        private static void PlayWeatherAmbience(WeatherType weather)
+        {
+            string? weatherFile = weather switch
+            {
+                WeatherType.Rain => "rain.wav",
+                WeatherType.Storm => "storm.wav",
+                WeatherType.Snow => "snow.wav",
+                WeatherType.Fog => "fog.wav",
+                WeatherType.Clear => null, // No extra ambience for clear weather
+                _ => null
+            };
+
+            if (weatherFile != null)
+            {
+                PlayWeatherLoop(weatherFile);
+            }
+            else
+            {
+                // Stop weather ambience for clear weather
+                _weatherPlayer?.Stop();
+                _weatherPlayer?.Dispose();
+                _weatherPlayer = null;
+            }
+        }
+
+        /// <summary>
+        /// Plays a weather ambient sound in a loop.
+        /// </summary>
+        private static void PlayWeatherLoop(string fileName)
+        {
+            try
+            {
+                if (File.Exists(fileName))
+                {
+                    _weatherPlayer?.Stop();
+                    _weatherPlayer?.Dispose();
+                    _weatherPlayer = new SoundPlayer(fileName);
+                    _weatherPlayer.PlayLooping();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Optionally log or ignore
+            }
         }
 
         /// <summary>

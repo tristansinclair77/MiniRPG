@@ -1,17 +1,17 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit MapView.xaml.
-
-Requirements:
-• Add TextBlock near region/time header showing:
-   "Weather: {Binding CurrentWeather}"
-• In MapViewModel, bind to EnvironmentService.Weather (via property CurrentWeather).
-• Change text color depending on weather:
-   - Blue for Rain, White for Snow, Gray for Fog, Yellow for Clear.
-• Add TODO:
-   <!-- TODO: Add weather icons or animated particle layers -->
-   <!-- TODO: Add ambient rain and snow overlays -->
-
+Testing checklist:
+1. Observe initial weather and lighting.
+2. Advance time → weather changes randomly.
+3. Confirm ambience audio updates (rain, snow, storm).
+4. Observe lighting tint shifts (day/night + weather combined).
+5. Progress through 30+ in-game days → verify season cycles.
+6. Confirm seasonal weather variety and environment logs.
+7. Save and reload → ensure weather, season, and time persist.
+8. Add TODO placeholders:
+   <!-- TODO: Add storm damage or travel delays -->
+   <!-- TODO: Add seasonal events (harvest festival, snow day) -->
+   <!-- TODO: Add region-based microclimates -->
 ---
 
 After you finish, update the Readme.md file with the changes.

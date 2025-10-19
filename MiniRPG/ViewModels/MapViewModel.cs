@@ -70,6 +70,11 @@ namespace MiniRPG.ViewModels
         /// </summary>
         public WeatherType CurrentWeather => EnvironmentService.Weather;
 
+        /// <summary>
+        /// Gets the current season from EnvironmentService for UI binding.
+        /// </summary>
+        public Season CurrentSeason => EnvironmentService.CurrentSeason;
+
         private ObservableCollection<string> _localEnemies;
         public ObservableCollection<string> LocalEnemies
         {
@@ -211,6 +216,9 @@ namespace MiniRPG.ViewModels
             // Subscribe to weather changes
             EnvironmentService.OnWeatherChanged += OnWeatherChanged;
             
+            // Subscribe to season changes
+            EnvironmentService.OnSeasonChanged += OnSeasonChanged;
+            
             // Subscribe to time changes
             TimeService.OnHourChanged += OnHourChanged;
             
@@ -260,6 +268,9 @@ namespace MiniRPG.ViewModels
             
             // Subscribe to weather changes
             EnvironmentService.OnWeatherChanged += OnWeatherChanged;
+            
+            // Subscribe to season changes
+            EnvironmentService.OnSeasonChanged += OnSeasonChanged;
             
             // Subscribe to time changes
             TimeService.OnHourChanged += OnHourChanged;
@@ -318,6 +329,15 @@ namespace MiniRPG.ViewModels
         }
 
         /// <summary>
+        /// Handles season changes from EnvironmentService and logs the change.
+        /// </summary>
+        private void OnSeasonChanged(object? sender, Season newSeason)
+        {
+            _globalLog?.Add($"The season has changed to {newSeason}!");
+            OnPropertyChanged(nameof(CurrentSeason));
+        }
+
+        /// <summary>
         /// Logs time-based events based on the current hour.
         /// </summary>
         private void LogTimedEvents(int hour)
@@ -352,25 +372,100 @@ namespace MiniRPG.ViewModels
         }
 
         /// <summary>
-        /// Updates the EnvironmentColor based on the current lighting state.
+        /// Updates the EnvironmentColor based on the current lighting state, weather, and season.
         /// </summary>
         private void UpdateEnvironmentColor(string lighting)
         {
+            // Base color based on time of day
+            Color baseColor;
+            
             switch (lighting)
             {
                 case "Daylight":
-                    EnvironmentColor = new SolidColorBrush(Colors.LightSkyBlue);
+                    baseColor = Colors.LightSkyBlue;
                     break;
                 case "Twilight":
-                    EnvironmentColor = new SolidColorBrush(Colors.OrangeRed);
+                    baseColor = Colors.OrangeRed;
                     break;
                 case "Night":
-                    EnvironmentColor = new SolidColorBrush(Colors.DarkSlateBlue);
+                    baseColor = Colors.DarkSlateBlue;
                     break;
                 default:
-                    EnvironmentColor = new SolidColorBrush(Colors.LightSkyBlue);
+                    baseColor = Colors.LightSkyBlue;
                     break;
             }
+            
+            // Modify color based on weather
+            switch (EnvironmentService.Weather)
+            {
+                case WeatherType.Rain:
+                case WeatherType.Storm:
+                    // Darken and add blue tint for rain/storm
+                    baseColor = Color.FromRgb(
+                        (byte)(baseColor.R * 0.7),
+                        (byte)(baseColor.G * 0.7),
+                        (byte)(baseColor.B * 0.9)
+                    );
+                    break;
+                case WeatherType.Snow:
+                    // Brighten and add white tint for snow
+                    baseColor = Color.FromRgb(
+                        (byte)Math.Min(255, baseColor.R * 1.1),
+                        (byte)Math.Min(255, baseColor.G * 1.1),
+                        (byte)Math.Min(255, baseColor.B * 1.2)
+                    );
+                    break;
+                case WeatherType.Fog:
+                    // Add gray tint for fog
+                    baseColor = Color.FromRgb(
+                        (byte)(baseColor.R * 0.8 + 50),
+                        (byte)(baseColor.G * 0.8 + 50),
+                        (byte)(baseColor.B * 0.8 + 50)
+                    );
+                    break;
+                case WeatherType.Clear:
+                    // No modification for clear weather
+                    break;
+            }
+            
+            // Subtle seasonal tint
+            switch (EnvironmentService.CurrentSeason)
+            {
+                case Season.Spring:
+                    // Slight green tint
+                    baseColor = Color.FromRgb(
+                        baseColor.R,
+                        (byte)Math.Min(255, baseColor.G * 1.05),
+                        baseColor.B
+                    );
+                    break;
+                case Season.Summer:
+                    // Slight yellow/warm tint
+                    baseColor = Color.FromRgb(
+                        (byte)Math.Min(255, baseColor.R * 1.05),
+                        (byte)Math.Min(255, baseColor.G * 1.05),
+                        baseColor.B
+                    );
+                    break;
+                case Season.Autumn:
+                    // Slight orange tint
+                    baseColor = Color.FromRgb(
+                        (byte)Math.Min(255, baseColor.R * 1.05),
+                        (byte)(baseColor.G * 0.95),
+                        baseColor.B
+                    );
+                    break;
+                case Season.Winter:
+                    // Slight blue/cool tint
+                    baseColor = Color.FromRgb(
+                        (byte)(baseColor.R * 0.95),
+                        (byte)(baseColor.G * 0.95),
+                        (byte)Math.Min(255, baseColor.B * 1.05)
+                    );
+                    break;
+            }
+            
+            EnvironmentColor = new SolidColorBrush(baseColor);
         }
 
         /// <summary>

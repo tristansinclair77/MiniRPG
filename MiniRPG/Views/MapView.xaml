@@ -81,6 +81,8 @@
                     <Run Text="{Binding CurrentDay, Mode=OneWay}" />
                     <Run Text=", " />
                     <Run Text="{Binding TimeOfDay, Mode=OneWay}" />
+                    <Run Text=" - " />
+                    <Run Text="{Binding CurrentSeason, Mode=OneWay}" FontWeight="Bold" Foreground="#90EE90" />
                 </TextBlock>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,0">
                     <TextBlock Text="Weather: " 

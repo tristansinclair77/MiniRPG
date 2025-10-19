@@ -18,6 +18,8 @@ namespace MiniRPG.Services
         public List<string> UnlockedRegions { get; set; } = new List<string>();
         public int Day { get; set; } = 1;
         public int Hour { get; set; } = 8;
+        public string Weather { get; set; } = "Clear";
+        public string Season { get; set; } = "Spring";
     }
 
     public static class SaveLoadService
@@ -47,7 +49,9 @@ namespace MiniRPG.Services
                     Player = player,
                     UnlockedRegions = FastTravelService.UnlockedRegions.ToList(),
                     Day = TimeService.Day,
-                    Hour = TimeService.Hour
+                    Hour = TimeService.Hour,
+                    Weather = EnvironmentService.Weather.ToString(),
+                    Season = EnvironmentService.CurrentSeason.ToString()
                 };
 
                 string json = JsonSerializer.Serialize(saveData, _jsonOptions);
@@ -59,6 +63,7 @@ namespace MiniRPG.Services
                               $"Accessory: {player.EquippedAccessory?.Name ?? "None"}");
                 Debug.WriteLine($"Unlocked regions saved: {string.Join(", ", saveData.UnlockedRegions)}");
                 Debug.WriteLine($"Time saved - Day {saveData.Day}, Hour {saveData.Hour}");
+                Debug.WriteLine($"Environment saved - Weather: {saveData.Weather}, Season: {saveData.Season}");
             }
             catch (Exception ex)
             {
@@ -122,11 +127,25 @@ namespace MiniRPG.Services
                     TimeService.Day = saveData.Day;
                     TimeService.Hour = saveData.Hour;
                     
+                    // Restore weather and season if available
+                    if (!string.IsNullOrEmpty(saveData.Weather) && Enum.TryParse<WeatherType>(saveData.Weather, out var weather))
+                    {
+                        // Use reflection to set the private Weather property
+                        typeof(EnvironmentService).GetProperty(nameof(EnvironmentService.Weather))?.SetValue(null, weather);
+                    }
+                    
+                    if (!string.IsNullOrEmpty(saveData.Season) && Enum.TryParse<Season>(saveData.Season, out var season))
+                    {
+                        // Use reflection to set the private CurrentSeason property
+                        typeof(EnvironmentService).GetProperty(nameof(EnvironmentService.CurrentSeason))?.SetValue(null, season);
+                    }
+                    
                     // Update lighting based on restored time
                     EnvironmentService.UpdateLighting();
                     
                     Debug.WriteLine($"Loaded unlocked regions: {string.Join(", ", saveData.UnlockedRegions)}");
                     Debug.WriteLine($"Time loaded - Day {TimeService.Day}, Hour {TimeService.Hour} ({TimeService.GetTimeOfDay()})");
+                    Debug.WriteLine($"Environment loaded - Weather: {EnvironmentService.Weather}, Season: {EnvironmentService.CurrentSeason}");
                 }
                 else
                 {
@@ -192,6 +211,17 @@ namespace MiniRPG.Services
                             // Restore time from backup
                             TimeService.Day = backupSaveData.Day;
                             TimeService.Hour = backupSaveData.Hour;
+                            
+                            // Restore weather and season from backup if available
+                            if (!string.IsNullOrEmpty(backupSaveData.Weather) && Enum.TryParse<WeatherType>(backupSaveData.Weather, out var weather))
+                            {
+                                typeof(EnvironmentService).GetProperty(nameof(EnvironmentService.Weather))?.SetValue(null, weather);
+                            }
+                            
+                            if (!string.IsNullOrEmpty(backupSaveData.Season) && Enum.TryParse<Season>(backupSaveData.Season, out var season))
+                            {
+                                typeof(EnvironmentService).GetProperty(nameof(EnvironmentService.CurrentSeason))?.SetValue(null, season);
+                            }
                             
                             // Update lighting based on restored time
                             EnvironmentService.UpdateLighting();
