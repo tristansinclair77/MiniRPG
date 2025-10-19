@@ -1,0 +1,107 @@
+<UserControl x:Class="MiniRPG.WorldMapView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="500" d:DesignWidth="700">
+    <!-- TODO: Replace with pixel-art overworld map -->
+    <!-- TODO: Add animated travel routes and markers -->
+    <!-- TODO: Add background music and fog-of-war for locked regions -->
+    <Grid Margin="10" Background="#222233">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- World Map Header -->
+        <Border Grid.Row="0" 
+                Background="#292944" 
+                Padding="15" 
+                BorderBrush="#444466" 
+                BorderThickness="3" 
+                CornerRadius="8"
+                Margin="10,10,10,20">
+            <TextBlock Text="World Map" 
+                       FontSize="28" 
+                       FontWeight="Bold" 
+                       Foreground="#F9E97A" 
+                       HorizontalAlignment="Center" />
+        </Border>
+
+        <!-- Regions Display -->
+        <Border Grid.Row="1" 
+                Background="#292944" 
+                Padding="20" 
+                BorderBrush="#444466" 
+                BorderThickness="3" 
+                CornerRadius="8"
+                Margin="10">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <WrapPanel HorizontalAlignment="Center" 
+                           VerticalAlignment="Center"
+                           Orientation="Horizontal">
+                    <ItemsControl ItemsSource="{Binding Regions}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding DataContext.TravelCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"
+                                        Width="200"
+                                        Height="120"
+                                        Margin="10"
+                                        Padding="15"
+                                        Background="#444466"
+                                        BorderBrush="#666688"
+                                        BorderThickness="2">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Background" Value="#444466" />
+                                            <Setter Property="Cursor" Value="Hand" />
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="#555577" />
+                                                    <Setter Property="BorderBrush" Value="#F9E97A" />
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter Property="Background" Value="#666688" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                    <Button.ToolTip>
+                                        <ToolTip>
+                                            <TextBlock Text="{Binding Description}" 
+                                                       FontSize="12" 
+                                                       MaxWidth="250" 
+                                                       TextWrapping="Wrap" />
+                                        </ToolTip>
+                                    </Button.ToolTip>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" 
+                                                   FontSize="18" 
+                                                   FontWeight="Bold" 
+                                                   Foreground="#F9E97A" 
+                                                   TextWrapping="Wrap"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,0,0,10" />
+                                        <TextBlock Text="{Binding Description}" 
+                                                   FontSize="12" 
+                                                   Foreground="#CCCCCC" 
+                                                   TextWrapping="Wrap"
+                                                   HorizontalAlignment="Center"
+                                                   TextAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </WrapPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

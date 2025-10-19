@@ -1,16 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create WorldMapService.cs in the Services folder.
+Create WorldMapView.xaml.
 
-Requirements:
-• Static class WorldMapService
-• Static method GetRegions() returning List<Region>
-• Example regions:
-   - "Greenfield Town" (NPCs: Mira, Shopkeeper)
-   - "Slime Plains" (Enemies: Slime, Big Slime)
-   - "Goblin Woods" (Enemies: Goblin, Goblin Chief)
+XAML layout:
+• Border or canvas background labeled "World Map".
+• Grid or WrapPanel displaying available regions as Buttons.
+• Each button shows region name and short description tooltip.
+• When clicked → bound to TravelCommand.
 • Add TODO:
-   // Add fast travel, region unlocks, and area difficulty scaling later
+   <!-- TODO: Replace with pixel-art overworld map -->
+   <!-- TODO: Add animated travel routes and markers -->
+   <!-- TODO: Add background music and fog-of-war for locked regions -->
 
 ---
 

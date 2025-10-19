@@ -1,6 +1,48 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: WorldMapService Implementation
+## Latest Update: WorldMapView UI Implementation
+
+### New Features ✨
+
+#### WorldMapView XAML Implementation
+- **Added**: `WorldMapView.xaml` and `WorldMapView.xaml.cs` in the Views folder
+- **Features**:
+  - Card-style world map interface with themed background (#292944 with #444466 border)
+  - **World Map Header**: Bold, large text (28pt) in gold color (#F9E97A)
+  - **Region Display**: WrapPanel layout showing all available regions as interactive buttons
+  - **Region Buttons**:
+    - 200x120px cards with region name and description
+    - Hover effects with border color change to gold (#F9E97A)
+    - Tooltip displays full region description on hover
+    - Command binding to `TravelCommand` with region as parameter
+    - Responsive layout that wraps to fit available space
+  - Consistent color scheme matching other views in the game (#222233, #292944, #444466, #F9E97A)
+  - ScrollViewer for overflow when many regions are added
+- **Bindings Required**:
+  - `Regions` - ObservableCollection or List of Region objects
+  - `TravelCommand` - Command for handling region travel
+  - Each button binds to `Region.Name` and `Region.Description`
+- **UI Layout**:
+  - Grid with two rows: header and content area
+  - Border with padding and rounded corners for polished look
+  - WrapPanel inside ItemsControl for flexible region card layout
+  - Centered alignment for professional appearance
+- **Future Enhancements Planned**:
+  - Pixel-art overworld map background
+  - Animated travel routes between regions
+  - Region markers showing player position
+  - Background music per region
+  - Fog-of-war system for locked/undiscovered regions
+  - Region difficulty indicators
+  - Travel cost display
+- **Added TODO Comments**:
+  - `<!-- TODO: Replace with pixel-art overworld map -->`
+  - `<!-- TODO: Add animated travel routes and markers -->`
+  - `<!-- TODO: Add background music and fog-of-war for locked regions -->`
+
+---
+
+## Previous Update: WorldMapService Implementation
 
 ### New Features ✨
 
