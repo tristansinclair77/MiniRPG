@@ -1,5 +1,131 @@
 ﻿# MiniRPG - Change Log
 
+## Latest Update: Quest-Based Region Unlocking System
+
+### New Features ✨
+
+#### Goblin Problem Quest - Region Unlock Integration
+- **Enhanced**: `BattleViewModel.Attack()` method
+  - Added region unlocking logic when "Goblin Problem" quest is completed
+  - When player defeats required enemies and completes the quest:
+    - Automatically unlocks "Goblin Woods" region via `FastTravelService.UnlockRegion("Goblin Woods")`
+    - Adds message to both CombatLog and GlobalLog: "New region unlocked: Goblin Woods!"
+    - Player progress is automatically saved after battle victory
+  - Quest completion triggers immediate region availability in fast travel system
+  - Added TODO comment: `// TODO: Tie region unlocking to cutscenes and story milestones later`
+
+#### DialogueViewModel Quest Acceptance Enhancement
+- **Enhanced**: `AcceptQuest()` method in DialogueViewModel
+  - Added special handling documentation for "Goblin Problem" quest
+  - Comment indicates that completing this quest will unlock "Goblin Woods" region
+  - Preserves existing quest acceptance flow while documenting future unlock behavior
+  - Added TODO comment: `// TODO: Tie region unlocking to cutscenes and story milestones later`
+  - Maintains save functionality after quest acceptance
+
+#### Complete Quest-to-Region Unlock Flow
+1. **Quest Acceptance**:
+   - Player talks to NPC offering "Goblin Problem" quest
+   - Accepts quest through DialogueViewModel
+   - Quest added to Player.ActiveQuests
+   - Player progress saved automatically
+2. **Quest Progress**:
+   - Player battles enemies in BattleViewModel
+   - Quest tracks kills based on enemy type matching quest title
+   - `quest.CurrentKills` increments with each relevant enemy defeated
+   - `quest.CheckProgress()` evaluates completion status
+3. **Quest Completion**:
+   - When `quest.IsCompleted` becomes true, quest moves to completed list
+   - Rewards (gold, experience, items) are awarded via `Player.CompleteQuest()`
+   - Special check for "Goblin Problem" quest title
+4. **Region Unlock**:
+   - If completed quest title is "Goblin Problem":
+     - `FastTravelService.UnlockRegion("Goblin Woods")` is called
+     - "New region unlocked: Goblin Woods!" appears in both logs
+     - Region immediately becomes available in Fast Travel system
+5. **Player Feedback**:
+   - Player sees quest completion message in combat log
+   - Region unlock notification appears immediately after
+   - "Goblin Woods" now appears in Fast Travel ListBox and World Map
+   - Auto-save ensures progress is persisted
+
+#### Integration Benefits
+- **Quest-Driven Progression**: Regions unlock through meaningful gameplay achievements
+- **Automatic Discovery**: No manual steps required - completion triggers unlock
+- **Immediate Access**: Unlocked region available for fast travel right away
+- **Clear Feedback**: Player informed through log messages when region unlocks
+- **Progress Preservation**: Auto-save ensures unlock persists between sessions
+- **Extensible System**: Easy to add more quest-to-region unlock mappings
+- **Story Integration**: Foundation for tying region access to narrative progression
+
+#### User Experience Improvements
+- **Rewarding Gameplay**: Completing quests feels impactful with new region access
+- **Exploration Incentive**: Players motivated to complete quests to unlock new areas
+- **Clear Progression**: Visual and text feedback confirms new content availability
+- **No Backtracking**: Region unlocks immediately without returning to quest giver
+- **Seamless Integration**: Works with existing fast travel and world map systems
+- **Achievement Feel**: Region unlock message provides sense of accomplishment
+
+#### Technical Details
+- **BattleViewModel.cs Changes**:
+  - Modified `Attack()` method in quest completion loop
+  - Added conditional check: `if (quest.Title == "Goblin Problem")`
+  - Calls `FastTravelService.UnlockRegion("Goblin Woods")` on match
+  - Adds unlock message to both CombatLog and GlobalLog
+  - Added TODO comment for future cutscene integration
+  - Maintains existing auto-save after battle victory
+- **DialogueViewModel.cs Changes**:
+  - Enhanced `AcceptQuest()` method with documentation comments
+  - Added special handling note for "Goblin Problem" quest
+  - Documents that completion will unlock "Goblin Woods"
+  - Added TODO comment matching BattleViewModel
+  - No functional changes to quest acceptance flow
+- **Dependencies**:
+  - FastTravelService for region unlock functionality
+  - SaveLoadService for progress persistence (already in place)
+  - Player.CompleteQuest() method for quest completion rewards
+  - Quest.CheckProgress() for completion detection
+
+#### Future Enhancements
+- **Cutscene Integration**:
+  - Play cutscene when region unlocks (as noted in TODO)
+  - Show region preview or teaser when unlocked
+  - NPC congratulatory dialogue after quest completion
+  - Animated transition showing new region on world map
+- **Story Milestone System**:
+  - Track major story events tied to region unlocks
+  - Multiple quests required to unlock high-level regions
+  - Chapter system with region unlock progression
+  - Quest chains that unlock region access progressively
+- **Additional Quest-Region Mappings**:
+  - Map other quests to unlock different regions
+  - Create quest data structure with unlock metadata
+  - Support multiple regions unlocked per quest
+  - Allow conditional unlocks based on player level or story state
+- **Visual Feedback Enhancements**:
+  - Pop-up notification for region unlock (not just log message)
+  - World map animation highlighting newly unlocked region
+  - Sound effect for region unlock moment
+  - Achievement badge or icon for unlocking regions
+- **Region Discovery System**:
+  - Separate "discovered" from "unlocked" states
+  - Show grayed-out regions on map before unlock
+  - Hint system for how to unlock specific regions
+  - Quest log shows region unlock requirements
+
+#### Testing Scenarios
+- Accept "Goblin Problem" quest from NPC
+- Battle and defeat goblins to complete quest
+- Verify "New region unlocked: Goblin Woods!" appears in both logs
+- Confirm "Goblin Woods" appears in Fast Travel ListBox
+- Verify "Goblin Woods" visible on World Map
+- Test fast traveling to "Goblin Woods"
+- Verify region unlock persists after save/load
+- Test quest completion without region unlock (other quests)
+- Verify auto-save after quest completion
+- Confirm unlock message appears only once per quest
+
+---
+
 ## Latest Update: Fast Travel Command Enhancement
 
 ### New Features ✨

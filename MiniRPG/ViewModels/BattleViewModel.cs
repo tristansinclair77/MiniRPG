@@ -115,6 +115,16 @@ namespace MiniRPG.ViewModels
                     var questCompleteMsg = $"Quest complete: {quest.Title}!";
                     CombatLog.Add(questCompleteMsg);
                     _globalLog.Add(questCompleteMsg);
+                    
+                    // Check if "Goblin Problem" quest was completed
+                    if (quest.Title == "Goblin Problem")
+                    {
+                        FastTravelService.UnlockRegion("Goblin Woods");
+                        var unlockMsg = "New region unlocked: Goblin Woods!";
+                        CombatLog.Add(unlockMsg);
+                        _globalLog.Add(unlockMsg);
+                    }
+                    // TODO: Tie region unlocking to cutscenes and story milestones later
                 }
 
                 // Add quest tracking popup and sound effect

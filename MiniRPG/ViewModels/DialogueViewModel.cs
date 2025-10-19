@@ -156,6 +156,11 @@ namespace MiniRPG.ViewModels
                 {
                     Player.AddQuest(CurrentNPC.OfferedQuest);
                     _globalLog.Add($"Quest accepted: {CurrentNPC.OfferedQuest.Title}");
+                    
+                    // Special handling for "Goblin Problem" quest
+                    // When completed, this quest will unlock the "Goblin Woods" region
+                    // TODO: Tie region unlocking to cutscenes and story milestones later
+                    
                     SaveLoadService.SavePlayer(Player);
                     // Add voiced confirmation and quest acceptance animation later
                     Debug.WriteLine($"You accepted {CurrentNPC.OfferedQuest.Title} from {CurrentNPC.Name}.");

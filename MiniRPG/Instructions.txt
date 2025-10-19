@@ -1,15 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify MapViewModel.cs.
+Modify DialogueViewModel.cs.
 
 Requirements:
-• Add RelayCommand named OpenFastTravelCommand.
-• When executed, raise event OnOpenFastTravel.
-• In MainViewModel, subscribe to this event.
-• When triggered, set CurrentViewModel = new WorldMapViewModel(CurrentPlayer)
-  filtered to show only unlocked regions.
+• When AcceptQuestCommand executes:
+   - If CurrentNPC.OfferedQuest.Title == "Goblin Problem":
+       * After Player completes the quest, unlock new region:
+         FastTravelService.UnlockRegion("Goblin Woods");
+       * Append to GlobalLog: "New region unlocked: Goblin Woods!"
+• Save player progress afterward.
 • Add TODO:
-   // Replace temporary menu with town gate NPC or airship terminal UI
+   // Tie region unlocking to cutscenes and story milestones later
 
 ---
 
