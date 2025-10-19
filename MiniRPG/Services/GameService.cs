@@ -22,6 +22,35 @@ namespace MiniRPG.Services
         }
 
         /// <summary>
+        /// Returns a random enemy name based on the region.
+        /// </summary>
+        /// <param name="regionName">The name of the region to get enemies from</param>
+        /// <returns>A random enemy name appropriate for the region</returns>
+        public static string GetRandomEnemy(string regionName)
+        {
+            List<string> regionalEnemies;
+
+            if (regionName == "Slime Plains")
+            {
+                regionalEnemies = new List<string> { "Slime", "Big Slime" };
+            }
+            else if (regionName == "Goblin Woods")
+            {
+                regionalEnemies = new List<string> { "Goblin", "Goblin Chief" };
+            }
+            else
+            {
+                // Fallback to default enemy list for unknown regions
+                regionalEnemies = _enemies;
+            }
+
+            int idx = _random.Next(regionalEnemies.Count);
+            return regionalEnemies[idx];
+            
+            // TODO: Add regional difficulty scaling and boss encounters
+        }
+
+        /// <summary>
         /// Returns a random damage value (1-10).
         /// </summary>
         public static int CalculateDamage()

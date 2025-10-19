@@ -70,7 +70,10 @@ namespace MiniRPG.ViewModels
             _globalLog = globalLog;
             Player = player;
             BattleLocation = location;
-            CurrentEnemy = GameService.GetRandomEnemy();
+            
+            // Use regional enemy selection based on location
+            CurrentEnemy = GameService.GetRandomEnemy(location);
+            
             EnemyHP = 20;
             IsBattleOver = false;
             BattleResult = string.Empty;

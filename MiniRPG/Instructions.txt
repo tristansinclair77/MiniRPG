@@ -1,14 +1,14 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit MapView.xaml.
+Update GameService.cs.
 
 Requirements:
-• Add a TextBlock at the top showing:
-   "Current Region: {Binding RegionName}"
-• Add subtle border or background highlight.
+• Modify GetRandomEnemy(regionName) to select enemies by region:
+   - If regionName == "Slime Plains" → Slime, Big Slime
+   - If regionName == "Goblin Woods" → Goblin, Goblin Chief
+• Update BattleViewModel to pass current region when requesting enemy.
 • Add TODO:
-   <!-- TODO: Replace with map banner UI -->
-   <!-- TODO: Add fast travel list -->
+   // Add regional difficulty scaling and boss encounters
 
 ---
 

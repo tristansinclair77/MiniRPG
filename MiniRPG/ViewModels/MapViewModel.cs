@@ -186,7 +186,8 @@ namespace MiniRPG.ViewModels
             var msg = $"Starting battle at [{SelectedLocation}]";
             Debug.WriteLine(msg);
             _globalLog.Add(msg);
-            OnStartBattle?.Invoke(SelectedLocation ?? "Unknown");
+            // Pass the region name to the battle system for region-aware enemy selection
+            OnStartBattle?.Invoke(RegionName ?? "Unknown");
             // TODO: In future, connect to BattleViewModel and load enemy data
         }
 

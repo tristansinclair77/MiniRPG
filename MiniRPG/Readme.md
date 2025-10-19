@@ -1,6 +1,74 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: MapView Region Banner UI Enhancement
+## Latest Update: Regional Enemy Selection System
+
+### New Features ✨
+
+#### GameService Regional Enemy Selection
+- **Added**: `GetRandomEnemy(string regionName)` method in GameService.cs
+  - Accepts region name parameter to select appropriate enemies for that region
+  - **Slime Plains Region**: Spawns "Slime" or "Big Slime" enemies
+  - **Goblin Woods Region**: Spawns "Goblin" or "Goblin Chief" enemies
+  - **Fallback Behavior**: Uses default enemy list for unknown/undefined regions
+  - Random selection from region-specific enemy pools for variety
+- **Maintains Compatibility**: Original parameterless `GetRandomEnemy()` method unchanged
+- **Added TODO Comment**:
+  - `// TODO: Add regional difficulty scaling and boss encounters`
+
+#### BattleViewModel Region Integration
+- **Updated**: BattleViewModel constructor to use region-aware enemy selection
+  - Changed from: `CurrentEnemy = GameService.GetRandomEnemy();`
+  - Changed to: `CurrentEnemy = GameService.GetRandomEnemy(location);`
+  - Constructor parameter `location` now represents region name passed from MapViewModel
+  - BattleLocation property stores the region name for display and logic
+
+#### MapViewModel Battle Region Context
+- **Updated**: `StartBattle()` method in MapViewModel
+  - Now passes `RegionName` to battle system instead of selected location
+  - Changed from: `OnStartBattle?.Invoke(SelectedLocation ?? "Unknown");`
+  - Changed to: `OnStartBattle?.Invoke(RegionName ?? "Unknown");`
+  - Ensures battles spawn region-appropriate enemies
+
+#### Complete Enemy Spawning Flow
+1. Player selects a region from World Map (e.g., "Slime Plains")
+2. MapViewModel is created with region-specific content
+3. Player clicks "Fight!" button to start battle
+4. MapViewModel passes `RegionName` through `OnStartBattle` event
+5. MainViewModel creates BattleViewModel with region name as location parameter
+6. BattleViewModel calls `GameService.GetRandomEnemy(regionName)`
+7. GameService returns region-appropriate enemy ("Slime" or "Big Slime" for Slime Plains)
+8. Battle begins with correct regional enemy
+
+#### Integration Benefits
+- **Regional Immersion**: Enemies match the environment and region theme
+- **Logical Gameplay**: Players encounter slimes in Slime Plains, goblins in Goblin Woods
+- **Extensible Design**: Easy to add new regions with custom enemy pools
+- **Consistent Architecture**: Follows existing event-driven pattern
+- **Player Expectations**: Players know what enemies to expect in each region
+
+#### Region-Specific Enemy Pools
+- **Slime Plains**:
+  - Slime (common, low-level)
+  - Big Slime (slightly stronger variant)
+- **Goblin Woods**:
+  - Goblin (common, mid-level)
+  - Goblin Chief (stronger variant, potential mini-boss)
+
+#### Future Enhancements
+- Add regional difficulty scaling (enemy HP, attack, defense vary by region)
+- Implement boss encounters specific to each region
+- Add rare/legendary enemy spawns with low probability
+- Create enemy variants with elemental types per region
+- Add level-based enemy scaling within regions
+- Implement day/night enemy variations
+- Add weather-based enemy spawn modifiers
+- Create region unlock requirements based on defeating region boss
+- Add enemy bestiary tracking per region
+- Implement combo chains and enemy group formations
+
+---
+
+## Previous Update: MapView Region Banner UI Enhancement
 
 ### New Features ✨
 
