@@ -1,6 +1,54 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Complete Weather and Season System
+## Latest Update: Skill System
+
+### Skill.cs (New File)
+- **Created `Skill` class in Models folder**:
+  - Inherits from `BaseViewModel` for property change notifications
+  - Full support for data binding in MVVM architecture
+- **Added core skill properties**:
+  - `Name`: The skill's display name
+  - `Description`: Detailed description of what the skill does
+  - `LevelRequirement`: Minimum player level required to unlock
+  - `CostSP`: Skill Points required to unlock the skill
+  - `Power`: Damage or bonus magnitude of the skill effect
+  - `IsPassive`: Boolean indicating if skill is passive or active
+  - `IsUnlocked`: Boolean tracking if player has unlocked this skill
+  - `EffectType`: String defining skill category ("Attack", "Defense", "Heal", "Buff")
+- **Added `ApplyEffect(Player player, string? target)` method**:
+  - **Passive skill behavior**: Permanently modifies player stats
+    - "Attack" effect: Increases player's Attack stat by Power
+    - "Defense" effect: Increases player's Defense stat by Power
+    - "Buff" effect: Increases both Attack and Defense by Power/2
+    - Returns 0 for passive skills
+  - **Active skill behavior**: Returns damage or healing value
+    - "Attack" effect: Returns Power + player.Attack as damage
+    - "Heal" effect: Restores HP (capped at MaxHP) and returns heal amount
+    - "Defense" effect: Temporary defense boost (returns 0)
+    - Default: Returns Power value
+  - Accepts nullable enemy target parameter for active skills
+- **Added TODO comments**:
+  - // TODO: Add skill animations and icons later
+  - // TODO: Add skill cooldown timers later
+
+### Technical Details
+- Skill system foundation laid for future skill tree and progression mechanics
+- All properties implement property change notifications for UI binding
+- Passive skills permanently enhance player stats (for equipped/learned skills)
+- Active skills can deal damage, heal, or provide temporary buffs
+- Enemy target parameter accepts null for self-targeted or passive skills
+- Effect system is extensible - new effect types can be added easily
+- Foundation laid for:
+  - Skill tree UI and unlock progression
+  - Skill Point economy and leveling rewards
+  - Skill animations and visual effects
+  - Cooldown system for active skills
+  - Skill icons and tooltips
+  - Combo system and skill synergies
+
+---
+
+## Previous Update: Complete Weather and Season System
 
 ### EnvironmentService.cs Enhancements
 - **Added `Season` enum**:
