@@ -1,15 +1,15 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Update WorldMapViewModel.cs.
+Edit MapView.xaml.
 
 Requirements:
-• Filter Regions list so only unlocked regions are visible:
-   - Regions = new ObservableCollection(WorldMapService.GetRegions()
-       .Where(r => FastTravelService.IsUnlocked(r.Name)));
-• If no regions unlocked yet, automatically unlock “Greenfield Town”.
-• After player visits a new region, call FastTravelService.UnlockRegion(regionName).
+• Add Button labeled “Fast Travel”.
+• Bind Command to OpenFastTravelCommand (to be created).
+• Add Expander or popup ListBox showing UnlockedRegions from FastTravelService.
+• Selecting a region triggers TravelCommand in WorldMapViewModel.
 • Add TODO:
-   // Add unlocking through quests or story events
+   <!-- TODO: Replace popup with pixel map fast travel overlay -->
+   <!-- TODO: Add travel cost confirmation dialogue -->
 
 ---
 

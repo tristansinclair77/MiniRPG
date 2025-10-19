@@ -203,6 +203,26 @@ namespace MiniRPG.ViewModels
                 AddLog("You open the world map.");
             };
             
+            // Subscribe to fast travel events
+            mapVM.OnFastTravel += regionName =>
+            {
+                var regions = WorldMapService.GetRegions();
+                var targetRegion = regions.FirstOrDefault(r => r.Name == regionName);
+                
+                if (targetRegion != null && FastTravelService.IsUnlocked(regionName))
+                {
+                    _currentRegion = targetRegion;
+                    CurrentPlayer.LastRegionName = targetRegion.Name;
+                    SaveLoadService.SavePlayer(CurrentPlayer);
+                    AddLog($"Fast traveled to {targetRegion.Name}!");
+                    ShowMap();
+                }
+                else
+                {
+                    AddLog("Cannot fast travel to that region.");
+                }
+            };
+            
             return mapVM;
         }
 

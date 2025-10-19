@@ -68,6 +68,20 @@ namespace MiniRPG.ViewModels
             set { _regionQuests = value; OnPropertyChanged(); }
         }
 
+        private string? _selectedFastTravelRegion;
+        public string? SelectedFastTravelRegion
+        {
+            get => _selectedFastTravelRegion;
+            set
+            {
+                _selectedFastTravelRegion = value;
+                OnPropertyChanged();
+                (FastTravelCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            }
+        }
+
+        public ObservableCollection<string> UnlockedRegions => FastTravelService.UnlockedRegions;
+
         public ICommand StartBattleCommand { get; }
         public ICommand RestCommand { get; }
         public ICommand SaveCommand { get; }
@@ -77,6 +91,8 @@ namespace MiniRPG.ViewModels
         public ICommand OpenQuestBoardCommand { get; }
         public ICommand TalkToNPCCommand { get; }
         public ICommand OpenWorldMapCommand { get; }
+        public ICommand OpenFastTravelCommand { get; }
+        public ICommand FastTravelCommand { get; }
         private ObservableCollection<string> _globalLog;
 
         private bool _isSaveConfirmed;
@@ -102,6 +118,9 @@ namespace MiniRPG.ViewModels
         
         // Event/callback for opening world map
         public event Action? OnOpenWorldMap;
+
+        // Event/callback for fast travel
+        public event Action<string>? OnFastTravel;
 
         /// <summary>
         /// Constructor for MapViewModel (legacy - uses default data).
@@ -133,6 +152,8 @@ namespace MiniRPG.ViewModels
             OpenQuestBoardCommand = new RelayCommand(_ => OpenQuestBoard());
             TalkToNPCCommand = new RelayCommand(param => TalkToNPC(param as NPC));
             OpenWorldMapCommand = new RelayCommand(_ => OpenWorldMap());
+            OpenFastTravelCommand = new RelayCommand(_ => OpenFastTravel());
+            FastTravelCommand = new RelayCommand(param => FastTravel(param as string), _ => !string.IsNullOrEmpty(SelectedFastTravelRegion));
         }
 
         /// <summary>
@@ -176,6 +197,8 @@ namespace MiniRPG.ViewModels
             OpenQuestBoardCommand = new RelayCommand(_ => OpenQuestBoard());
             TalkToNPCCommand = new RelayCommand(param => TalkToNPC(param as NPC));
             OpenWorldMapCommand = new RelayCommand(_ => OpenWorldMap());
+            OpenFastTravelCommand = new RelayCommand(_ => OpenFastTravel());
+            FastTravelCommand = new RelayCommand(param => FastTravel(param as string), _ => !string.IsNullOrEmpty(SelectedFastTravelRegion));
             
             // TODO: Add visual background per region
             // TODO: Add weather or time-of-day changes
@@ -212,6 +235,22 @@ namespace MiniRPG.ViewModels
         private void OpenWorldMap()
         {
             OnOpenWorldMap?.Invoke();
+        }
+
+        private void OpenFastTravel()
+        {
+            _globalLog?.Add("Opening fast travel menu...");
+            // The Expander will be toggled by the user in the UI
+            // This command can be used if we want a popup instead
+        }
+
+        private void FastTravel(string? regionName)
+        {
+            if (!string.IsNullOrEmpty(regionName))
+            {
+                _globalLog?.Add($"Fast traveling to {regionName}...");
+                OnFastTravel?.Invoke(regionName);
+            }
         }
 
         private async void Rest()
