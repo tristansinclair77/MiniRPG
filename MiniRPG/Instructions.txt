@@ -1,19 +1,13 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify MapViewModel.cs and MainViewModel.cs.
+Edit MapView.xaml.
 
-MapViewModel:
-• Add RelayCommand named OpenWorldMapCommand.
-• When executed, trigger event OnOpenWorldMap.
-
-MainViewModel:
-• Subscribe to OnOpenWorldMap.
-• When triggered:
-   - Set CurrentViewModel = new WorldMapViewModel(CurrentPlayer)
-• Subscribe to WorldMapViewModel.OnRegionSelected → load selected Region into MapViewModel.
+Requirements:
+• Add a Button labeled "World Map" near “Quest Board” and “Shop”.
+• Bind Command to OpenWorldMapCommand.
 • Add TODO:
-   // Add animated fade-out/fade-in transitions between regions
-   // Add music change and environment effect system
+   <!-- TODO: Replace with clickable travel icon -->
+   <!-- TODO: Add animated map transitions -->
 
 ---
 
