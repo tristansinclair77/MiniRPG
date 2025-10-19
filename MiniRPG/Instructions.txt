@@ -1,18 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create EnvironmentService.cs in the Services folder.
+Enhance MapView.xaml.
 
 Requirements:
-• Static class EnvironmentService
-• Static property string CurrentLighting = "Daylight"
-• Method UpdateLighting():
-   - switch(TimeService.GetTimeOfDay()):
-       * "Morning" or "Afternoon" → "Daylight"
-       * "Evening" → "Twilight"
-       * "Night" → "Night"
-• Trigger event OnLightingChanged whenever it updates.
+• Add top-level Grid.Background bound to EnvironmentColor property in MapViewModel.
+• MapViewModel listens to EnvironmentService.OnLightingChanged:
+   - "Daylight" → LightSkyBlue
+   - "Twilight" → OrangeRed
+   - "Night" → DarkSlateBlue
+• Add smooth color transitions (optional via Storyboard).
 • Add TODO:
-   // Add regional weather, fog, and rain states later
+   <!-- TODO: Replace with parallax pixel background by time of day -->
 
 ---
 

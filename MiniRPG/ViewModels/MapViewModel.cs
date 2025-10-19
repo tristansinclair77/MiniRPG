@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Media;
 using MiniRPG.Models;
 using MiniRPG.Services;
 
@@ -138,6 +139,13 @@ namespace MiniRPG.ViewModels
             set { _isSaveConfirmed = value; OnPropertyChanged(); }
         }
 
+        private Brush _environmentColor;
+        public Brush EnvironmentColor
+        {
+            get => _environmentColor;
+            set { _environmentColor = value; OnPropertyChanged(); }
+        }
+
         public Player Player { get; }
 
         // Event/callback for starting battle
@@ -189,6 +197,12 @@ namespace MiniRPG.ViewModels
             
             _lastHour = TimeService.Hour;
             
+            // Initialize environment color based on current lighting
+            UpdateEnvironmentColor(EnvironmentService.CurrentLighting);
+            
+            // Subscribe to lighting changes
+            EnvironmentService.OnLightingChanged += OnLightingChanged;
+            
             StartBattleCommand = new RelayCommand(_ => StartBattle(), _ => !string.IsNullOrEmpty(this.SelectedLocation));
             RestCommand = new RelayCommand(_ => Rest());
             SaveCommand = new RelayCommand(async _ => await SaveGame());
@@ -224,6 +238,12 @@ namespace MiniRPG.ViewModels
             
             _lastHour = TimeService.Hour;
             
+            // Initialize environment color based on current lighting
+            UpdateEnvironmentColor(EnvironmentService.CurrentLighting);
+            
+            // Subscribe to lighting changes
+            EnvironmentService.OnLightingChanged += OnLightingChanged;
+            
             // Use region enemies as battle locations, fallback to default if none
             if (region.AvailableEnemies != null && region.AvailableEnemies.Any())
             {
@@ -256,6 +276,36 @@ namespace MiniRPG.ViewModels
             // TODO: Add weather or time-of-day changes
             // TODO: Add time-based events and NPC schedules
             // TODO: Add NPC pathfinding or animated map icons later
+        }
+
+        /// <summary>
+        /// Handles lighting changes from EnvironmentService and updates the background color.
+        /// </summary>
+        private void OnLightingChanged(object? sender, string newLighting)
+        {
+            UpdateEnvironmentColor(newLighting);
+        }
+
+        /// <summary>
+        /// Updates the EnvironmentColor based on the current lighting state.
+        /// </summary>
+        private void UpdateEnvironmentColor(string lighting)
+        {
+            switch (lighting)
+            {
+                case "Daylight":
+                    EnvironmentColor = new SolidColorBrush(Colors.LightSkyBlue);
+                    break;
+                case "Twilight":
+                    EnvironmentColor = new SolidColorBrush(Colors.OrangeRed);
+                    break;
+                case "Night":
+                    EnvironmentColor = new SolidColorBrush(Colors.DarkSlateBlue);
+                    break;
+                default:
+                    EnvironmentColor = new SolidColorBrush(Colors.LightSkyBlue);
+                    break;
+            }
         }
 
         /// <summary>
@@ -382,6 +432,7 @@ namespace MiniRPG.ViewModels
             
             // Advance time by 1 hour for battle
             TimeService.AdvanceHours(1);
+            EnvironmentService.UpdateLighting();
             RefreshTimeDisplay();
             
             // Pass the region name to the battle system for region-aware enemy selection
@@ -425,6 +476,7 @@ namespace MiniRPG.ViewModels
             {
                 // Advance time by 2 hours for travel
                 TimeService.AdvanceHours(2);
+                EnvironmentService.UpdateLighting();
                 RefreshTimeDisplay();
                 
                 _globalLog?.Add($"Fast traveling to {regionName}... It is now Day {CurrentDay}, {TimeOfDay}.");
@@ -444,6 +496,7 @@ namespace MiniRPG.ViewModels
         {
             // Advance time by 8 hours for resting
             TimeService.AdvanceHours(8);
+            EnvironmentService.UpdateLighting();
             RefreshTimeDisplay();
             
             Player.HP = Player.MaxHP;

@@ -30,7 +30,8 @@
     <!-- TODO: Add calendar UI -->
     <!-- TODO: Add festivals or timed events -->
     <!-- TODO: Add NPC schedules tied to time of day -->
-    <Grid Margin="10">
+    <!-- TODO: Replace with parallax pixel background by time of day -->
+    <Grid Margin="10" Background="{Binding EnvironmentColor}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- Region Name row -->
             <RowDefinition Height="Auto" /> <!-- Save message row -->
