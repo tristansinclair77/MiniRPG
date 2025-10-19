@@ -1,5 +1,169 @@
 ﻿# MiniRPG - Change Log
 
+## Latest Update: World Map Travel Cost System
+
+### New Features ✨
+
+#### WorldMapViewModel Travel Cost Implementation
+- **Enhanced**: `Travel()` method in WorldMapViewModel
+  - Added travel cost validation before allowing travel
+  - Fixed cost of 10 gold per travel
+  - **Cost Check Logic**:
+    - Defines `int travelCost = 10;`
+    - Checks if `Player.Gold >= travelCost`
+    - If sufficient gold:
+      - Calls `Player.SpendGold(travelCost)` to deduct gold
+      - Logs: `"You spend {travelCost} gold to travel."`
+      - Proceeds with normal travel flow
+    - If insufficient gold:
+      - Logs: `"Not enough gold to travel there."`
+      - Returns early to cancel travel (no region change occurs)
+  - Added TODO comment: `// TODO: Add dynamic costs based on distance and vehicle type`
+  - Foundation for future dynamic pricing system
+
+#### Complete Travel Cost Flow
+1. **Player Initiates Travel**:
+   - Player clicks region on World Map
+   - WorldMapViewModel `TravelCommand` triggered
+   - `Travel()` method called with selected region
+2. **Gold Validation**:
+   - System checks player's gold balance
+   - Compares against travel cost (10 gold)
+   - Decision point: Can player afford travel?
+3. **Sufficient Gold Path**:
+   - `Player.SpendGold(10)` deducts gold
+   - Player.Gold property updates (triggers UI refresh)
+   - Log message confirms gold spent
+   - Travel proceeds to region
+   - Random encounter check occurs
+   - Region-specific content loads
+4. **Insufficient Gold Path**:
+   - Log message warns player of insufficient funds
+   - `return` statement cancels travel
+   - Player remains in current region
+   - No gold deducted
+   - No region unlock occurs
+   - No random encounter triggered
+
+#### Integration Benefits
+- **Resource Management**: Adds strategic element to travel decisions
+- **Gold Sink**: Provides meaningful use for accumulated gold
+- **Risk/Reward Balance**: Players must decide when travel is worth the cost
+- **Prevents Spam**: Cost discourages frivolous back-and-forth travel
+- **Early Game Challenge**: 10 gold is significant at low levels
+- **Progression Feel**: High-level players can afford travel easily
+- **Future Extensibility**: Foundation for variable pricing system
+
+#### User Experience Improvements
+- **Clear Feedback**: Log messages inform player of cost and payment
+- **Transparent Costs**: 10 gold is consistent and predictable
+- **No Hidden Fees**: Cost applied before travel (not after)
+- **Fair Warning**: Insufficient gold message prevents confusion
+- **Economic Strategy**: Adds depth to resource management gameplay
+- **Safe Cancellation**: Insufficient gold gracefully cancels travel
+- **UI Synchronization**: Gold counter updates immediately after payment
+
+#### Technical Details
+- **WorldMapViewModel.cs Changes**:
+  - Modified `Travel(Region? region)` method
+  - Added travel cost validation at start of travel logic
+  - Declared `int travelCost = 10;`
+  - Added conditional check: `if (Player.Gold >= travelCost)`
+  - Success path: `Player.SpendGold(travelCost)` + log message
+  - Failure path: Log warning + `return;` to cancel
+  - Added TODO comment for dynamic cost system
+  - Maintains existing random encounter and region unlock logic
+- **Player.cs Integration**:
+  - Uses existing `SpendGold(int amount)` method
+  - Returns bool indicating success/failure (not currently used)
+  - Gold property bound to UI with INotifyPropertyChanged
+  - UI automatically updates when gold changes
+- **Cost Structure**:
+  - Fixed cost: 10 gold per travel
+  - No distance calculation (yet)
+  - No vehicle type variation (yet)
+  - Same cost for all regions
+  - Cost paid regardless of random encounter outcome
+- **Dependencies**:
+  - Player.Gold property for balance checking
+  - Player.SpendGold() method for gold deduction
+  - System.Diagnostics.Debug for logging
+  - Existing travel flow (region unlock, encounter checks)
+
+#### Future Enhancements - Dynamic Cost System
+- **Distance-Based Pricing**:
+  - Calculate distance between current region and destination
+  - Base cost formula: `baseCost + (distance * distanceMultiplier)`
+  - Longer trips cost more gold
+  - Short trips between neighboring regions cheaper
+  - Region coordinate system for distance calculation
+- **Vehicle Type Variations**:
+  - Walking: Cheap but slow, high encounter rate
+  - Carriage: Medium cost, medium speed, medium encounter rate
+  - Airship: Expensive but fast, low encounter rate
+  - Portal: Very expensive, instant travel, no encounters
+  - Unlock better vehicles through quests or gold investment
+- **Dynamic Cost Factors**:
+  - Weather conditions affect cost (storms increase prices)
+  - Time of day (night travel costs more)
+  - Region danger level (high-level regions charge premium)
+  - Reputation discounts (friendly NPCs offer deals)
+  - Season-based pricing (winter travel more expensive)
+- **Economic Simulation**:
+  - Regional economy affects travel costs
+  - War or conflict increases prices
+  - Trade routes make certain paths cheaper
+  - Special events (festivals) reduce costs temporarily
+- **Player Progression Benefits**:
+  - Travel pass items (unlimited travel for duration)
+  - VIP membership (50% discount on all travel)
+  - Fast travel skill tree (reduce costs with skill points)
+  - Quest rewards include free travel vouchers
+- **Cost Preview System**:
+  - Show cost on region button before clicking
+  - Tooltip displays cost breakdown (base + modifiers)
+  - Color-coded regions (green = affordable, red = too expensive)
+  - Cost history tracking for budgeting
+- **Alternative Payment Methods**:
+  - Use items instead of gold (rations, fuel)
+  - Pay with reputation or faction points
+  - Barter system with NPC transporters
+  - Work-for-passage minigames
+
+#### Gameplay Impact
+- **Early Game (Levels 1-5)**:
+  - Starting gold: 100
+  - Travel cost: 10 (10% of starting gold)
+  - Significant decision: Travel vs. buying equipment
+  - Forces players to earn gold before exploring
+  - Quest rewards more valuable
+- **Mid Game (Levels 6-15)**:
+  - Gold becomes more abundant from battles
+  - 10 gold less impactful but still noticeable
+  - Players can afford multiple trips per session
+  - Encourages strategic travel routing
+- **Late Game (Levels 16+)**:
+  - 10 gold trivial amount
+  - Players travel freely without concern
+  - Sets stage for higher-cost premium travel options
+  - Reinforces power progression feel
+
+#### Testing Scenarios
+- Verify player with 100 gold can travel (90 gold remaining)
+- Test player with 9 gold cannot travel (log warning appears)
+- Confirm player with exactly 10 gold can travel (0 gold remaining)
+- Verify gold counter updates immediately after travel
+- Test multiple consecutive travels (gold decreases each time)
+- Confirm canceled travel doesn't unlock region
+- Verify canceled travel doesn't trigger random encounter
+- Test travel cost doesn't prevent region unlock on successful travel
+- Confirm save file persists gold changes after travel
+- Verify log messages display correctly in both success/failure cases
+- Test UI responsiveness when gold is insufficient
+- Confirm travel cost applies before encounter roll
+
+---
+
 ## Latest Update: Save/Load System - Unlocked Regions Persistence
 
 ### New Features ✨

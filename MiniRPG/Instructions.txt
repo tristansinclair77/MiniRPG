@@ -1,15 +1,18 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Update SaveLoadService.cs.
+Edit WorldMapViewModel.cs.
 
 Requirements:
-• Extend save file format to include a list of unlocked regions.
-• On SavePlayer:
-   - Serialize FastTravelService.UnlockedRegions.
-• On LoadPlayer:
-   - Rehydrate FastTravelService.UnlockedRegions from JSON.
+• Before traveling:
+   - int travelCost = 10;
+   - If Player.Gold >= travelCost:
+       * Player.SpendGold(travelCost);
+       * Log $"You spend {travelCost} gold to travel.";
+   - Else:
+       * Log "Not enough gold to travel there."
+       * Cancel TravelCommand.
 • Add TODO:
-   // Add multi-save-slot world-state synchronization later
+   // Add dynamic costs based on distance and vehicle type
 
 ---
 

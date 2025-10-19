@@ -103,6 +103,20 @@ namespace MiniRPG.ViewModels
         {
             if (region != null)
             {
+                // Check travel cost before traveling
+                int travelCost = 10;
+                if (Player.Gold >= travelCost)
+                {
+                    Player.SpendGold(travelCost);
+                    Debug.WriteLine($"You spend {travelCost} gold to travel.");
+                    // TODO: Add dynamic costs based on distance and vehicle type
+                }
+                else
+                {
+                    Debug.WriteLine("Not enough gold to travel there.");
+                    return; // Cancel travel
+                }
+
                 SelectedRegion = region;
                 Debug.WriteLine($"Traveling to {region.Name}...");
                 
