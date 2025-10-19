@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Input;
 using MiniRPG.Models;
 using MiniRPG.Services;
@@ -72,8 +73,15 @@ namespace MiniRPG.ViewModels
         {
             Player = player;
             
-            // Load regions from WorldMapService
-            Regions = new ObservableCollection<Region>(WorldMapService.GetRegions());
+            // If no regions are unlocked yet, automatically unlock "Greenfield Town"
+            if (FastTravelService.UnlockedRegions.Count == 0)
+            {
+                FastTravelService.UnlockRegion("Greenfield Town");
+            }
+            
+            // Filter Regions list so only unlocked regions are visible
+            Regions = new ObservableCollection<Region>(WorldMapService.GetRegions()
+                .Where(r => FastTravelService.IsUnlocked(r.Name)));
 
             TravelCommand = new RelayCommand(param => Travel(param as Region), _ => CanTravel());
             ExitWorldMapCommand = new RelayCommand(_ => ExitWorldMap());
@@ -98,6 +106,9 @@ namespace MiniRPG.ViewModels
                 SelectedRegion = region;
                 Debug.WriteLine($"Traveling to {region.Name}...");
                 
+                // After player visits a new region, unlock it for fast travel
+                FastTravelService.UnlockRegion(region.Name);
+                
                 // Check if a random encounter should occur
                 if (EncounterService.ShouldTriggerEncounter())
                 {
@@ -121,5 +132,6 @@ namespace MiniRPG.ViewModels
         }
 
         // TODO: Add travel cost, animation, and random encounter system
+        // TODO: Add unlocking through quests or story events
     }
 }

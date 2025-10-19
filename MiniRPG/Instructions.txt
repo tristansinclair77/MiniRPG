@@ -1,16 +1,15 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create FastTravelService.cs in the Services folder.
+Update WorldMapViewModel.cs.
 
 Requirements:
-• Static class FastTravelService
-• Static ObservableCollection<string> UnlockedRegions = new();
-• Method UnlockRegion(string regionName):
-   - If not already in UnlockedRegions, add it.
-• Method IsUnlocked(string regionName) → bool
-• Method GetUnlockedRegions() → returns copy of list.
+• Filter Regions list so only unlocked regions are visible:
+   - Regions = new ObservableCollection(WorldMapService.GetRegions()
+       .Where(r => FastTravelService.IsUnlocked(r.Name)));
+• If no regions unlocked yet, automatically unlock “Greenfield Town”.
+• After player visits a new region, call FastTravelService.UnlockRegion(regionName).
 • Add TODO:
-   // Add cost, cooldown, and transport types (airship, portal, carriage)
+   // Add unlocking through quests or story events
 
 ---
 

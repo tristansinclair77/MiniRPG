@@ -1,5 +1,111 @@
 ﻿# MiniRPG - Change Log
 
+## Latest Update: Region Unlock System Implementation
+
+### New Features ✨
+
+#### WorldMapViewModel Region Filtering and Unlocking
+- **Enhanced**: `WorldMapViewModel.cs` constructor to implement region unlock system
+  - **Filter Regions by Unlock Status**: 
+    - Regions collection now filtered to show only unlocked regions
+    - Uses `FastTravelService.IsUnlocked(r.Name)` to check unlock status
+    - Implementation: `Regions = new ObservableCollection<Region>(WorldMapService.GetRegions().Where(r => FastTravelService.IsUnlocked(r.Name)))`
+  - **Auto-Unlock Starting Region**:
+    - Checks if `FastTravelService.UnlockedRegions.Count == 0` on initialization
+    - Automatically unlocks "Greenfield Town" if no regions are unlocked
+    - Ensures new players always have at least one region available
+  - **Unlock on Visit**:
+    - `Travel()` method now calls `FastTravelService.UnlockRegion(region.Name)` when traveling
+    - Regions are unlocked immediately when player visits them for the first time
+    - Unlocked regions persist in memory for duration of game session
+- **Added TODO Comment**: 
+  - `// TODO: Add unlocking through quests or story events`
+  - Foundation for future quest-based region unlocking system
+
+#### Complete Region Unlock Flow
+1. **First Launch**:
+   - Player starts new game with no unlocked regions
+   - WorldMapViewModel constructor detects empty unlock list
+   - "Greenfield Town" automatically unlocked
+   - World map displays only Greenfield Town
+2. **Visiting a Region**:
+   - Player selects Greenfield Town and travels
+   - `Travel()` method calls `FastTravelService.UnlockRegion("Greenfield Town")`
+   - Region is added to FastTravelService.UnlockedRegions collection
+3. **Discovering New Regions**:
+   - Player completes quests or explores
+   - New regions unlocked through gameplay (future: quest rewards)
+   - When player opens world map, only unlocked regions are displayed
+4. **Region Filtering**:
+   - WorldMapViewModel filters regions using LINQ Where clause
+   - Only regions in UnlockedRegions collection are shown
+   - Locked regions remain hidden until unlocked through gameplay
+
+#### Integration Benefits
+- **Progressive Exploration**: Players discover regions gradually through gameplay
+- **Guided Experience**: Starting region always unlocked ensures clear starting point
+- **Dynamic World Map**: Region list updates based on player progress
+- **Seamless Integration**: Works with existing FastTravelService unlock system
+- **Future-Ready**: Foundation for quest-based and story-driven region unlocking
+- **Consistent Pattern**: Uses LINQ filtering pattern common throughout codebase
+
+#### User Experience Improvements
+- **No Empty World Map**: New players always start with accessible region
+- **Sense of Discovery**: Unlocking new regions feels rewarding
+- **Clear Progression**: World map expands as player explores
+- **Intuitive System**: Visit a region to unlock it permanently
+- **Reduced Confusion**: Only available regions shown, no locked/grayed out regions
+
+#### Technical Details
+- **WorldMapViewModel.cs Changes**:
+  - Added `System.Linq` using directive for LINQ filtering
+  - Constructor checks unlock count before initializing regions
+  - Auto-unlock logic for "Greenfield Town" when no regions unlocked
+  - Regions filtered using `Where(r => FastTravelService.IsUnlocked(r.Name))`
+  - `Travel()` method calls `FastTravelService.UnlockRegion()` on region visit
+- **Dependencies**:
+  - FastTravelService for unlock status tracking
+  - WorldMapService for complete region list
+  - LINQ for filtering operations
+- **Backward Compatibility**:
+  - Works seamlessly with existing travel and encounter systems
+  - No changes required to MainViewModel or other ViewModels
+
+#### Future Enhancements
+- **Quest-Based Unlocking**:
+  - Unlock regions as quest completion rewards
+  - Story events that unlock special regions
+  - NPC dialogue that reveals new regions
+- **Level Requirements**:
+  - Require minimum player level to unlock dangerous regions
+  - Display level recommendations on locked regions
+- **Item-Based Unlocking**:
+  - Special items (keys, maps) required to unlock certain regions
+  - Quest items that grant access to hidden regions
+- **Visual Feedback**:
+  - Show locked regions as grayed out or with fog overlay
+  - Display unlock requirements when hovering over locked regions
+  - Notification popup when new region is unlocked
+- **Save Persistence**:
+  - Serialize UnlockedRegions to save file
+  - Restore unlocked regions on game load
+  - Track unlock timestamps for statistics
+- **Achievement System**:
+  - Achievements for discovering all regions
+  - Track exploration progress percentage
+  - Reward players for full map discovery
+
+#### Testing Scenarios
+- Verify "Greenfield Town" auto-unlocks on first launch
+- Test region filtering shows only unlocked regions
+- Confirm regions unlock when visited
+- Verify unlocked regions persist during game session
+- Test world map updates after unlocking new regions
+- Confirm empty unlock list triggers auto-unlock
+- Test multiple region unlocks in sequence
+
+---
+
 ## Latest Update: FastTravelService Implementation
 
 ### New Features ✨
@@ -434,12 +540,6 @@
 - **Unlockable Regions**: Progression system where players must complete quests or reach certain levels to access new regions
 - **Map Fog**: Visual fog-of-war system to hide unexplored or locked regions from view
 - **Towns with Interior Navigation**: Advanced navigation system allowing players to enter towns and explore interior building layouts
-
-#### Future Implementation Notes
-- **Random Encounters**: Could include special rare enemies, merchant encounters, or story events
-- **Region Unlocking**: May tie into quest completion, level requirements, or item possession
-- **Fog-of-War**: Visual overlay system that reveals regions as player explores or completes objectives
-- **Interior Navigation**: Separate view for town interiors with clickable buildings (shops, inns, quest halls, etc.)
 
 ---
 
