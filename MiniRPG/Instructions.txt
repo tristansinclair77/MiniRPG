@@ -1,20 +1,15 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify BuildingInteriorViewModel.cs.
+Edit BuildingInteriorView.xaml.
 
 Requirements:
-• If CurrentBuilding.Type == "Inn":
-   - Add RelayCommand named StayAtInnCommand.
-   - When executed:
-       * const int cost = 20;
-       * If Player.Gold >= cost:
-           Player.SpendGold(cost);
-           Player.HP = Player.MaxHP;
-           TimeService.AdvanceHours(8);
-           Log "You rest at the inn and feel refreshed."
-       * Else Log "You can't afford a room."
+• If Building.Type == "Inn":
+   - Add Button labeled "Stay the Night" bound to StayAtInnCommand.
+   - Place below occupant list.
+• Add note TextBlock: "Cost: 20 Gold"
 • Add TODO:
-   // Add choice of standard/luxury rooms and longer rest durations
+   <!-- TODO: Replace with innkeeper NPC dialogue and fade-out sleep animation -->
+   <!-- TODO: Add sound effect for morning wake-up -->
 
 ---
 

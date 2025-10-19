@@ -112,6 +112,43 @@
                             </Style>
                         </Button.Style>
                     </Button>
+
+                    <!-- Inn Stay Section (only visible for inns) -->
+                    <StackPanel Visibility="{Binding IsInn, Converter={StaticResource BoolToVis}}" 
+                                Margin="0,15,0,0">
+                        <!-- TODO: Replace with innkeeper NPC dialogue and fade-out sleep animation -->
+                        <!-- TODO: Add sound effect for morning wake-up -->
+                        
+                        <!-- Stay the Night Button -->
+                        <Button Content="Stay the Night" 
+                                Command="{Binding StayAtInnCommand}" 
+                                Padding="12,8"
+                                Foreground="#F9E97A" 
+                                Background="#446644" 
+                                FontWeight="Bold"
+                                FontSize="14"
+                                HorizontalAlignment="Center"
+                                MinWidth="180">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#446644" />
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#557755" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        
+                        <!-- Cost Note -->
+                        <TextBlock Text="Cost: 20 Gold" 
+                                   FontSize="12" 
+                                   FontStyle="Italic" 
+                                   Foreground="#CCCCCC" 
+                                   HorizontalAlignment="Center" 
+                                   Margin="0,6,0,0" />
+                    </StackPanel>
                 </StackPanel>
             </Border>
         </Expander>
