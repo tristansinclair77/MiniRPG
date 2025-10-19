@@ -1,6 +1,83 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Skill Tree Service
+## Latest Update: Skill Tree UI
+
+### SkillTreeView.xaml (New File)
+- **Created Skill Tree user interface in Views folder**:
+  - Full MVVM implementation with data binding
+  - Dark theme matching existing UI style (#222233 background, #F9E97A accents)
+- **XAML layout includes**:
+  - **Header**: "Skill Tree" title in large gold text
+  - **Skill Points Display**: Shows current available Skill Points for the player
+  - **Skills List**: Scrollable ListBox bound to `AllSkills` collection
+    - Each skill entry shows:
+      - Skill Name (with [UNLOCKED] badge if already unlocked)
+      - Description text
+      - Level requirement and SP cost
+      - Skill type (Attack, Defense, Heal) and power value
+      - [Passive] or [Active] tag color-coded
+    - Skills displayed in bordered cards with hover-friendly layout
+  - **Unlock Button**: Bound to `UnlockSkillCommand`
+    - Automatically disabled if requirements not met (level, SP cost)
+  - **Close Button**: Bound to `ExitSkillTreeCommand` to return to previous view
+- **Added TODO comments**:
+  - `<!-- TODO: Add category tabs for Attack / Defense / Magic -->`
+  - `<!-- TODO: Replace with icon grid layout and progress lines -->`
+
+### SkillTreeView.xaml.cs (New File)
+- **Created code-behind file**:
+  - Simple UserControl initialization
+  - No business logic (follows MVVM pattern)
+
+### SkillTreeViewModel.cs (New File)
+- **Created SkillTreeViewModel in ViewModels folder**:
+  - Inherits from `BaseViewModel` for property change notifications
+  - Full MVVM pattern implementation
+- **Added properties**:
+  - `Player Player`: Reference to current player for skill unlocking
+  - `ObservableCollection<Skill> AllSkills`: Collection of all available skills
+  - `Skill? SelectedSkill`: Tracks currently selected skill in the list
+  - Property change notifications trigger command CanExecute updates
+- **Constructor(Player player)**:
+  - Loads `AllSkills = new ObservableCollection<Skill>(SkillTreeService.GetAllSkills())`
+  - Sets `Player.AvailableSkills = AllSkills` to link player skills to service data
+  - Initializes commands
+- **Added commands**:
+  - `UnlockSkillCommand`: Unlocks selected skill if requirements are met
+    - Calls `Player.UnlockSkill(SelectedSkill)` for skill unlocking logic
+    - Refreshes `Player.SkillPoints` display via property notifications
+    - Auto-saves player progress after unlocking
+    - CanExecute checks level requirement, skill point cost, and unlock status
+  - `ExitSkillTreeCommand`: Fires `OnExitSkillTree` event to return to previous view
+- **Added TODO comment**:
+  - // TODO: Add skill preview popups and animations later
+
+### InverseBooleanToVisibilityConverter.cs (New File)
+- **Created inverse boolean to visibility converter**:
+  - Converts `false` to `Visibility.Visible` and `true` to `Visibility.Collapsed`
+  - Used for displaying [Active] tag when skill is not passive
+  - Implements `IValueConverter` interface for XAML binding
+  - Supports two-way conversion
+
+### Technical Details
+- Skill Tree UI fully integrated with existing skill system (Player, Skill, SkillTreeService)
+- Player gains 1 skill point per level automatically (from Player.GainExperience)
+- Skills are loaded from SkillTreeService and assigned to Player.AvailableSkills
+- Skill unlock validation handled by Player.UnlockSkill method
+- Player.UnlockSkill deducts skill points, marks skill as unlocked, and adds to LearnedSkills
+- Auto-save ensures skill unlocks are persisted immediately
+- Event-driven architecture allows parent ViewModels to handle view transitions via OnExitSkillTree
+- Foundation laid for:
+  - Category tabs (Attack, Defense, Magic specializations)
+  - Visual skill tree with prerequisite lines and tier progression
+  - Skill icons and animated unlock effects
+  - Skill preview popups showing detailed information
+  - Skill trainer NPCs offering region-specific skills
+  - Quest rewards granting unique skills
+
+---
+
+## Previous Update: Skill Tree Service
 
 ### SkillTreeService.cs (New File)
 - **Created static `SkillTreeService` class in Services folder**:

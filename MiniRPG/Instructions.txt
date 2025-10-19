@@ -1,17 +1,25 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create SkillTreeService.cs in the Services folder.
+Create SkillTreeViewModel.cs in the ViewModels folder.
 
 Requirements:
-• Static class SkillTreeService
-• Static method GetAllSkills() returning List<Skill>
-   - Include example entries:
-       * "Power Strike" – Attack +5, Level 2, Cost 1, EffectType "Attack"
-       * "Iron Skin" – Defense +5, Level 3, Cost 1, EffectType "Defense"
-       * "Healing Light" – Restores HP, Level 4, Cost 2, EffectType "Heal"
-• Later: link skill dependencies (e.g. "Requires Power Strike").
+• Inherit from BaseViewModel.
+• Properties:
+   - Player Player
+   - ObservableCollection<Skill> AllSkills
+   - Skill? SelectedSkill
+• Commands:
+   - UnlockSkillCommand
+   - ExitSkillTreeCommand
+• Constructor(Player player):
+   - Load AllSkills = new(SkillTreeService.GetAllSkills())
+   - Mark Player.AvailableSkills = AllSkills
+• UnlockSkillCommand:
+   - Calls Player.UnlockSkill(SelectedSkill)
+   - Refresh Player.SkillPoints display.
+• ExitSkillTreeCommand triggers OnExitSkillTree event.
 • Add TODO:
-   // Add skill tree tier data and class specialization later
+   // Add skill preview popups and animations later
 
 ---
 
