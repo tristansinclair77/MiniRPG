@@ -1,12 +1,17 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit MapView.xaml.
+Modify BattleViewModel.cs.
 
 Requirements:
-• Add Button labeled "Skill Tree" near "Quest Board" and "Shop".
-• Bind Command to OpenSkillTreeCommand.
+• Add ObservableCollection<Skill> UsableSkills => Player.LearnedSkills.Where(s => !s.IsPassive)
+• Add Skill? SelectedSkill
+• Add RelayCommand UseSkillCommand.
+• When executed:
+   - If SelectedSkill != null:
+       * int damage = SelectedSkill.ApplyEffect(Player, CurrentEnemy)
+       * Log $"Used {SelectedSkill.Name} on {CurrentEnemy.Name} for {damage} damage!"
 • Add TODO:
-   <!-- TODO: Add animated sparkle on new skill unlock -->
+   // Add skill cooldowns, SP or MP costs, and VFX
 
 ---
 

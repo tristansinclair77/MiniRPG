@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
 using MiniRPG.Services;
 using MiniRPG.Models;
@@ -54,10 +55,25 @@ namespace MiniRPG.ViewModels
         private bool _canAct = true;
         private bool _defendNext = false;
 
+        public ObservableCollection<Skill> UsableSkills => new ObservableCollection<Skill>(Player.LearnedSkills.Where(s => !s.IsPassive));
+
+        private Skill? _selectedSkill;
+        public Skill? SelectedSkill
+        {
+            get => _selectedSkill;
+            set
+            {
+                _selectedSkill = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(UseSkillCommand));
+            }
+        }
+
         public ICommand AttackCommand { get; }
         public ICommand DefendCommand { get; }
         public ICommand RunCommand { get; }
         public ICommand ReturnToMapCommand { get; }
+        public ICommand UseSkillCommand { get; }
 
         // Later: Replace integers with full Stat objects for scaling difficulty
         // TODO: Later - persist Player object between battles
@@ -81,6 +97,130 @@ namespace MiniRPG.ViewModels
             DefendCommand = new RelayCommand(_ => Defend(), _ => _canAct && !IsBattleOver);
             RunCommand = new RelayCommand(_ => Run(), _ => _canAct && !IsBattleOver);
             ReturnToMapCommand = new RelayCommand(_ => OnReturnToMap(), _ => IsBattleOver);
+            UseSkillCommand = new RelayCommand(_ => UseSkill(), _ => _canAct && !IsBattleOver && SelectedSkill != null);
+        }
+
+        private void UseSkill()
+        {
+            if (SelectedSkill != null)
+            {
+                int damage = SelectedSkill.ApplyEffect(Player, CurrentEnemy);
+                var msg = $"Used {SelectedSkill.Name} on {CurrentEnemy} for {damage} damage!";
+                CombatLog.Add(msg);
+                _globalLog.Add(msg);
+                
+                // If the skill dealt damage to the enemy, reduce enemy HP
+                if (SelectedSkill.EffectType == "Attack")
+                {
+                    EnemyHP -= damage;
+                    var hpMsg = $"(Enemy HP: {EnemyHP})";
+                    CombatLog.Add(hpMsg);
+                    _globalLog.Add(hpMsg);
+                    
+                    if (EnemyHP <= 0)
+                    {
+                        CombatLog.Add("You defeated the enemy!");
+                        _globalLog.Add("You defeated the enemy!");
+
+                        // Quest tracking - check active quests for enemy kill requirements
+                        var questsToComplete = new List<Quest>();
+                        foreach (var quest in Player.ActiveQuests)
+                        {
+                            if (quest.Title.Contains(CurrentEnemy, StringComparison.OrdinalIgnoreCase))
+                            {
+                                quest.CurrentKills++;
+                                quest.CheckProgress();
+                                if (quest.IsCompleted)
+                                {
+                                    questsToComplete.Add(quest);
+                                }
+                            }
+                        }
+                        foreach (var quest in questsToComplete)
+                        {
+                            Player.CompleteQuest(quest);
+                            var questCompleteMsg = $"Quest complete: {quest.Title}!";
+                            CombatLog.Add(questCompleteMsg);
+                            _globalLog.Add(questCompleteMsg);
+                            
+                            // Check if "Goblin Problem" quest was completed
+                            if (quest.Title == "Goblin Problem")
+                            {
+                                FastTravelService.UnlockRegion("Goblin Woods");
+                                var unlockMsg = "New region unlocked: Goblin Woods!";
+                                CombatLog.Add(unlockMsg);
+                                _globalLog.Add(unlockMsg);
+                            }
+                            // TODO: Tie region unlocking to cutscenes and story milestones later
+                        }
+
+                        // Add quest tracking popup and sound effect
+                        // Add enemy type classification for matching
+
+                        // Experience and level-up logic
+                        int exp = new Random().Next(5, 15);
+                        bool leveledUp = Player.GainExperience(exp);
+                        CombatLog.Add($"You gained {exp} experience!");
+                        _globalLog.Add($"You gained {exp} experience!");
+                        if (leveledUp)
+                        {
+                            CombatLog.Add($"You reached level {Player.Level}! Your stats increased.");
+                            _globalLog.Add($"You reached level {Player.Level}! Your stats increased.");
+                        }
+                        // Loot logic
+                        var loot = GameService.GetRandomLoot();
+                        if (loot != null)
+                        {
+                            int inventoryBefore = Player.Inventory.Count;
+                            Player.AddItem(loot);
+                            if (Player.Inventory.Count == inventoryBefore)
+                            {
+                                // Item was not added - inventory full
+                                string fullMsg = $"{loot.Name} could not be collected: Inventory Full!";
+                                CombatLog.Add(fullMsg);
+                                _globalLog.Add(fullMsg);
+                            }
+                            else
+                            {
+                                CombatLog.Add($"You found {loot.Name}!");
+                                _globalLog.Add($"You found {loot.Name}!");
+                            }
+                        }
+                        else
+                        {
+                            CombatLog.Add("No items found this time.");
+                            _globalLog.Add("No items found this time.");
+                        }
+                        // Gold reward logic
+                        int gold = new Random().Next(5, 20);
+                        Player.AddGold(gold);
+                        CombatLog.Add($"You earned {gold} gold!");
+                        _globalLog.Add($"You earned {gold} gold!");
+                        SaveLoadService.SavePlayer(Player);
+                        CombatLog.Add("Progress saved!");
+                        _globalLog.Add("Progress saved!");
+                        IsBattleOver = true;
+                        _canAct = false;
+                        BattleResult = "Victory";
+                        UpdateCommands();
+                        BattleEnded?.Invoke("Victory");
+                        // TODO: Later - include loot drops and enemy-specific EXP scaling
+                        // TODO: Later - add autosave indicator animation on screen
+                        // TODO: Display loot visually in post-battle summary later
+                    }
+                    else
+                    {
+                        EnemyAttack();
+                    }
+                }
+                else
+                {
+                    // Non-attack skills (heal, buff, etc.) - enemy still attacks
+                    EnemyAttack();
+                }
+            }
+            
+            // TODO: Add skill cooldowns, SP or MP costs, and VFX
         }
 
         private void Attack()

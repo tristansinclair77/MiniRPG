@@ -1,6 +1,56 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Skill Tree Button in MapView
+## Latest Update: Battle Skill System Integration
+
+### BattleViewModel.cs Enhancements
+- **Added `UsableSkills` property**:
+  - Returns `ObservableCollection<Skill>` containing only non-passive learned skills
+  - Filters `Player.LearnedSkills` using LINQ: `Where(s => !s.IsPassive)`
+  - Provides battle-ready skills that can be actively used during combat
+  - Automatically updates when player learns new active skills
+- **Added `SelectedSkill` property**:
+  - Nullable `Skill?` property for tracking currently selected skill
+  - Implements property change notifications for UI binding
+  - Updates `UseSkillCommand` CanExecute state when selection changes
+- **Added `UseSkillCommand`**:
+  - New RelayCommand for using skills in battle
+  - CanExecute checks: `_canAct && !IsBattleOver && SelectedSkill != null`
+  - Ensures skills can only be used during player's turn when a skill is selected
+- **Added `UseSkill()` method**:
+  - Calls `SelectedSkill.ApplyEffect(Player, CurrentEnemy)` to calculate damage/effect
+  - Logs skill usage: "Used {SkillName} on {EnemyName} for {damage} damage!"
+  - **For Attack-type skills**:
+    - Reduces enemy HP by damage amount
+    - Checks for enemy defeat and triggers victory sequence (quest tracking, EXP, loot, gold)
+    - Includes full victory logic: quest completion, level-up, item drops, gold rewards, auto-save
+  - **For non-Attack skills** (Heal, Buff, etc.):
+    - Applies effect to player (healing, stat boosts)
+    - Enemy still attacks after skill use
+  - Triggers enemy counter-attack after skill use (if enemy survives)
+- **Added TODO comment**:
+  - `// TODO: Add skill cooldowns, SP or MP costs, and VFX`
+  - Placeholder for future skill resource system and visual effects
+
+### Technical Details
+- Skill system now fully integrated into battle flow
+- Players can use active skills learned from skill tree during combat
+- Skill damage/effects calculated using existing `Skill.ApplyEffect()` method
+- Attack skills deal damage equal to `Skill.Power + Player.Attack`
+- Heal skills restore HP (capped at MaxHP)
+- Enemy counter-attack occurs after skill use (matches normal combat flow)
+- Victory sequence with skill-based kills includes full quest tracking and rewards
+- Foundation laid for:
+  - Skill cooldown timers per skill
+  - SP (Skill Points) or MP (Mana Points) resource costs
+  - Skill animations and visual effects
+  - Skill combo systems
+  - Enemy skill usage and AI
+  - Skill tooltips showing damage/effect calculations
+- Integrates seamlessly with existing combat system and player progression
+
+---
+
+## Previous Update: Skill Tree Button in MapView
 
 ### MapView.xaml Enhancements
 - **Added "Skill Tree" button to Player Info Panel**:
