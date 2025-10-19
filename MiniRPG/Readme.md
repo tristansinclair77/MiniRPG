@@ -1,5 +1,150 @@
 ﻿# MiniRPG - Change Log
 
+## Latest Update: FastTravelService Implementation
+
+### New Features ✨
+
+#### FastTravelService Class Added
+- **Added**: `FastTravelService.cs` in the Services folder
+- **Class Type**: Static service for managing fast travel between unlocked regions
+- **Features**:
+  - Static class following established service patterns (GameService, WorldMapService, DialogueService)
+  - Tracks unlocked regions for fast travel using ObservableCollection
+  - Provides methods to unlock regions, check unlock status, and retrieve unlocked regions
+
+#### UnlockedRegions Collection
+- **Added**: Static `ObservableCollection<string> UnlockedRegions`
+  - Public read-only collection containing region names unlocked for fast travel
+  - Observable for UI binding and automatic updates
+  - Persists across game session (in memory)
+  - **Use Cases**:
+    - Track which regions player has visited and can fast travel to
+    - Display available fast travel destinations in UI
+    - Filter world map regions by unlock status
+    - Quest and progression requirements
+
+#### UnlockRegion Method
+- **Added**: `UnlockRegion(string regionName)` - void
+  - Accepts region name parameter to unlock for fast travel
+  - Checks if region is already unlocked before adding (prevents duplicates)
+  - Automatically adds region to UnlockedRegions collection
+  - **Use Cases**:
+    - Unlock region when player first visits
+    - Unlock regions as quest rewards
+    - Story-driven region unlocking
+    - Achievement-based region access
+
+#### IsUnlocked Method
+- **Added**: `IsUnlocked(string regionName)` → bool
+  - Checks if a specific region is unlocked for fast travel
+  - Returns `true` if region is in UnlockedRegions collection
+  - Returns `false` if region is locked or not yet discovered
+  - **Use Cases**:
+    - Validate fast travel destination before allowing travel
+    - UI button enable/disable logic
+    - Display locked region indicators
+    - Quest completion checks
+
+#### GetUnlockedRegions Method
+- **Added**: `GetUnlockedRegions()` → ObservableCollection<string>
+  - Returns a new copy of the unlocked regions list
+  - Creates defensive copy to prevent external modification
+  - Converts to new ObservableCollection for safe UI binding
+  - **Use Cases**:
+    - Populate fast travel UI dropdowns or lists
+    - Display player exploration progress
+    - Save/load unlocked regions list
+    - Analytics and statistics tracking
+
+#### Future Enhancements TODO
+- **Added TODO Comment**: `// Add cost, cooldown, and transport types (airship, portal, carriage)`
+  - **Cost System**: Deduct gold or items for fast travel usage
+  - **Cooldown Mechanics**: Time-based restrictions between fast travels
+  - **Transport Types**: Different travel methods with unique properties
+    - **Airship**: Expensive, instant, long-distance travel
+    - **Portal**: Medium cost, magical teleportation
+    - **Carriage**: Cheap, slower ground transport
+  - **Transport Availability**: Certain regions may only support specific transport types
+
+#### Integration Points
+- **WorldMapService**: Can filter regions by unlock status
+- **MainViewModel**: Call UnlockRegion when player first visits a region
+- **WorldMapViewModel**: Display only unlocked regions or show locked regions with indicators
+- **SaveLoadService**: Future integration to persist unlocked regions across sessions
+- **QuestService**: Unlock regions as quest completion rewards
+
+#### Potential Use Cases
+1. **First Visit Unlock**:
+   - When player travels to a region for the first time, call `UnlockRegion(regionName)`
+   - Log message: "You have unlocked {regionName} for fast travel!"
+2. **Fast Travel UI**:
+   - Display list of unlocked regions using `GetUnlockedRegions()`
+   - Bind to ComboBox or ListBox for player selection
+   - Disable travel button if selected region is not unlocked
+3. **Region Progression**:
+   - Quest completion unlocks new regions
+   - Defeating region bosses grants fast travel access
+   - Story events unlock distant regions
+4. **World Map Display**:
+   - Show locked regions as grayed out or with fog overlay
+   - Display unlock requirements on locked regions
+   - Add visual indicators (lock icons) for locked regions
+5. **Save/Load Integration**:
+   - Serialize `UnlockedRegions` collection to save file
+   - Restore unlocked regions when loading game
+   - Track exploration progress across sessions
+
+#### Future Enhancement Ideas
+- **Travel Cost System**:
+  - Different costs based on distance between regions
+  - Discounts for repeat travel or membership systems
+  - Free travel to previously visited "home" regions
+- **Cooldown System**:
+  - Time-based cooldowns to prevent spam fast travel
+  - Instant travel available with consumable items
+  - Cooldown reduction based on player skills or upgrades
+- **Transport Type System**:
+  - Airship: Fast, expensive, available for distant regions
+  - Portal: Instant magical travel, requires mana or magic items
+  - Carriage: Cheap ground travel, time delay, regional limitations
+  - Mount: Personal travel with no cooldown but consumes stamina
+- **Region Lock Conditions**:
+  - Level requirements for accessing high-level regions
+  - Quest completion requirements for story-locked regions
+  - Item possession requirements (e.g., need key for castle region)
+  - Reputation or faction standing requirements
+- **Unlockable Shortcuts**:
+  - Discover hidden fast travel points within regions
+  - Activate waypoints or shrines for intra-region fast travel
+  - Build or repair travel infrastructure (bridges, roads)
+- **Dynamic Availability**:
+  - Weather-based travel restrictions
+  - Time-of-day limitations (night travel more dangerous)
+  - Event-based closures (regions blocked during invasions)
+- **Travel Log System**:
+  - Track number of times each region has been visited
+  - Display "first visit" timestamps
+  - Achievement system for visiting all regions
+
+#### Technical Details
+- **Namespace**: `MiniRPG.Services`
+- **Inheritance**: Static class, no base class
+- **Dependencies**: 
+  - `System.Collections.ObjectModel` for ObservableCollection
+  - `System.Linq` for LINQ queries (ToList)
+- **Thread Safety**: Currently not thread-safe (consider locks for async operations)
+- **Extensibility**: Easy to add new methods (GetTravelCost, GetTransportTypes, etc.)
+
+#### Testing Scenarios
+- Verify UnlockRegion adds new regions to collection
+- Verify UnlockRegion prevents duplicate entries
+- Test IsUnlocked returns correct boolean values
+- Confirm GetUnlockedRegions returns a copy, not reference
+- Validate empty collection behavior
+- Test with null or empty string region names
+
+---
+
 ## Latest Update: Random Travel Encounter System
 
 ### New Features ✨
@@ -630,7 +775,7 @@
 4. MainViewModel receives event and creates WorldMapViewModel
 5. CurrentViewModel switches to WorldMapView
 6. Player sees all available regions
-7. Player clicks a region button, triggering `TravelCommand`
+7. Player clicks a region button, triggering TravelCommand
 8. WorldMapViewModel raises `OnRegionSelected` event with region data
 9. MainViewModel receives region selection and logs travel message
 10. MainViewModel returns to MapView (future: load region-specific content)

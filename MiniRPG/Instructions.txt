@@ -1,21 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify WorldMapViewModel.cs and MainViewModel.cs.
+Create FastTravelService.cs in the Services folder.
 
-WorldMapViewModel:
-• After TravelCommand is triggered:
-   - If EncounterService.ShouldTriggerEncounter() == true:
-       * Raise OnRandomEncounter(regionName) event.
-
-MainViewModel:
-• Subscribe to OnRandomEncounter.
-• When raised:
-   - Create new BattleViewModel(CurrentPlayer, regionName)
-   - Log "A wild enemy appears during travel!"
-   - Switch CurrentViewModel to BattleViewModel.
-• After battle ends, return to target region’s MapViewModel.
+Requirements:
+• Static class FastTravelService
+• Static ObservableCollection<string> UnlockedRegions = new();
+• Method UnlockRegion(string regionName):
+   - If not already in UnlockedRegions, add it.
+• Method IsUnlocked(string regionName) → bool
+• Method GetUnlockedRegions() → returns copy of list.
 • Add TODO:
-   // Add encounter animations and travel interruption visuals
+   // Add cost, cooldown, and transport types (airship, portal, carriage)
 
 ---
 
