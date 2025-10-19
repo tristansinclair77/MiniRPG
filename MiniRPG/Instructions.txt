@@ -1,14 +1,15 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit BattleView.xaml.
+Modify SaveLoadService.cs.
 
 Requirements:
-• Add Expander labeled “Skills”.
-• Inside, ListBox bound to UsableSkills.
-• Add Button labeled “Use Skill” bound to UseSkillCommand.
-• CommandParameter = SelectedSkill.
+• Serialize and deserialize:
+   - Player.SkillPoints
+   - Player.LearnedSkills
+   - Player.AvailableSkills
+• Ensure Skill objects maintain names and IsUnlocked state.
 • Add TODO:
-   <!-- TODO: Replace with command wheel or battle HUD icons -->
+   // Add skill versioning and balance re-scaling later
 
 ---
 

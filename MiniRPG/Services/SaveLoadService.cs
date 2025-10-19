@@ -20,6 +20,21 @@ namespace MiniRPG.Services
         public int Hour { get; set; } = 8;
         public string Weather { get; set; } = "Clear";
         public string Season { get; set; } = "Spring";
+        
+        // Skill system data
+        public int SkillPoints { get; set; } = 0;
+        public List<SkillData> LearnedSkills { get; set; } = new List<SkillData>();
+        public List<SkillData> AvailableSkills { get; set; } = new List<SkillData>();
+    }
+
+    /// <summary>
+    /// Serializable representation of a Skill for save/load operations.
+    /// Maintains skill name and unlock state.
+    /// </summary>
+    public class SkillData
+    {
+        public string Name { get; set; } = string.Empty;
+        public bool IsUnlocked { get; set; }
     }
 
     public static class SaveLoadService
@@ -43,7 +58,7 @@ namespace MiniRPG.Services
                     File.Copy(filePath, backupPath, true);
                 }
 
-                // Create save data that includes player, unlocked regions, and time
+                // Create save data that includes player, unlocked regions, time, and skill data
                 var saveData = new SaveData
                 {
                     Player = player,
@@ -51,7 +66,10 @@ namespace MiniRPG.Services
                     Day = TimeService.Day,
                     Hour = TimeService.Hour,
                     Weather = EnvironmentService.Weather.ToString(),
-                    Season = EnvironmentService.CurrentSeason.ToString()
+                    Season = EnvironmentService.CurrentSeason.ToString(),
+                    SkillPoints = player.SkillPoints,
+                    LearnedSkills = player.LearnedSkills.Select(s => new SkillData { Name = s.Name, IsUnlocked = s.IsUnlocked }).ToList(),
+                    AvailableSkills = player.AvailableSkills.Select(s => new SkillData { Name = s.Name, IsUnlocked = s.IsUnlocked }).ToList()
                 };
 
                 string json = JsonSerializer.Serialize(saveData, _jsonOptions);
@@ -64,6 +82,9 @@ namespace MiniRPG.Services
                 Debug.WriteLine($"Unlocked regions saved: {string.Join(", ", saveData.UnlockedRegions)}");
                 Debug.WriteLine($"Time saved - Day {saveData.Day}, Hour {saveData.Hour}");
                 Debug.WriteLine($"Environment saved - Weather: {saveData.Weather}, Season: {saveData.Season}");
+                Debug.WriteLine($"Skill Points saved: {saveData.SkillPoints}");
+                Debug.WriteLine($"Learned Skills saved: {string.Join(", ", saveData.LearnedSkills.Select(s => s.Name))}");
+                Debug.WriteLine($"Available Skills saved: {saveData.AvailableSkills.Count} skills");
             }
             catch (Exception ex)
             {
@@ -113,7 +134,7 @@ namespace MiniRPG.Services
                 
                 if (saveData?.Player != null)
                 {
-                    // New format with unlocked regions and time
+                    // New format with unlocked regions, time, and skill data
                     player = saveData.Player;
                     
                     // Rehydrate FastTravelService.UnlockedRegions from JSON
@@ -143,15 +164,46 @@ namespace MiniRPG.Services
                     // Update lighting based on restored time
                     EnvironmentService.UpdateLighting();
                     
+                    // Restore skill data
+                    player.SkillPoints = saveData.SkillPoints;
+                    
+                    // Restore LearnedSkills by matching names from SkillTreeService
+                    player.LearnedSkills.Clear();
+                    var allSkills = SkillTreeService.GetAllSkills();
+                    foreach (var skillData in saveData.LearnedSkills)
+                    {
+                        var skill = allSkills.FirstOrDefault(s => s.Name == skillData.Name);
+                        if (skill != null)
+                        {
+                            skill.IsUnlocked = skillData.IsUnlocked;
+                            player.LearnedSkills.Add(skill);
+                        }
+                    }
+                    
+                    // Restore AvailableSkills by matching names from SkillTreeService
+                    player.AvailableSkills.Clear();
+                    foreach (var skillData in saveData.AvailableSkills)
+                    {
+                        var skill = allSkills.FirstOrDefault(s => s.Name == skillData.Name);
+                        if (skill != null)
+                        {
+                            skill.IsUnlocked = skillData.IsUnlocked;
+                            player.AvailableSkills.Add(skill);
+                        }
+                    }
+                    
                     Debug.WriteLine($"Loaded unlocked regions: {string.Join(", ", saveData.UnlockedRegions)}");
                     Debug.WriteLine($"Time loaded - Day {TimeService.Day}, Hour {TimeService.Hour} ({TimeService.GetTimeOfDay()})");
                     Debug.WriteLine($"Environment loaded - Weather: {EnvironmentService.Weather}, Season: {EnvironmentService.CurrentSeason}");
+                    Debug.WriteLine($"Skill Points loaded: {player.SkillPoints}");
+                    Debug.WriteLine($"Learned Skills loaded: {string.Join(", ", player.LearnedSkills.Select(s => s.Name))}");
+                    Debug.WriteLine($"Available Skills loaded: {player.AvailableSkills.Count} skills");
                 }
                 else
                 {
                     // Legacy format - just Player object
                     player = JsonSerializer.Deserialize<Player>(json, _jsonOptions);
-                    Debug.WriteLine("Loaded from legacy save format (no unlocked regions or time data)");
+                    Debug.WriteLine("Loaded from legacy save format (no unlocked regions, time data, or skill data)");
                     // Keep default time values (Day 1, Hour 8)
                     EnvironmentService.UpdateLighting();
                 }
@@ -225,6 +277,34 @@ namespace MiniRPG.Services
                             
                             // Update lighting based on restored time
                             EnvironmentService.UpdateLighting();
+                            
+                            // Restore skill data from backup
+                            backupPlayer.SkillPoints = backupSaveData.SkillPoints;
+                            
+                            // Restore LearnedSkills from backup
+                            backupPlayer.LearnedSkills.Clear();
+                            var allSkills = SkillTreeService.GetAllSkills();
+                            foreach (var skillData in backupSaveData.LearnedSkills)
+                            {
+                                var skill = allSkills.FirstOrDefault(s => s.Name == skillData.Name);
+                                if (skill != null)
+                                {
+                                    skill.IsUnlocked = skillData.IsUnlocked;
+                                    backupPlayer.LearnedSkills.Add(skill);
+                                }
+                            }
+                            
+                            // Restore AvailableSkills from backup
+                            backupPlayer.AvailableSkills.Clear();
+                            foreach (var skillData in backupSaveData.AvailableSkills)
+                            {
+                                var skill = allSkills.FirstOrDefault(s => s.Name == skillData.Name);
+                                if (skill != null)
+                                {
+                                    skill.IsUnlocked = skillData.IsUnlocked;
+                                    backupPlayer.AvailableSkills.Add(skill);
+                                }
+                            }
                         }
                         else
                         {
@@ -298,5 +378,6 @@ namespace MiniRPG.Services
         // TODO: Add multi-save-slot world-state synchronization later
         // TODO: Add per-building interior coordinates later
         // TODO: Add autosave on midnight or event triggers later
+        // TODO: Add skill versioning and balance re-scaling later
     }
 }

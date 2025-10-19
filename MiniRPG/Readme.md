@@ -1,6 +1,69 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Battle Skills UI Integration
+## Latest Update: Skill System Save/Load Support
+
+### SaveLoadService.cs Enhancements
+- **Added `SkillData` class**:
+  - Serializable representation of Skill for save/load operations
+  - Properties: `Name` (string) and `IsUnlocked` (bool)
+  - Maintains essential skill state without full object serialization
+  - Lightweight data transfer object for JSON serialization
+- **Extended `SaveData` class with skill system properties**:
+  - `SkillPoints` (int): Tracks player's available skill points
+  - `LearnedSkills` (List<SkillData>): Stores learned skills with names and unlock status
+  - `AvailableSkills` (List<SkillData>): Stores available skills with names and unlock status
+  - All skill data now persisted alongside player, time, weather, and region data
+- **Enhanced `SavePlayer()` method**:
+  - Serializes `Player.SkillPoints` to save file
+  - Converts `Player.LearnedSkills` to `List<SkillData>` using LINQ projection
+  - Converts `Player.AvailableSkills` to `List<SkillData>` using LINQ projection
+  - Projects Skill objects to SkillData (Name + IsUnlocked only)
+  - Debug logging confirms skill data is saved:
+    - "Skill Points saved: {count}"
+    - "Learned Skills saved: {names}"
+    - "Available Skills saved: {count} skills"
+- **Enhanced `LoadPlayer()` method**:
+  - Restores `Player.SkillPoints` from save data
+  - Restores `Player.LearnedSkills` by matching skill names from `SkillTreeService.GetAllSkills()`
+  - Restores `Player.AvailableSkills` by matching skill names from `SkillTreeService.GetAllSkills()`
+  - For each saved SkillData:
+    - Finds matching Skill object from SkillTreeService by name
+    - Sets `Skill.IsUnlocked` to saved state
+    - Adds Skill object to appropriate ObservableCollection
+  - Clears existing skill collections before restoring to prevent duplicates
+  - Debug logging confirms skill data is loaded:
+    - "Skill Points loaded: {count}"
+    - "Learned Skills loaded: {names}"
+    - "Available Skills loaded: {count} skills"
+  - Handles legacy saves without skill data (keeps default empty collections)
+- **Enhanced backup restoration**:
+  - Backup loading also restores skill data (SkillPoints, LearnedSkills, AvailableSkills)
+  - Same matching logic applied to backup skill data
+  - Ensures skill progression is preserved even when loading from backup
+- **Added TODO comment**:
+  - `// TODO: Add skill versioning and balance re-scaling later`
+  - Placeholder for future skill rebalancing and save migration system
+
+### Technical Details
+- Skill objects are reconstituted from SkillTreeService during load to ensure full object state
+- Only Name and IsUnlocked are serialized to keep save files lightweight
+- Skill.Power, Skill.Description, and other static properties loaded from SkillTreeService
+- This approach allows skill stats to be rebalanced without invalidating old saves
+- Skill matching uses FirstOrDefault by name - missing skills are silently skipped
+- If a skill is removed from SkillTreeService, it won't be restored (graceful degradation)
+- If a new skill is added to SkillTreeService, it won't appear in old saves (as expected)
+- Foundation laid for:
+  - Save versioning system (e.g., "SaveVersion": 2)
+  - Skill rebalancing migrations (update Power/CostSP without breaking saves)
+  - Skill refund system on balance changes
+  - Skill preset imports/exports
+  - Cloud save synchronization for skill builds
+- Completes the skill system integration: SkillTreeService → SkillTreeView → Player → SaveLoadService
+- Skills now fully persist across game sessions with auto-save after unlock
+
+---
+
+## Previous Update: Battle Skills UI Integration
 
 ### BattleView.xaml Enhancements
 - **Added Skills Expander to battle interface**:
@@ -564,7 +627,6 @@
 - UI updates automatically when weather changes (every 6 hours or on event)
 - Color-coded weather provides visual feedback at a glance
 - Foundation laid for future weather icons and animated particle effects
-- Event-driven architecture ensures real-time UI updates
 
 ---
 
