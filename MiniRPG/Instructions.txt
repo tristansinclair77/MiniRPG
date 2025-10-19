@@ -1,15 +1,18 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit MapView.xaml.
+Create EnvironmentService.cs in the Services folder.
 
 Requirements:
-• In the "NPCs" ListBox, show each NPC.Name and append:
-   - "(Available)" in green if active
-   - "(Away)" in gray if not available
-• Bind availability via NPC.IsAvailableNow() (use ValueConverter if needed).
+• Static class EnvironmentService
+• Static property string CurrentLighting = "Daylight"
+• Method UpdateLighting():
+   - switch(TimeService.GetTimeOfDay()):
+       * "Morning" or "Afternoon" → "Daylight"
+       * "Evening" → "Twilight"
+       * "Night" → "Night"
+• Trigger event OnLightingChanged whenever it updates.
 • Add TODO:
-   <!-- TODO: Replace with day/night portrait lighting -->
-   <!-- TODO: Add animated 'open/closed' shop icons -->
+   // Add regional weather, fog, and rain states later
 
 ---
 

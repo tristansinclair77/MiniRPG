@@ -1,6 +1,190 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: NPC Availability UI Display with Value Converters
+## Latest Update: Environment Service - Lighting System
+
+### Changes Made ✨
+
+#### EnvironmentService.cs - New Lighting Management Service
+- **Added**: `EnvironmentService` static class
+  - **Purpose**: Manage environmental effects and lighting states in the game world
+  - **Location**: Services folder
+  - **Type**: Static service class
+
+- **Added**: `CurrentLighting` static property (string)
+  - **Purpose**: Track the current lighting state of the game world
+  - **Default Value**: "Daylight"
+  - **Access**: Public getter, private setter
+  - **Values**: "Daylight", "Twilight", "Night"
+
+- **Added**: `OnLightingChanged` static event (EventHandler<string>)
+  - **Purpose**: Notify subscribers when lighting changes
+  - **Parameter**: New lighting state (string)
+  - **Usage**: Subscribe to receive lighting change notifications
+
+- **Added**: `UpdateLighting()` method
+  - **Purpose**: Update lighting based on current time of day
+  - **Implementation**: 
+    - Calls `TimeService.GetTimeOfDay()` to determine current time period
+    - Maps time periods to lighting states using switch statement
+    - Triggers `OnLightingChanged` event only when lighting actually changes
+  - **Mapping**:
+    - "Morning" or "Afternoon" → "Daylight"
+    - "Evening" → "Twilight"
+    - "Night" → "Night"
+
+- **Added**: TODO comment for future features
+  - `// TODO: Add regional weather, fog, and rain states later`
+  - **Purpose**: Placeholder for weather system expansion
+
+#### Implementation Details
+
+**Lighting State Mapping:**
+
+| Time of Day | TimeService Hour Range | Lighting State |
+|------------|----------------------|----------------|
+| Morning | 6:00 - 11:59 | Daylight |
+| Afternoon | 12:00 - 17:59 | Daylight |
+| Evening | 18:00 - 23:59 | Twilight |
+| Night | 0:00 - 5:59 | Night |
+
+**UpdateLighting() Logic:**public static void UpdateLighting()
+{
+    string previousLighting = CurrentLighting;
+    string newLighting;
+
+    switch (TimeService.GetTimeOfDay())
+    {
+        case "Morning":
+        case "Afternoon":
+            newLighting = "Daylight";
+            break;
+        case "Evening":
+            newLighting = "Twilight";
+            break;
+        case "Night":
+            newLighting = "Night";
+            break;
+        default:
+            newLighting = "Daylight";
+            break;
+    }
+
+    if (newLighting != previousLighting)
+    {
+        CurrentLighting = newLighting;
+        OnLightingChanged?.Invoke(null, CurrentLighting);
+    }
+}
+**Event Subscription Example:**// Subscribe to lighting changes
+EnvironmentService.OnLightingChanged += (sender, newLighting) =>
+{
+    Debug.WriteLine($"Lighting changed to: {newLighting}");
+    // Update UI, apply visual effects, etc.
+};
+
+// Update lighting after time changes
+TimeService.AdvanceHours(8);
+EnvironmentService.UpdateLighting();
+#### Example Usage Scenarios
+
+**Scenario 1: Morning to Evening Transition**
+1. **Initial**: Day 1, Morning (10:00), Lighting = "Daylight"
+2. **Action**: Rest for 8 hours
+3. **Result**: Day 1, Evening (18:00)
+4. **Call**: `EnvironmentService.UpdateLighting()`
+5. **Lighting**: Changes from "Daylight" to "Twilight"
+6. **Event**: `OnLightingChanged` triggered with "Twilight"
+
+**Scenario 2: Evening to Night Transition**
+1. **Initial**: Day 1, Evening (22:00), Lighting = "Twilight"
+2. **Action**: Battle (1 hour)
+3. **Result**: Day 1, Evening (23:00), still "Twilight"
+4. **Call**: `EnvironmentService.UpdateLighting()`
+5. **Lighting**: Remains "Twilight" (no change)
+6. **Event**: Not triggered (lighting unchanged)
+7. **Action**: Battle again (1 hour)
+8. **Result**: Day 2, Night (0:00)
+9. **Call**: `EnvironmentService.UpdateLighting()`
+10. **Lighting**: Changes from "Twilight" to "Night"
+11. **Event**: `OnLightingChanged` triggered with "Night"
+
+**Scenario 3: Full Day Cycle**
+1. **Start**: Day 1, Night (2:00), Lighting = "Night"
+2. **Rest** (8 hours): Day 1, Morning (10:00), Lighting = "Daylight" ✨ Event triggered
+3. **Rest** (8 hours): Day 1, Evening (18:00), Lighting = "Twilight" ✨ Event triggered
+4. **Rest** (8 hours): Day 2, Night (2:00), Lighting = "Night" ✨ Event triggered
+
+**Scenario 4: No Lighting Change**
+1. **Initial**: Day 1, Morning (8:00), Lighting = "Daylight"
+2. **Battle**: Advance 1 hour to 9:00 (still Morning)
+3. **Call**: `EnvironmentService.UpdateLighting()`
+4. **Lighting**: Remains "Daylight"
+5. **Event**: Not triggered (no change)
+
+#### Integration Points
+
+**Where to Call UpdateLighting():**
+
+| Location | Method | Time Change | Call UpdateLighting() |
+|----------|--------|-------------|----------------------|
+| MapViewModel | `StartBattle()` | +1 hour | ✅ After time advance |
+| MapViewModel | `FastTravel()` | +2 hours | ✅ After time advance |
+| MapViewModel | `Rest()` | +8 hours | ✅ After time advance |
+| BuildingInteriorViewModel | `StayAtInn()` | +8 hours | ✅ After time advance |
+| SaveLoadService | `LoadPlayer()` | Restore time | ✅ After loading |
+| Any | Manual time change | Variable | ✅ After any time manipulation |
+
+**Suggested Integration in MapViewModel:**private async void Rest()
+{
+    TimeService.AdvanceHours(8);
+    EnvironmentService.UpdateLighting(); // Add this call
+    RefreshTimeDisplay();
+    
+    Player.HP = Player.MaxHP;
+    OnPropertyChanged(nameof(Player));
+    _globalLog?.Add($"You rest and recover all HP. It is now Day {CurrentDay}, {TimeOfDay}.");
+    IsSaveConfirmed = true;
+    await HideSaveConfirmation();
+}
+#### Future Use Cases
+
+**Visual Effects:**
+- Apply screen tints/overlays based on CurrentLighting
+- Adjust sprite brightness/saturation
+- Show/hide light sources (torches, lanterns)
+- Modify shadow directions and intensity
+
+**Gameplay Effects:**
+- Certain enemies only appear at night
+- Quest objectives that require specific lighting
+- Stealth mechanics affected by lighting
+- NPC behavior changes based on lighting
+
+**Weather Integration (TODO):**
+- Rain reduces visibility
+- Fog creates atmospheric effects
+- Regional weather patterns (desert, forest, mountains)
+- Weather affects travel time and random encounters
+
+#### Future Enhancements (TODOs)
+
+- `// TODO: Add regional weather, fog, and rain states later`
+  - **Weather States**: Clear, Rainy, Foggy, Stormy, Snowy
+  - **Regional Weather**: Different weather patterns per region
+  - **Weather Events**: Random weather changes over time
+  - **Gameplay Impact**: Weather affects visibility, encounter rates, travel costs
+  
+- **Potential Improvements**:
+  - Seasonal lighting variations (longer days in summer, shorter in winter)
+  - Eclipse or special celestial events
+  - Indoor vs outdoor lighting states
+  - Dynamic shadows and ambient lighting
+  - Weather sounds (rain, thunder, wind)
+  - Temperature system tied to time and weather
+
+---
+
+## Previous Update: NPC Availability UI Display with Value Converters
 
 ### Changes Made ✨
 
@@ -65,8 +249,7 @@ public object Convert(object value, Type targetType, object parameter, CultureIn
         return npc.IsAvailableNow() ? "LimeGreen" : "Gray";
     }
     return "White";
-}
-**XAML Binding:**<StackPanel Orientation="Horizontal">
+}**XAML Binding:**<StackPanel Orientation="Horizontal">
     <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="White" />
     <TextBlock Text="(" Foreground="#CCCCCC" />
     <TextBlock Text="{Binding Role}" Foreground="#CCCCCC" />
@@ -88,8 +271,7 @@ public object Convert(object value, Type targetType, object parameter, CultureIn
             </MultiBinding>
         </TextBlock.Text>
     </TextBlock>
-</StackPanel>
-#### Example Usage Scenarios
+</StackPanel>#### Example Usage Scenarios
 
 **Scenario 1: NPC Opens Shop in Morning**
 1. **Initial**: Day 1, Night (6:00 AM), Merchant has AvailableStartHour = 8
@@ -228,8 +410,7 @@ public object Convert(object value, Type targetType, object parameter, CultureIn
 **NPC Filtering Flow:**// When constructing MapViewModel with region
 NearbyNPCs = new ObservableCollection<NPC>(
     region.NPCs.Where(npc => npc.IsAvailableNow())
-);
-**Time Change Detection:**public void RefreshTimeDisplay()
+);**Time Change Detection:**public void RefreshTimeDisplay()
 {
     OnPropertyChanged(nameof(CurrentDay));
     OnPropertyChanged(nameof(TimeOfDay));
@@ -240,8 +421,7 @@ NearbyNPCs = new ObservableCollection<NPC>(
         RefreshNearbyNPCs();
         _lastHour = TimeService.Hour;
     }
-}
-**NPC Refresh Logic:**private void RefreshNearbyNPCs()
+}**NPC Refresh Logic:**private void RefreshNearbyNPCs()
 {
     var previousNPCs = NearbyNPCs.ToList();
     var availableNPCs = _region.NPCs.Where(npc => npc.IsAvailableNow()).ToList();
@@ -265,8 +445,7 @@ NearbyNPCs = new ObservableCollection<NPC>(
     }
     
     NearbyNPCs = new ObservableCollection<NPC>(availableNPCs);
-}
-**Context-Aware Message Generation:**
+}**Context-Aware Message Generation:**
 
 | Time of Day | NPC Role | Appearance Message | Disappearance Message |
 |------------|----------|-------------------|----------------------|
@@ -388,8 +567,7 @@ NearbyNPCs = new ObservableCollection<NPC>(
     CurrentLocation = "Market Square",
     DialogueLines = new() { "Slimes have been attacking!", "Please defeat 3 of them." },
     OfferedQuest = new Quest("Slime Hunt", "Defeat 3 Slimes for Mira.", 3, 50, 20)
-};
-#### Implementation Details
+};#### Implementation Details
 
 **NPC Availability Logic:**
 - NPCs can now have specific hours of operation
@@ -526,8 +704,7 @@ JsonSerializer.Serialize(saveData);
 // Loading
 TimeService.Day = saveData.Day;     // Restore day
 TimeService.Hour = saveData.Hour;   // Restore hour
-Debug.WriteLine($"Time loaded - Day {TimeService.Day}, Hour {TimeService.Hour}");
-**Time Display Binding:**<TextBlock HorizontalAlignment="Center" Margin="0,4,0,0">
+Debug.WriteLine($"Time loaded - Day {TimeService.Day}, Hour {TimeService.Hour}");**Time Display Binding:**<TextBlock HorizontalAlignment="Center" Margin="0,4,0,0">
     <Run Text="Day " />
     <Run Text="{Binding CurrentDay, Mode=OneWay}" />
     <Run Text=", " />
@@ -541,8 +718,7 @@ public void RefreshTimeDisplay()
 {
     OnPropertyChanged(nameof(CurrentDay));
     OnPropertyChanged(nameof(TimeOfDay));
-}
-#### Testing Scenarios
+}#### Testing Scenarios
 
 **Scenario 1: Day Progression Through Rest**
 1. **Initial**: Day 1, Morning (8:00 AM)
