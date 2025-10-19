@@ -60,6 +60,11 @@ namespace MiniRPG.ViewModels
         public event Action? OnExitWorldMap;
 
         /// <summary>
+        /// Event triggered when a random encounter occurs during travel.
+        /// </summary>
+        public event Action<string>? OnRandomEncounter;
+
+        /// <summary>
         /// Constructor for WorldMapViewModel.
         /// </summary>
         /// <param name="player">The player character</param>
@@ -92,7 +97,18 @@ namespace MiniRPG.ViewModels
             {
                 SelectedRegion = region;
                 Debug.WriteLine($"Traveling to {region.Name}...");
-                OnRegionSelected?.Invoke(region);
+                
+                // Check if a random encounter should occur
+                if (EncounterService.ShouldTriggerEncounter())
+                {
+                    // Trigger random encounter event with region name
+                    OnRandomEncounter?.Invoke(region.Name);
+                }
+                else
+                {
+                    // No encounter, proceed to region normally
+                    OnRegionSelected?.Invoke(region);
+                }
             }
         }
 

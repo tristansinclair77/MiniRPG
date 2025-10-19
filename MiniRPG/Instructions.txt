@@ -1,16 +1,21 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create EncounterService.cs in the Services folder.
+Modify WorldMapViewModel.cs and MainViewModel.cs.
 
-Requirements:
-• Static class EncounterService
-• Method ShouldTriggerEncounter() → bool
-   - Uses Random with 25% chance to return true.
-• Method GetEncounterEnemy(string regionName)
-   - Calls GameService.GetRandomEnemy(regionName)
+WorldMapViewModel:
+• After TravelCommand is triggered:
+   - If EncounterService.ShouldTriggerEncounter() == true:
+       * Raise OnRandomEncounter(regionName) event.
+
+MainViewModel:
+• Subscribe to OnRandomEncounter.
+• When raised:
+   - Create new BattleViewModel(CurrentPlayer, regionName)
+   - Log "A wild enemy appears during travel!"
+   - Switch CurrentViewModel to BattleViewModel.
+• After battle ends, return to target region’s MapViewModel.
 • Add TODO:
-   // Add encounter rarity tiers and enemy groups later
-   // Add roaming miniboss encounters
+   // Add encounter animations and travel interruption visuals
 
 ---
 

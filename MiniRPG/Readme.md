@@ -1,6 +1,159 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: EncounterService Implementation
+## Latest Update: Random Travel Encounter System
+
+### New Features ✨
+
+#### WorldMapViewModel Random Encounter Integration
+- **Added**: `OnRandomEncounter` event in WorldMapViewModel.cs
+  - Event signature: `Action<string>?` passing region name to trigger battle
+  - Triggered when `EncounterService.ShouldTriggerEncounter()` returns true during travel
+  - Passes target region name to enable region-specific enemy spawning
+- **Enhanced**: `Travel()` method in WorldMapViewModel
+  - After player selects a region, checks `EncounterService.ShouldTriggerEncounter()`
+  - **If encounter triggered (25% chance)**:
+    - Raises `OnRandomEncounter` event with region name
+    - Battle occurs before reaching destination
+  - **If no encounter**:
+    - Raises `OnRegionSelected` event as normal
+    - Player travels to region without interruption
+- **Integration Benefits**:
+  - Seamless integration with existing EncounterService
+  - Region-aware encounters during travel
+  - Event-driven architecture maintains MVVM pattern
+  - No disruption to normal travel flow when no encounter occurs
+
+#### MainViewModel Random Encounter Handling
+- **Added**: Subscription to `WorldMapViewModel.OnRandomEncounter` event
+  - Handler creates `BattleViewModel` with region name parameter
+  - Logs message: "A wild enemy appears during travel!"
+  - Switches `CurrentViewModel` to BattleViewModel for encounter
+  - Plays battle theme music via `AudioService.PlayBattleTheme()`
+- **Added**: `_targetRegion` field to track destination during encounter
+  - Stores the region player was traveling to when encounter occurs
+  - Enables resuming journey after battle concludes
+  - Cleared after successful region transition
+- **Enhanced**: Battle completion flow for travel encounters
+  - After battle ends (victory, defeat, or run), delay 1 second
+  - If `_targetRegion` is set:
+    - Sets `_currentRegion` to `_targetRegion`
+    - Updates `CurrentPlayer.LastRegionName` for save persistence
+    - Calls `SaveLoadService.SavePlayer()` to auto-save
+    - Logs: "Continuing journey to {region.Name}..."
+    - Clears `_targetRegion` to prevent duplicate transitions
+  - Returns to MapView with region-specific content loaded
+- **Added TODO Comment**:
+  - `// TODO: Add encounter animations and travel interruption visuals`
+  - Foundation for visual effects when encounter interrupts travel
+
+#### Complete Random Encounter Flow
+1. **Player Initiates Travel**:
+   - Player opens World Map from MapView
+   - Selects a destination region (e.g., "Goblin Woods")
+   - Clicks region button, triggering `TravelCommand`
+2. **Encounter Check**:
+   - WorldMapViewModel calls `EncounterService.ShouldTriggerEncounter()`
+   - 25% chance returns true for random encounter
+3. **Encounter Triggered Path**:
+   - WorldMapViewModel raises `OnRandomEncounter("Goblin Woods")`
+   - MainViewModel receives event and stores region in `_targetRegion`
+   - Creates BattleViewModel with region name for region-specific enemy
+   - Logs "A wild enemy appears during travel!"
+   - Switches view to BattleView with battle music
+   - Enemy spawned matches target region (Goblin or Goblin Chief for Goblin Woods)
+4. **Battle Resolution**:
+   - Player fights random encounter using normal battle system
+   - Battle ends with victory, defeat, or escape
+   - BattleViewModel raises `BattleEnded` event
+5. **Post-Battle Region Transition**:
+   - MainViewModel checks if `_targetRegion` is set
+   - Updates `_currentRegion` to destination region
+   - Saves player progress with `LastRegionName` updated
+   - Logs "Continuing journey to {region.Name}..."
+   - Creates MapViewModel with destination region data
+   - Player arrives at intended destination
+6. **No Encounter Path**:
+   - If encounter check fails (75% chance):
+   - WorldMapViewModel raises `OnRegionSelected` directly
+   - Player travels to region immediately without battle
+   - Normal region transition flow proceeds
+
+#### Integration Benefits
+- **Seamless Integration**: Uses existing EncounterService and BattleViewModel
+- **Region-Aware**: Encounters spawn enemies appropriate to destination region
+- **Event-Driven**: Maintains MVVM architecture with clean event subscriptions
+- **Save Persistence**: Auto-saves after battle, preserving progress
+- **Player Experience**: 
+  - 25% encounter rate adds unpredictability to travel
+  - Rewards preparation and strategy
+  - Maintains sense of danger in world travel
+- **Backward Compatible**: No changes to existing travel flow when no encounter occurs
+- **Extensible**: Easy to add visual effects, animations, and encounter variations
+
+#### Technical Details
+- **WorldMapViewModel.cs**:
+  - Added `OnRandomEncounter` event (Action<string>)
+  - Modified `Travel()` method to check EncounterService
+  - Conditional event raising based on encounter result
+- **MainViewModel.cs**:
+  - Added `_targetRegion` field (Region?)
+  - Added OnRandomEncounter subscription in CreateMapViewModel()
+  - Battle completion handler checks for target region and completes travel
+  - Auto-save after encounter battle
+  - Added TODO comment for encounter animations
+- **Dependencies**:
+  - EncounterService for encounter probability
+  - GameService for region-specific enemy selection
+  - BattleViewModel for encounter battle system
+  - SaveLoadService for progress persistence
+
+#### User Experience Flow
+- **Visual Feedback**: Log messages keep player informed of travel status
+- **Interruption Handling**: Battle interrupts travel but destination is preserved
+- **Progress Preservation**: Auto-save ensures encounter results are not lost
+- **Fair Challenge**: 25% rate balances risk vs. reward for travel
+- **Region Consistency**: Encounter enemies match destination region theme
+
+#### Future Enhancements
+- **Travel Interruption Visuals**:
+  - Screen shake or flash effect when encounter triggers
+  - "Enemy appears!" popup animation
+  - Travel route line interrupted on world map
+  - Encounter warning sound effect
+- **Encounter Animations**:
+  - Fade-in effect for enemy sprite during travel
+  - Battle transition animation from world map to battle view
+  - Post-battle victory animation before continuing journey
+- **Dynamic Encounter Rates**:
+  - Adjust rate based on player level or equipment
+  - Different rates per region (safe vs. dangerous areas)
+  - Time-of-day modifiers (higher at night)
+- **Encounter Variety**:
+  - Merchant encounters (buy/sell during travel)
+  - Treasure chest discoveries
+  - NPC rescue quests
+  - Environmental hazards
+- **Encounter Avoidance**:
+  - Stealth items reduce encounter rate
+  - Fast travel options bypass encounters
+  - Consumables to temporarily disable encounters
+- **Multiple Enemies**:
+  - Group encounters (2-3 enemies)
+  - Ambush scenarios with increased difficulty
+  - Boss encounters on specific routes
+
+#### Testing Scenarios
+- Test encounter triggers during travel (verify ~25% rate)
+- Verify region-specific enemies spawn in travel encounters
+- Confirm destination reached after encounter battle ends
+- Test auto-save after encounter battle completion
+- Verify normal travel works when no encounter triggers
+- Test encounter with different battle outcomes (victory, defeat, escape)
+- Confirm `_targetRegion` cleared after successful transition
+
+---
+
+## Previous Update: EncounterService Implementation
 
 ### New Features ✨
 
