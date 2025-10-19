@@ -169,11 +169,19 @@ namespace MiniRPG.ViewModels
                             resubscribedBuildingVM.OnTalkToNPC += npc =>
                             {
                                 var innerDialogueVM = new DialogueViewModel(npc, CurrentPlayer, GlobalLog);
-                                innerDialogueVM.OnDialogueExit += () => ShowMap();
+                                innerDialogueVM.OnDialogueExit += () =>
+                                {
+                                    ShowMap();
+                                    try { AudioService.PlayMapTheme(); } catch { }
+                                };
                                 CurrentViewModel = innerDialogueVM;
                                 AddLog($"You talk to {npc.Name}.");
                             };
-                            resubscribedBuildingVM.OnExitBuilding += () => ShowMap();
+                            resubscribedBuildingVM.OnExitBuilding += () =>
+                            {
+                                ShowMap();
+                                try { AudioService.PlayMapTheme(); } catch { }
+                            };
                         }
                     };
                     CurrentViewModel = dialogueVM;
@@ -181,9 +189,14 @@ namespace MiniRPG.ViewModels
                 };
                 
                 // Subscribe to exit building event
-                buildingVM.OnExitBuilding += () => ShowMap();
+                buildingVM.OnExitBuilding += () =>
+                {
+                    ShowMap();
+                    try { AudioService.PlayMapTheme(); } catch { }
+                };
                 
                 CurrentViewModel = buildingVM;
+                try { AudioService.PlayBuildingTheme(selectedBuilding.Type); } catch { }
                 AddLog($"You enter {selectedBuilding.Name}.");
                 // TODO: Add animated fade transition between outdoor and indoor views
             };

@@ -1,6 +1,151 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: BuildingInteriorViewModel Exit Functionality Enhancement
+## Latest Update: Building Audio Theme System
+
+### Changes Made ✨
+
+#### AudioService.cs - PlayBuildingTheme Method Added
+- **Added**: `PlayBuildingTheme(string buildingType)` method
+  - **Purpose**: Play different audio themes based on building type
+  - **Parameters**: `buildingType` - The type of building (e.g., "Inn", "Shop", "House", "Guild")
+  - **Logic**: Switch statement to determine appropriate audio file:
+    - **"Inn"** → plays `inn.wav`
+    - **"Shop"** → plays `shop.wav`
+    - **default** → plays `interior.wav` (for all other building types)
+  - **Implementation**: Calls `PlayWavIfExists()` with appropriate file name
+  - **Error Handling**: Inherits try-catch from PlayWavIfExists method
+
+- **Added**: TODO Comment
+  - `// TODO: // Add smooth crossfade and environmental sound effects later`
+  - Foundation for future audio improvements
+  - Supports smooth transitions between themes
+  - Environmental ambient sounds (e.g., fireplace crackling in inn, crowd noise in shop)
+
+#### MainViewModel.cs - Building Audio Integration
+- **Updated**: `CreateMapViewModel()` method - Building Entry Event Handler
+  - **Audio on Entry**: Calls `AudioService.PlayBuildingTheme(selectedBuilding.Type)`
+    - Plays building-specific theme when entering
+    - Based on Building.Type property
+    - Wrapped in try-catch for error handling
+  - **Audio on Exit**: Calls `AudioService.PlayMapTheme()`
+    - Returns to map theme when exiting building
+    - Called in main exit handler: `buildingVM.OnExitBuilding += () => { ShowMap(); try { AudioService.PlayMapTheme(); } catch { } };`
+    - Called in nested dialogue exit handlers to ensure map theme plays when returning to outdoor map
+    - Wrapped in try-catch for error handling
+
+#### Requirements Fulfilled
+All requirements from Instructions.txt have been implemented:
+
+**AudioService.cs:**
+- ✅ Method: `PlayBuildingTheme(string buildingType)` added
+- ✅ Switch Logic:
+  - ✅ Case "Inn" → plays inn.wav
+  - ✅ Case "Shop" → plays shop.wav
+  - ✅ Default → plays interior.wav
+- ✅ TODO Comment: `// Add smooth crossfade and environmental sound effects later`
+
+**MainViewModel.cs:**
+- ✅ Entry Call: `AudioService.PlayBuildingTheme(Building.Type)` when entering building
+- ✅ Exit Call: `AudioService.PlayMapTheme()` when exiting building
+
+#### Integration Flow
+The complete building audio system now works as follows:
+
+1. **Building Entry**: Player enters building via EnterBuildingCommand
+2. **Audio Switch**: `AudioService.PlayBuildingTheme(selectedBuilding.Type)` executes
+3. **Theme Selection**:
+   - If building type is "Inn" → plays inn.wav
+   - If building type is "Shop" → plays shop.wav
+   - Otherwise → plays interior.wav (House, Guild, etc.)
+4. **Building Interior**: Player interacts with NPCs, dialogue, etc.
+5. **Building Exit**: Player clicks Exit button or completes dialogue chain
+6. **Audio Restore**: `AudioService.PlayMapTheme()` executes
+7. **Return to Map**: Map theme plays, player returns to outdoor MapView
+
+#### Code Flow Example// In MainViewModel.CreateMapViewModel()
+mapVM.OnEnterBuilding += selectedBuilding =>
+{
+    var buildingVM = new BuildingInteriorViewModel(selectedBuilding, CurrentPlayer);
+    
+    // ... event subscriptions ...
+    
+    buildingVM.OnExitBuilding += () =>
+    {
+        ShowMap();
+        try { AudioService.PlayMapTheme(); } catch { }
+    };
+    
+    CurrentViewModel = buildingVM;
+    try { AudioService.PlayBuildingTheme(selectedBuilding.Type); } catch { }
+    AddLog($"You enter {selectedBuilding.Name}.");
+};
+
+// In AudioService
+public static void PlayBuildingTheme(string buildingType)
+{
+    switch (buildingType)
+    {
+        case "Inn":
+            PlayWavIfExists("inn.wav");
+            break;
+        case "Shop":
+            PlayWavIfExists("shop.wav");
+            break;
+        default:
+            PlayWavIfExists("interior.wav");
+            break;
+    }
+}
+#### Audio File Requirements
+The system expects the following audio files in the application directory:
+- **inn.wav**: Cozy, relaxing music for inn buildings
+- **shop.wav**: Upbeat, commercial music for shop buildings
+- **interior.wav**: Generic indoor ambiance for other building types (House, Guild, etc.)
+- **map_theme.wav**: Outdoor exploration theme (existing)
+
+#### Building Type Mapping
+Based on the Building model, the following types are supported:
+- **"Inn"** → inn.wav (dedicated inn theme)
+- **"Shop"** → shop.wav (dedicated shop theme)
+- **"House"** → interior.wav (generic interior)
+- **"Guild"** → interior.wav (generic interior)
+- **Custom Types** → interior.wav (fallback for any undefined types)
+
+#### Potential Future Enhancements
+Based on the TODO comment:
+- **Smooth Crossfade**:
+  - Fade-out current theme when switching
+  - Fade-in new theme for seamless transition
+  - Configurable fade duration (e.g., 1-2 seconds)
+  - Prevents abrupt audio cuts
+  - Volume envelope control
+  
+- **Environmental Sound Effects**:
+  - **Inn**: Fireplace crackling, distant chatter, mug clinks
+  - **Shop**: Cash register, door chime, customer murmurs
+  - **House**: Clock ticking, footsteps, creaking floors
+  - **Guild**: Weapon sharpening, armor clanking, rowdy voices
+  - Layered ambient sounds over music theme
+  - Dynamic volume based on player actions
+  
+- **Positional Audio**:
+  - Volume changes based on NPC proximity
+  - Stereo panning for directional sound
+  - Echo/reverb for large buildings
+  
+- **Time-of-Day Variations**:
+  - Different themes for day/night
+  - Quieter music at night
+  - Unique ambient sounds per time period
+
+#### Files Modified
+- `MiniRPG\Services\AudioService.cs`
+- `MiniRPG\ViewModels\MainViewModel.cs`
+- `MiniRPG\Readme.md`
+
+---
+
+## Previous Update: BuildingInteriorViewModel Exit Functionality Enhancement
 
 ### Changes Made ✨
 
@@ -59,8 +204,7 @@ private void ShowMap()
     CurrentViewModel = mapVM;
     try { AudioService.PlayMapTheme(); } catch { }
     AddLog("Switched to MapView");
-}
-#### Potential Future Enhancements
+}#### Potential Future Enhancements
 Based on the TODO comment:
 - **Fade-to-Black Transition**:
   - Fade-out animation when exiting building

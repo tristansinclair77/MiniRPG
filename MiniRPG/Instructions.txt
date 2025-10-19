@@ -1,13 +1,17 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify BuildingInteriorViewModel.cs.
+Enhance AudioService.cs.
 
 Requirements:
-• Add event Action OnExitBuilding;
-• ExitBuildingCommand executes OnExitBuilding?.Invoke();
-• MainViewModel listens and switches back to MapViewModel(CurrentPlayer, currentRegion).
+• Add method PlayBuildingTheme(string buildingType):
+   - Switch(buildingType):
+       * "Inn" → play inn.wav
+       * "Shop" → play shop.wav
+       * default → play interior.wav
+• Call AudioService.PlayBuildingTheme(Building.Type) when entering building.
+• Call AudioService.PlayMapTheme() when exiting.
 • Add TODO:
-   // Add fade-to-black transition between scenes
+   // Add smooth crossfade and environmental sound effects later
 
 ---
 

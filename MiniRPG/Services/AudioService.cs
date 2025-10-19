@@ -21,6 +21,22 @@ namespace MiniRPG.Services
             PlayWavIfExists("battle_theme.wav");
         }
 
+        public static void PlayBuildingTheme(string buildingType)
+        {
+            switch (buildingType)
+            {
+                case "Inn":
+                    PlayWavIfExists("inn.wav");
+                    break;
+                case "Shop":
+                    PlayWavIfExists("shop.wav");
+                    break;
+                default:
+                    PlayWavIfExists("interior.wav");
+                    break;
+            }
+        }
+
         private static void PlayWavIfExists(string fileName)
         {
             try
@@ -37,5 +53,6 @@ namespace MiniRPG.Services
             }
         }
         // TODO: // Replace with cross-fade audio engine later.
+        // TODO: // Add smooth crossfade and environmental sound effects later
     }
 }
