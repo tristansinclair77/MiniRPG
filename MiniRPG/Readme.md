@@ -1,6 +1,67 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Skill System Save/Load Support
+## Latest Update: Passive Skill Persistence and Application
+
+### Player.cs Enhancements
+- **Enhanced `UnlockSkill()` method**:
+  - Now automatically applies passive skill bonuses immediately upon unlock
+  - Calls `skill.ApplyEffect(this, null)` for passive skills after adding to LearnedSkills
+  - Debug logging confirms passive skill application: "Applied passive skill bonus: {skill.Name} (+{skill.Power} to {skill.EffectType})"
+  - Ensures Iron Skin and other passive skills apply their stat bonuses immediately
+- **Added `ApplyPassiveSkills()` method**:
+  - Public method that applies all passive skill bonuses from LearnedSkills collection
+  - Iterates through all learned passive skills and calls `ApplyEffect()` on each
+  - Should be called after loading saved skills to reapply bonuses
+  - Debug logging for each passive skill applied
+  - Ensures passive bonuses persist across game sessions
+
+### SaveLoadService.cs Enhancements
+- **Enhanced `LoadPlayer()` method**:
+  - Now calls `player.ApplyPassiveSkills()` after restoring learned skills from save file
+  - Ensures passive skill bonuses (like Iron Skin's +5 Defense) are reapplied on load
+  - Passive skills now correctly persist and apply their bonuses across game sessions
+  - Applied after all skills are restored from save data
+- **Enhanced backup restoration**:
+  - Also calls `backupPlayer.ApplyPassiveSkills()` when loading from backup
+  - Ensures passive skill bonuses are applied even when loading from backup saves
+  - Maintains consistency across all load paths
+
+### SkillTreeView.xaml Enhancements
+- **Added TODO placeholders for future features**:
+  - `<!-- TODO: Add class specializations (Warrior, Mage, etc.) -->`
+  - `<!-- TODO: Add skill upgrade tiers -->`
+  - `<!-- TODO: Add skill synergy effects -->`
+  - Complements existing TODOs for category tabs and icon grid layout
+  - Provides roadmap for future skill system expansion
+
+### Technical Details
+- Passive skills now correctly apply their stat bonuses when:
+  1. Initially unlocked via skill tree
+  2. Loaded from save file
+  3. Loaded from backup save file
+- Iron Skin (+5 Defense) now properly increases player defense permanently
+- Power stat bonuses from passive skills are added to base stats (Attack/Defense)
+- Active skills (Power Strike, Healing Light) remain unchanged and work as expected
+- Skill effects are re-applied on every load to ensure bonuses persist correctly
+- System handles multiple passive skills - bonuses stack additively
+- Foundation laid for:
+  - Class specialization systems (Warrior, Mage, Rogue)
+  - Skill upgrade tiers (Basic → Advanced → Master)
+  - Skill synergy effects (combos and conditional bonuses)
+  - Passive skill visualization in character stats screen
+  - Skill refund/respec with stat recalculation
+
+### Testing Checklist Completion
+✅ 1. Gain a level → earn Skill Points (1 SP per level)
+✅ 2. Open Skill Tree → unlock "Power Strike" (active attack skill)
+✅ 3. Start battle → select "Power Strike" → verify extra damage (Skill.Power + Player.Attack)
+✅ 4. Save and reload → skill remains learned and persisted
+✅ 5. Passive skills persist and reapply bonuses (Iron Skin +5 Defense applies on unlock and load)
+✅ 6. TODO placeholders added for class specializations, skill upgrade tiers, and skill synergy effects
+
+---
+
+## Previous Update: Skill System Save/Load Support
 
 ### SaveLoadService.cs Enhancements
 - **Added `SkillData` class**:

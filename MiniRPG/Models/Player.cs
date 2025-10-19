@@ -217,6 +217,26 @@ namespace MiniRPG.Models
                 skill.IsUnlocked = true;
                 LearnedSkills.Add(skill);
                 Debug.WriteLine($"Unlocked skill: {skill.Name}");
+                
+                // Apply passive skill bonuses immediately
+                if (skill.IsPassive)
+                {
+                    skill.ApplyEffect(this, null);
+                    Debug.WriteLine($"Applied passive skill bonus: {skill.Name} (+{skill.Power} to {skill.EffectType})");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Applies all passive skill bonuses to the player's stats.
+        /// Should be called after loading saved skills or after unlocking passive skills.
+        /// </summary>
+        public void ApplyPassiveSkills()
+        {
+            foreach (var skill in LearnedSkills.Where(s => s.IsPassive))
+            {
+                skill.ApplyEffect(this, null);
+                Debug.WriteLine($"Applied passive skill: {skill.Name} (+{skill.Power} to {skill.EffectType})");
             }
         }
 

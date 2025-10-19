@@ -1,15 +1,15 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify SaveLoadService.cs.
-
-Requirements:
-• Serialize and deserialize:
-   - Player.SkillPoints
-   - Player.LearnedSkills
-   - Player.AvailableSkills
-• Ensure Skill objects maintain names and IsUnlocked state.
-• Add TODO:
-   // Add skill versioning and balance re-scaling later
+Testing checklist:
+1. Gain a level → earn Skill Points.
+2. Open Skill Tree → unlock “Power Strike.”
+3. Start battle → select “Power Strike” → verify extra damage.
+4. Save and reload → skill remains learned.
+5. Ensure passive skills persist and reapply bonuses.
+6. Add TODO placeholders:
+   <!-- TODO: Add class specializations (Warrior, Mage, etc.) -->
+   <!-- TODO: Add skill upgrade tiers -->
+   <!-- TODO: Add skill synergy effects -->
 
 ---
 

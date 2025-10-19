@@ -12,6 +12,9 @@
     </UserControl.Resources>
     <!-- TODO: Add category tabs for Attack / Defense / Magic -->
     <!-- TODO: Replace with icon grid layout and progress lines -->
+    <!-- TODO: Add class specializations (Warrior, Mage, etc.) -->
+    <!-- TODO: Add skill upgrade tiers -->
+    <!-- TODO: Add skill synergy effects -->
     <Grid Margin="10" Background="#222233">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

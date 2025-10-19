@@ -192,6 +192,9 @@ namespace MiniRPG.Services
                         }
                     }
                     
+                    // Apply all passive skill bonuses after loading
+                    player.ApplyPassiveSkills();
+                    
                     Debug.WriteLine($"Loaded unlocked regions: {string.Join(", ", saveData.UnlockedRegions)}");
                     Debug.WriteLine($"Time loaded - Day {TimeService.Day}, Hour {TimeService.Hour} ({TimeService.GetTimeOfDay()})");
                     Debug.WriteLine($"Environment loaded - Weather: {EnvironmentService.Weather}, Season: {EnvironmentService.CurrentSeason}");
@@ -305,6 +308,9 @@ namespace MiniRPG.Services
                                     backupPlayer.AvailableSkills.Add(skill);
                                 }
                             }
+                            
+                            // Apply all passive skill bonuses after loading backup
+                            backupPlayer.ApplyPassiveSkills();
                         }
                         else
                         {
