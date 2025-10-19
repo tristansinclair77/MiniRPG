@@ -1,6 +1,30 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Skill Tree Integration with MapViewModel
+## Latest Update: Skill Tree Button in MapView
+
+### MapView.xaml Enhancements
+- **Added "Skill Tree" button to Player Info Panel**:
+  - New button positioned between "Quest Board" and "World Map" buttons
+  - Labeled "Skill Tree" with consistent styling:
+    - Gold text (#F9E97A) on dark background (#222233)
+    - Bold font weight matching other action buttons
+    - 8px left margin for consistent spacing
+  - Command binding: `Command="{Binding OpenSkillTreeCommand}"`
+  - Enables direct access to Skill Tree from the main map view
+- **Added TODO comment for future enhancement**:
+  - `<!-- TODO: Add animated sparkle on new skill unlock -->`
+  - Placeholder for visual feedback when player gains new skill points
+
+### Technical Details
+- Button uses existing `OpenSkillTreeCommand` from MapViewModel (already implemented)
+- Follows established UI pattern matching Shop, Quest Board, and World Map buttons
+- Positioned logically near other progression-related features (Quest Board)
+- Fully integrated with MVVM architecture via command binding
+- Foundation laid for future visual enhancements (sparkle animation, notification badge)
+
+---
+
+## Previous Update: Skill Tree Integration with MapViewModel
 
 ### MapViewModel.cs Enhancements
 - **Added `OpenSkillTreeCommand`**:

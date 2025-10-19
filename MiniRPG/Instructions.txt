@@ -1,20 +1,12 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify MapViewModel.cs and MainViewModel.cs.
+Edit MapView.xaml.
 
-MapViewModel:
-• Add RelayCommand OpenSkillTreeCommand.
-• When executed → trigger event OnOpenSkillTree.
-
-MainViewModel:
-• Subscribe to OnOpenSkillTree.
-• When triggered:
-   - Set CurrentViewModel = new SkillTreeViewModel(CurrentPlayer)
-   - Log "Opened Skill Tree."
-• Subscribe to ExitSkillTreeCommand to return to MapViewModel.
-
-Add TODO:
-// Add keyboard shortcut or button icon for Skill Tree
+Requirements:
+• Add Button labeled "Skill Tree" near "Quest Board" and "Shop".
+• Bind Command to OpenSkillTreeCommand.
+• Add TODO:
+   <!-- TODO: Add animated sparkle on new skill unlock -->
 
 ---
 
