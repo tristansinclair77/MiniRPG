@@ -1,6 +1,30 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: MapView NPC Quest Indicators
+## Latest Update: Region Class Implementation
+
+### New Features ✨
+
+#### Region Class Added
+- **Added**: `Region.cs` in the Models folder
+- **Features**:
+  - Core region properties: Name, Description
+  - `ObservableCollection<NPC>` for NPCs in the region
+  - `ObservableCollection<string>` for available enemies in the region
+  - `ObservableCollection<Quest>` for local quests specific to the region
+  - Constructor initializes all collections automatically
+- **Example Usage**:new Region("Greenfield Town", "A quiet settlement surrounded by plains.")- **Purpose**: 
+  - Represents different locations/areas in the game world
+  - Each region can have its own NPCs, enemies, and quests
+  - Foundation for a region-based world map system
+- **Future Enhancements**:
+  - Travel cost between regions
+  - Region difficulty levels
+  - Background art for each region
+  - Music themes for different areas
+
+---
+
+## Previous Update: MapView NPC Quest Indicators
 
 ### Improvements Made ✨
 
