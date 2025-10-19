@@ -1,16 +1,25 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Testing checklist:
-1. Enter “Greenfield Town” region.
-2. Open “Buildings” → select “General Shop” → click “Enter”.
-3. Verify interior loads with NPCs.
-4. Talk to shopkeeper → confirm dialogue or shop UI appears.
-5. Leave building → return to map.
-6. Save and reload → confirm region and building persistence.
-7. Add TODO placeholders:
-   <!-- TODO: Add inn stay mechanic (rest for gold) -->
-   <!-- TODO: Add visual interiors with pixel furniture -->
-   <!-- TODO: Add multi-room buildings and upstairs/downstairs -->
+Create TimeService.cs in the Services folder.
+
+Requirements:
+• Static class TimeService
+• Static properties:
+   - int Day = 1
+   - int Hour = 8   // start morning
+• Static methods:
+   - AdvanceHours(int amount):
+       * Hour += amount
+       * If Hour >= 24:
+           Day++
+           Hour %= 24
+   - GetTimeOfDay():
+       * If Hour < 6 → "Night"
+       * If Hour < 12 → "Morning"
+       * If Hour < 18 → "Afternoon"
+       * Else → "Evening"
+• Add TODO:
+   // Add moon phases, seasons, and weather events later
 
 ---
 
