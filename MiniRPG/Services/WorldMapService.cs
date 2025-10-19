@@ -23,6 +23,25 @@ namespace MiniRPG.Services
             var mira = allNPCs.Find(npc => npc.Name == "Mira")!;
             var shopkeeper = allNPCs.Find(npc => npc.Name == "Shopkeeper")!;
 
+            // Create buildings with home assignments
+            var miraHome = new Building("Mira's Home", "A cozy cottage where Mira lives.", "House")
+            {
+                Occupants = new ObservableCollection<NPC> { mira },
+                IsHome = true
+            };
+            
+            var generalShop = new Building("General Shop", "A well-stocked shop selling basic supplies and equipment.", "Shop")
+            {
+                Occupants = new ObservableCollection<NPC> { shopkeeper },
+                IsHome = true
+            };
+            
+            var inn = new Building("Inn", "A cozy inn where travelers can rest and recover.", "Inn");
+
+            // Assign home buildings to NPCs and set CurrentLocation
+            mira.CurrentLocation = miraHome.Name;
+            shopkeeper.CurrentLocation = generalShop.Name;
+
             // Greenfield Town - Starting area with NPCs
             var greenfieldTown = new Region("Greenfield Town", "A quiet settlement surrounded by plains.")
             {
@@ -33,15 +52,9 @@ namespace MiniRPG.Services
                 },
                 Buildings = new ObservableCollection<Building>
                 {
-                    new Building("General Shop", "A well-stocked shop selling basic supplies and equipment.", "Shop")
-                    {
-                        Occupants = new ObservableCollection<NPC> { shopkeeper }
-                    },
-                    new Building("Inn", "A cozy inn where travelers can rest and recover.", "Inn"),
-                    new Building("Mira's Home", "A cozy cottage where Mira lives.", "House")
-                    {
-                        Occupants = new ObservableCollection<NPC> { mira }
-                    }
+                    generalShop,
+                    inn,
+                    miraHome
                 }
             };
             regions.Add(greenfieldTown);
@@ -67,6 +80,8 @@ namespace MiniRPG.Services
                 }
             };
             regions.Add(goblinWoods);
+
+            // TODO: Add NPC bedtime dialogues and idle animations
 
             return regions;
         }

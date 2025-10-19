@@ -11,6 +11,7 @@ namespace MiniRPG.Models
         public string Description { get; set; }
         public string Type { get; set; } // e.g. "Shop", "Inn", "House", "Guild"
         public ObservableCollection<NPC> Occupants { get; set; }
+        public bool IsHome { get; set; } = false;
 
         /// <summary>
         /// Constructor for creating a new building with basic information.

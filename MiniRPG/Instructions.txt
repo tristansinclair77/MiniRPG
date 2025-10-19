@@ -1,17 +1,15 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Update TimeService.cs and MapViewModel.cs.
+Enhance Building.cs and Region.cs.
 
-TimeService:
-• Add event OnHourChanged.
-• Fire event each time AdvanceHours() modifies Hour.
+Building.cs:
+• Add property bool IsHome = false.
 
-MapViewModel:
-• Subscribe to TimeService.OnHourChanged.
-• When triggered, refresh NearbyNPCs (using IsAvailableNow).
-• Log time-based events (e.g., "Shops are closing for the night.").
+Region.cs:
+• Assign certain buildings as homes for specific NPCs.
+• Update NPC initialization: npc.CurrentLocation = homeBuilding.Name;
 • Add TODO:
-   // Add fade-to-night transitions for NPC sprites later
+   // Add NPC bedtime dialogues and idle animations
 
 ---
 

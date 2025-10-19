@@ -1,6 +1,32 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Time-Based NPC Scheduling System
+## Latest Update: NPC Home Assignment System
+
+### Building.cs Enhancements
+- **Added `IsHome` property**: 
+  - Boolean property to identify buildings that serve as NPC homes
+  - Defaults to `false`
+  - Can be set to `true` for buildings assigned as homes for specific NPCs
+
+### WorldMapService.cs Enhancements
+- **Assigned buildings as homes for specific NPCs**:
+  - Mira's Home is marked as `IsHome = true` and assigned as Mira's home
+  - General Shop is marked as `IsHome = true` and assigned as Shopkeeper's home
+- **Updated NPC initialization**:
+  - `mira.CurrentLocation` set to "Mira's Home"
+  - `shopkeeper.CurrentLocation` set to "General Shop"
+  - NPCs now have their home locations properly initialized
+- **Added TODO**: Add NPC bedtime dialogues and idle animations
+
+### Technical Details
+- Buildings can now be designated as NPC homes using the `IsHome` property
+- NPCs have their `CurrentLocation` property set to their home building name during initialization
+- This enables future features like NPC pathfinding, schedules, and location-based interactions
+- Foundation laid for bedtime routines and idle animations
+
+---
+
+## Previous Update: Time-Based NPC Scheduling System
 
 ### TimeService Enhancements
 - **Added `OnHourChanged` event**: 
