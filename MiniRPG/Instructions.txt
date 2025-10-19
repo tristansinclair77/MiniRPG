@@ -1,15 +1,19 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit MapView.xaml.
+Modify MapViewModel.cs.
 
 Requirements:
-• Add TextBlock near region name showing:
-   "Day {Binding CurrentDay}, {Binding TimeOfDay}"
-• Bind properties from MapViewModel (wrapping TimeService).
-• Style subtly (small italic font under header).
+• Add properties:
+   - int CurrentDay => TimeService.Day
+   - string TimeOfDay => TimeService.GetTimeOfDay()
+• Raise OnPropertyChanged when time advances.
+• After any RestCommand, Travel, or Battle → call TimeService.AdvanceHours(x)
+   - Rest = 8 hours
+   - Battle = 1 hour
+   - Travel = 2 hours
+• Call OnPropertyChanged(nameof(CurrentDay)) and OnPropertyChanged(nameof(TimeOfDay)).
 • Add TODO:
-   <!-- TODO: Add animated sun/moon icons -->
-   <!-- TODO: Add day-night background tint -->
+   // Add time-based events and NPC schedules
 
 ---
 

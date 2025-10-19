@@ -1,6 +1,245 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Time Display on Map UI
+## Latest Update: Time Advancement Integration
+
+### Changes Made ✨
+
+#### MapViewModel.cs - Time Advancement with Property Notifications
+- **Updated**: Time now advances during gameplay actions with UI notifications
+  - **RestCommand**: Advances time by 8 hours
+  - **StartBattle**: Advances time by 1 hour  
+  - **FastTravel**: Advances time by 2 hours
+
+- **Added**: Property Change Notifications
+  - After calling `TimeService.AdvanceHours()`, MapViewModel now calls:
+    - `OnPropertyChanged(nameof(CurrentDay))`
+    - `OnPropertyChanged(nameof(TimeOfDay))`
+  - This ensures the UI updates immediately when time changes
+  - Time display in MapView header automatically refreshes
+
+- **Enhanced**: Log Messages with Time Information
+  - **Rest**: "You rest and recover all HP. It is now Day {CurrentDay}, {TimeOfDay}."
+  - **FastTravel**: "Fast traveling to {regionName}... It is now Day {CurrentDay}, {TimeOfDay}."
+  - **Battle**: Time advances silently (1 hour per battle)
+
+- **Added**: TODO Comment for Future Features
+  - `// TODO: Add time-based events and NPC schedules`
+  - Foundation for advanced time-based gameplay:
+    - **Time-Based Events**: Specific events triggered at certain times/days
+    - **NPC Schedules**: NPCs appear in different locations based on time
+    - **Shop Hours**: Shops open/close based on time of day
+    - **Quest Deadlines**: Time-sensitive quest mechanics
+    - **Dynamic World**: World changes based on time progression
+
+#### Requirements Fulfilled
+
+All requirements from Instructions.txt have been implemented:
+
+**MapViewModel.cs:**
+- ✅ Properties added:
+  - ✅ `int CurrentDay => TimeService.Day`
+  - ✅ `string TimeOfDay => TimeService.GetTimeOfDay()`
+- ✅ Raise OnPropertyChanged when time advances:
+  - ✅ `OnPropertyChanged(nameof(CurrentDay))`
+  - ✅ `OnPropertyChanged(nameof(TimeOfDay))`
+- ✅ After RestCommand → call `TimeService.AdvanceHours(8)`
+- ✅ After Battle → call `TimeService.AdvanceHours(1)`
+- ✅ After Travel → call `TimeService.AdvanceHours(2)`
+- ✅ TODO comment added: `// TODO: Add time-based events and NPC schedules`
+
+#### Integration Flow
+
+**Time Advancement During Rest:**
+1. **Player Clicks Rest**: RestCommand executes
+2. **Time Advances**: `TimeService.AdvanceHours(8)`
+3. **Notify UI**: `OnPropertyChanged(nameof(CurrentDay))` and `OnPropertyChanged(nameof(TimeOfDay))`
+4. **Restore HP**: `Player.HP = Player.MaxHP`
+5. **Log Message**: "You rest and recover all HP. It is now Day 1, Afternoon."
+6. **UI Updates**: Time display shows new day/time immediately
+
+**Time Advancement During Battle:**
+1. **Player Clicks Fight**: StartBattleCommand executes
+2. **Time Advances**: `TimeService.AdvanceHours(1)`
+3. **Notify UI**: `OnPropertyChanged(nameof(CurrentDay))` and `OnPropertyChanged(nameof(TimeOfDay))`
+4. **Battle Starts**: Transitions to BattleViewModel
+5. **UI Updates**: Time display updates (visible when returning to map)
+
+**Time Advancement During Travel:**
+1. **Player Fast Travels**: FastTravelCommand executes with destination
+2. **Time Advances**: `TimeService.AdvanceHours(2)`
+3. **Notify UI**: `OnPropertyChanged(nameof(CurrentDay))` and `OnPropertyChanged(nameof(TimeOfDay))`
+4. **Log Message**: "Fast traveling to Ironforge Peaks... It is now Day 1, Evening."
+5. **Region Changes**: Loads new region with updated time
+6. **UI Updates**: Time display shows new time in new region
+
+#### Code Examples
+
+**Rest with Time Advancement:**```csharp
+private async void Rest()
+{
+    // Advance time by 8 hours for resting
+    TimeService.AdvanceHours(8);
+    OnPropertyChanged(nameof(CurrentDay));
+    OnPropertyChanged(nameof(TimeOfDay));
+    
+    Player.HP = Player.MaxHP;
+    OnPropertyChanged(nameof(Player));
+    _globalLog?.Add($"You rest and recover all HP. It is now Day {CurrentDay}, {TimeOfDay}.");
+    IsSaveConfirmed = true;
+    await HideSaveConfirmation();
+}
+**Battle with Time Advancement:**```csharp
+private void StartBattle()
+{
+    var msg = $"Starting battle at [{SelectedLocation}]";
+    Debug.WriteLine(msg);
+    _globalLog.Add(msg);
+    
+    // Advance time by 1 hour for battle
+    TimeService.AdvanceHours(1);
+    OnPropertyChanged(nameof(CurrentDay));
+    OnPropertyChanged(nameof(TimeOfDay));
+    
+    OnStartBattle?.Invoke(RegionName ?? "Unknown");
+}
+**Travel with Time Advancement:**```csharp
+private void FastTravel(string? regionName)
+{
+    if (!string.IsNullOrEmpty(regionName))
+    {
+        // Advance time by 2 hours for travel
+        TimeService.AdvanceHours(2);
+        OnPropertyChanged(nameof(CurrentDay));
+        OnPropertyChanged(nameof(TimeOfDay));
+        
+        _globalLog?.Add($"Fast traveling to {regionName}... It is now Day {CurrentDay}, {TimeOfDay}.");
+        OnFastTravel?.Invoke(regionName);
+    }
+}
+#### Gameplay Examples
+
+**Example 1: Morning to Evening Progression**
+- **Start**: Day 1, Morning (8:00 AM)
+- **Action**: Rest (8 hours)
+- **Result**: Day 1, Afternoon (4:00 PM)
+- **Message**: "You rest and recover all HP. It is now Day 1, Afternoon."
+
+**Example 2: Day Transition**
+- **Start**: Day 1, Evening (10:00 PM)
+- **Action**: Rest (8 hours)
+- **Result**: Day 2, Morning (6:00 AM)
+- **Message**: "You rest and recover all HP. It is now Day 2, Morning."
+
+**Example 3: Full Day of Adventure**
+- **8:00 AM** (Day 1, Morning): Start at Greenfield Town
+- **9:00 AM** (Day 1, Morning): Battle with Goblin (+1 hour)
+- **11:00 AM** (Day 1, Morning): Travel to Ironforge Peaks (+2 hours)
+- **12:00 PM** (Day 1, Afternoon): Battle with Orc (+1 hour)
+- **1:00 PM** (Day 1, Afternoon): Battle with Troll (+1 hour)
+- **3:00 PM** (Day 1, Afternoon): Travel back to Greenfield (+2 hours)
+- **11:00 PM** (Day 2, Morning): Rest at inn (+8 hours, crosses midnight)
+
+#### Potential Future Enhancements
+
+Based on the new TODO comment:
+
+**Time-Based Events:**
+- **Scheduled Cutscenes**: Trigger story events at specific times
+  - Day 5, Evening: Festival begins in town square
+  - Day 10, Night: Mysterious stranger appears at inn
+- **Random Encounters**: Certain enemies only appear at specific times
+  - Vampires only at Night
+  - Bandits more common during Evening
+- **Special Items**: Time-limited shop inventory
+  - Rare items available only on certain days
+- **Implementation**:```csharp
+public void CheckTimeBasedEvents()
+{
+    if (TimeService.Day == 5 && TimeService.GetTimeOfDay() == "Evening")
+    {
+        TriggerEvent("Festival Begins");
+    }
+    
+    if (TimeService.GetTimeOfDay() == "Night" && Random.NextDouble() < 0.3)
+    {
+        SpawnVampireEncounter();
+    }
+}
+**NPC Schedules:**
+- **Dynamic Locations**: NPCs move based on time
+  - Morning (6-12): Shopkeeper at shop, Farmer at fields
+  - Afternoon (12-18): Shopkeeper at shop, Farmer at market
+  - Evening (18-24): Shopkeeper at home, Farmer at tavern
+  - Night (0-6): All NPCs at home/sleeping
+- **Time-Based Dialogue**: Different greetings based on time
+  - Morning: "Good morning! Ready for a new day?"
+  - Night: "You should be sleeping at this hour!"
+- **Availability**: Some NPCs only accessible at certain times
+  - Thieves Guild contact only appears at Night
+  - Town mayor only available during business hours
+- **Implementation**:```csharp
+public string GetNPCLocation(NPC npc)
+{
+    return (npc.Name, TimeService.GetTimeOfDay()) switch
+    {
+        ("Shopkeeper", "Morning" or "Afternoon") => "General Shop",
+        ("Shopkeeper", "Evening" or "Night") => "Shopkeeper's Home",
+        ("Farmer", "Morning") => "Farm Fields",
+        ("Farmer", "Afternoon") => "Town Market",
+        ("Farmer", "Evening" or "Night") => "Tavern",
+        _ => "Unknown"
+    };
+}
+**Shop Hours:**
+- **Open/Close Times**: Shops only accessible during business hours
+  - General Shop: 8:00 AM - 8:00 PM
+  - Tavern: 6:00 PM - 2:00 AM
+  - Blacksmith: 6:00 AM - 6:00 PM
+- **Closed Message**: "The shop is closed. Come back during business hours (8 AM - 8 PM)."
+- **After-Hours Premium**: Some shops offer 24/7 service for extra gold
+- **Implementation**:```csharp
+public bool IsShopOpen(string shopType)
+{
+    return shopType switch
+    {
+        "General Shop" => TimeService.Hour >= 8 && TimeService.Hour < 20,
+        "Tavern" => TimeService.Hour >= 18 || TimeService.Hour < 2,
+        "Blacksmith" => TimeService.Hour >= 6 && TimeService.Hour < 18,
+        _ => true
+    };
+}
+**Quest Deadlines:**
+- **Time-Limited Quests**: Must complete before deadline
+  - "Defeat 5 Goblins by Day 7"
+  - "Deliver package before Evening"
+- **Failure Consequences**: Quest fails if not completed in time
+- **Bonus Rewards**: Extra rewards for early completion
+- **Implementation**:```csharp
+public void CheckQuestDeadlines()
+{
+    foreach (var quest in Player.ActiveQuests.ToList())
+    {
+        if (quest.Deadline.HasValue && TimeService.Day > quest.Deadline.Value)
+        {
+            FailQuest(quest, "Time limit exceeded!");
+        }
+    }
+}
+**Dynamic World Changes:**
+- **Day/Night Visuals**: Background tint changes with time
+- **NPC Behavior**: Different schedules and dialogue
+- **Shop Availability**: Open/closed based on hours
+- **Enemy Spawns**: Different enemies at different times
+- **Weather Patterns**: Weather changes throughout day
+- **Special Events**: Festivals, markets, unique encounters
+
+#### Files Modified
+- `MiniRPG\ViewModels\MapViewModel.cs`
+- `MiniRPG\Readme.md`
+
+---
+
+## Previous Update: Time Display on Map UI
 
 ### Changes Made ✨
 

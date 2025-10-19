@@ -242,6 +242,7 @@ namespace MiniRPG.ViewModels
             
             // TODO: Add visual background per region
             // TODO: Add weather or time-of-day changes
+            // TODO: Add time-based events and NPC schedules
         }
 
         private void StartBattle()
@@ -249,6 +250,12 @@ namespace MiniRPG.ViewModels
             var msg = $"Starting battle at [{SelectedLocation}]";
             Debug.WriteLine(msg);
             _globalLog.Add(msg);
+            
+            // Advance time by 1 hour for battle
+            TimeService.AdvanceHours(1);
+            OnPropertyChanged(nameof(CurrentDay));
+            OnPropertyChanged(nameof(TimeOfDay));
+            
             // Pass the region name to the battle system for region-aware enemy selection
             OnStartBattle?.Invoke(RegionName ?? "Unknown");
             // TODO: In future, connect to BattleViewModel and load enemy data
@@ -288,7 +295,12 @@ namespace MiniRPG.ViewModels
         {
             if (!string.IsNullOrEmpty(regionName))
             {
-                _globalLog?.Add($"Fast traveling to {regionName}...");
+                // Advance time by 2 hours for travel
+                TimeService.AdvanceHours(2);
+                OnPropertyChanged(nameof(CurrentDay));
+                OnPropertyChanged(nameof(TimeOfDay));
+                
+                _globalLog?.Add($"Fast traveling to {regionName}... It is now Day {CurrentDay}, {TimeOfDay}.");
                 OnFastTravel?.Invoke(regionName);
             }
         }
@@ -303,9 +315,14 @@ namespace MiniRPG.ViewModels
 
         private async void Rest()
         {
+            // Advance time by 8 hours for resting
+            TimeService.AdvanceHours(8);
+            OnPropertyChanged(nameof(CurrentDay));
+            OnPropertyChanged(nameof(TimeOfDay));
+            
             Player.HP = Player.MaxHP;
             OnPropertyChanged(nameof(Player));
-            _globalLog?.Add("You rest and recover all HP.");
+            _globalLog?.Add($"You rest and recover all HP. It is now Day {CurrentDay}, {TimeOfDay}.");
             IsSaveConfirmed = true;
             await HideSaveConfirmation();
             // TODO: Replace with inn scene and cost-based healing later
