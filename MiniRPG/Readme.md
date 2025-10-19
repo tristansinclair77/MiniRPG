@@ -1,6 +1,52 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Battle Skill System Integration
+## Latest Update: Battle Skills UI Integration
+
+### BattleView.xaml Enhancements
+- **Added Skills Expander to battle interface**:
+  - New Expander control labeled "Skills" positioned below Run button
+  - Width set to 250px for better skill list visibility
+  - Dark theme styling matching existing UI (#1E1E2A background, #F9E97A accents)
+  - Expands/collapses to show/hide skill selection panel
+- **Added Skills ListBox**:
+  - Bound to `UsableSkills` collection from BattleViewModel
+  - Two-way binding to `SelectedSkill` property for skill selection tracking
+  - Displays skill names using DataTemplate
+  - Dark background (#1E1E2A) with white text for consistency
+  - Height set to 100px for scrollable list of skills
+  - Shows only active (non-passive) skills available for combat use
+- **Added "Use Skill" Button**:
+  - Bound to `UseSkillCommand` from BattleViewModel
+  - CommandParameter bound to `SelectedSkill` for command execution
+  - Gold text (#F9E97A) on dark background (#222233) matching other battle buttons
+  - Bold font weight for visual consistency
+  - Width 120px matching Attack/Defend/Run buttons
+  - Automatically disabled when no skill is selected (via command CanExecute)
+- **Added TODO comment**:
+  - `<!-- TODO: Replace with command wheel or battle HUD icons -->`
+  - Placeholder for future command wheel UI or battle HUD icon system
+
+### Technical Details
+- Skills Expander integrates seamlessly with existing BattleViewModel skill system
+- ListBox automatically populates from `UsableSkills` ObservableCollection
+- Skill selection syncs with `SelectedSkill` property for real-time command updates
+- "Use Skill" button uses existing `UseSkillCommand` from BattleViewModel
+- CommandParameter passes selected skill directly to command for execution
+- Button state managed by command's CanExecute (requires player turn, battle not over, skill selected)
+- UI updates automatically when player learns new skills or skills become available
+- Visual style matches existing battle button layout (Attack/Defend/Run)
+- Foundation laid for:
+  - Command wheel UI for quick skill access
+  - Battle HUD with skill hotkeys and cooldown indicators
+  - Skill icons and visual effects
+  - Skill tooltips showing damage/effect calculations
+  - Skill cooldown timers displayed in UI
+  - Drag-and-drop skill hotbar customization
+- Completes the skill system integration: SkillTreeService → SkillTreeView → BattleView → BattleViewModel
+
+---
+
+## Previous Update: Battle Skill System Integration
 
 ### BattleViewModel.cs Enhancements
 - **Added `UsableSkills` property**:

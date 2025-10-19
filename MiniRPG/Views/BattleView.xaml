@@ -77,6 +77,35 @@
             <Button Name="AttackButton" Content="Attack" Command="{Binding AttackCommand}" Width="120" Margin="5" Padding="8,4" Foreground="#F9E97A" Background="#222233" FontWeight="Bold" />
             <Button Name="DefendButton" Content="Defend" Command="{Binding DefendCommand}" Width="120" Margin="5" Padding="8,4" Foreground="#F9E97A" Background="#222233" FontWeight="Bold" />
             <Button Name="RunButton" Content="Run" Command="{Binding RunCommand}" Width="120" Margin="5" Padding="8,4" Foreground="#F9E97A" Background="#222233" FontWeight="Bold" />
+            
+            <!-- Skills Expander -->
+            <Expander Header="Skills" Width="250" Margin="5" Foreground="#F9E97A" Background="#1E1E2A" FontWeight="Bold">
+                <StackPanel>
+                    <ListBox Name="SkillsListBox" 
+                             ItemsSource="{Binding UsableSkills}" 
+                             SelectedItem="{Binding SelectedSkill}"
+                             Background="#1E1E2A" 
+                             Foreground="White" 
+                             Height="100" 
+                             Margin="5">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <Button Content="Use Skill" 
+                            Command="{Binding UseSkillCommand}" 
+                            CommandParameter="{Binding SelectedSkill}"
+                            Width="120" 
+                            Margin="5" 
+                            Padding="8,4" 
+                            Foreground="#F9E97A" 
+                            Background="#222233" 
+                            FontWeight="Bold" />
+                    <!-- TODO: Replace with command wheel or battle HUD icons -->
+                </StackPanel>
+            </Expander>
         </StackPanel>
 
         <!-- Bottom: Combat log with Border -->

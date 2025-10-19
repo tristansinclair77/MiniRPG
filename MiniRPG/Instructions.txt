@@ -1,17 +1,14 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify BattleViewModel.cs.
+Edit BattleView.xaml.
 
 Requirements:
-• Add ObservableCollection<Skill> UsableSkills => Player.LearnedSkills.Where(s => !s.IsPassive)
-• Add Skill? SelectedSkill
-• Add RelayCommand UseSkillCommand.
-• When executed:
-   - If SelectedSkill != null:
-       * int damage = SelectedSkill.ApplyEffect(Player, CurrentEnemy)
-       * Log $"Used {SelectedSkill.Name} on {CurrentEnemy.Name} for {damage} damage!"
+• Add Expander labeled “Skills”.
+• Inside, ListBox bound to UsableSkills.
+• Add Button labeled “Use Skill” bound to UseSkillCommand.
+• CommandParameter = SelectedSkill.
 • Add TODO:
-   // Add skill cooldowns, SP or MP costs, and VFX
+   <!-- TODO: Replace with command wheel or battle HUD icons -->
 
 ---
 
