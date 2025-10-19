@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using MiniRPG.Models;
@@ -46,6 +47,27 @@ namespace MiniRPG.ViewModels
             set { _nearbyNPCs = value; OnPropertyChanged(); }
         }
 
+        private string _regionName;
+        public string RegionName
+        {
+            get => _regionName;
+            set { _regionName = value; OnPropertyChanged(); }
+        }
+
+        private ObservableCollection<string> _localEnemies;
+        public ObservableCollection<string> LocalEnemies
+        {
+            get => _localEnemies;
+            set { _localEnemies = value; OnPropertyChanged(); }
+        }
+
+        private ObservableCollection<Quest> _regionQuests;
+        public ObservableCollection<Quest> RegionQuests
+        {
+            get => _regionQuests;
+            set { _regionQuests = value; OnPropertyChanged(); }
+        }
+
         public ICommand StartBattleCommand { get; }
         public ICommand RestCommand { get; }
         public ICommand SaveCommand { get; }
@@ -81,10 +103,14 @@ namespace MiniRPG.ViewModels
         // Event/callback for opening world map
         public event Action? OnOpenWorldMap;
 
+        /// <summary>
+        /// Constructor for MapViewModel (legacy - uses default data).
+        /// </summary>
         public MapViewModel(ObservableCollection<string> globalLog, Player player)
         {
             _globalLog = globalLog;
             Player = player;
+            RegionName = "Unknown Region";
             Locations = new ObservableCollection<string>
             {
                 "Forest",
@@ -95,6 +121,9 @@ namespace MiniRPG.ViewModels
             // Populate NearbyNPCs with all NPCs from DialogueService
             NearbyNPCs = new ObservableCollection<NPC>(DialogueService.GetAllNPCs());
             
+            LocalEnemies = new ObservableCollection<string>();
+            RegionQuests = new ObservableCollection<Quest>();
+            
             StartBattleCommand = new RelayCommand(_ => StartBattle(), _ => !string.IsNullOrEmpty(this.SelectedLocation));
             RestCommand = new RelayCommand(_ => Rest());
             SaveCommand = new RelayCommand(async _ => await SaveGame());
@@ -104,6 +133,52 @@ namespace MiniRPG.ViewModels
             OpenQuestBoardCommand = new RelayCommand(_ => OpenQuestBoard());
             TalkToNPCCommand = new RelayCommand(param => TalkToNPC(param as NPC));
             OpenWorldMapCommand = new RelayCommand(_ => OpenWorldMap());
+        }
+
+        /// <summary>
+        /// Constructor for MapViewModel with region-specific content.
+        /// </summary>
+        /// <param name="globalLog">The global log for game messages</param>
+        /// <param name="player">The player character</param>
+        /// <param name="region">The region to load content from</param>
+        public MapViewModel(ObservableCollection<string> globalLog, Player player, Region region)
+        {
+            _globalLog = globalLog;
+            Player = player;
+            RegionName = region.Name;
+            
+            // Load region-specific content
+            NearbyNPCs = region.NPCs;
+            LocalEnemies = region.AvailableEnemies;
+            RegionQuests = region.LocalQuests;
+            
+            // Use region enemies as battle locations, fallback to default if none
+            if (region.AvailableEnemies != null && region.AvailableEnemies.Any())
+            {
+                Locations = new ObservableCollection<string>(region.AvailableEnemies);
+            }
+            else
+            {
+                Locations = new ObservableCollection<string>
+                {
+                    "Forest",
+                    "Cave",
+                    "Ruins"
+                };
+            }
+            
+            StartBattleCommand = new RelayCommand(_ => StartBattle(), _ => !string.IsNullOrEmpty(this.SelectedLocation));
+            RestCommand = new RelayCommand(_ => Rest());
+            SaveCommand = new RelayCommand(async _ => await SaveGame());
+            UseItemCommand = new RelayCommand(param => UseItem(param as Item));
+            EquipItemCommand = new RelayCommand(param => EquipItem(param as Item));
+            OpenShopCommand = new RelayCommand(_ => OpenShop());
+            OpenQuestBoardCommand = new RelayCommand(_ => OpenQuestBoard());
+            TalkToNPCCommand = new RelayCommand(param => TalkToNPC(param as NPC));
+            OpenWorldMapCommand = new RelayCommand(_ => OpenWorldMap());
+            
+            // TODO: Add visual background per region
+            // TODO: Add weather or time-of-day changes
         }
 
         private void StartBattle()

@@ -1,13 +1,18 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit MapView.xaml.
+Enhance MapViewModel.cs.
 
 Requirements:
-• Add a Button labeled "World Map" near “Quest Board” and “Shop”.
-• Bind Command to OpenWorldMapCommand.
+• Add constructor MapViewModel(Player player, Region region)
+• Set:
+   - NearbyNPCs = region.NPCs
+   - RegionName = region.Name
+   - LocalEnemies = region.AvailableEnemies
+   - RegionQuests = region.LocalQuests
+• Display RegionName in MapView header.
 • Add TODO:
-   <!-- TODO: Replace with clickable travel icon -->
-   <!-- TODO: Add animated map transitions -->
+   // Add visual background per region
+   // Add weather or time-of-day changes
 
 ---
 

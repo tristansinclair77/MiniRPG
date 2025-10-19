@@ -74,7 +74,19 @@ namespace MiniRPG.ViewModels
 
         private MapViewModel CreateMapViewModel()
         {
-            var mapVM = new MapViewModel(GlobalLog, CurrentPlayer);
+            MapViewModel mapVM;
+            
+            // If a region is selected, create MapViewModel with region-specific content
+            if (_currentRegion != null)
+            {
+                mapVM = new MapViewModel(GlobalLog, CurrentPlayer, _currentRegion);
+                AddLog($"You are now in {_currentRegion.Name}.");
+            }
+            else
+            {
+                // Use default constructor (legacy behavior)
+                mapVM = new MapViewModel(GlobalLog, CurrentPlayer);
+            }
             
             // Subscribe to battle events
             mapVM.OnStartBattle += async location =>

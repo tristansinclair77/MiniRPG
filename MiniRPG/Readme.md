@@ -1,8 +1,105 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: World Map Integration
+## Latest Update: Region-Aware MapViewModel Enhancement
 
 ### New Features ✨
+
+#### MapViewModel Region-Specific Constructor
+- **Added**: New constructor `MapViewModel(ObservableCollection<string> globalLog, Player player, Region region)`
+  - Accepts a `Region` parameter to load region-specific content
+  - Automatically populates view with region data
+  - Maintains backward compatibility with original constructor for default/legacy behavior
+- **New Properties**:
+  - `RegionName` - String property displaying current region name
+  - `LocalEnemies` - ObservableCollection<string> containing region-specific enemies
+  - `RegionQuests` - ObservableCollection<Quest> containing region-specific quests
+- **Region Data Loading**:
+  - `NearbyNPCs` populated from `region.NPCs`
+  - `LocalEnemies` populated from `region.AvailableEnemies`
+  - `RegionQuests` populated from `region.LocalQuests`
+  - `Locations` (battle locations) populated from `region.AvailableEnemies`
+  - Fallback to default locations if region has no enemies
+- **Added TODO Comments**:
+  - `// Add visual background per region`
+  - `// Add weather or time-of-day changes`
+
+#### MapView UI Region Display
+- **Added**: Region Name Header in MapView.xaml
+  - Displays `{Binding RegionName}` at top of view
+  - Large, bold text (20pt) in gold color (#F9E97A)
+  - Center-aligned with bottom margin
+  - Grid row added specifically for region display
+- **Layout Enhancement**:
+  - New row definition at top of Grid for RegionName header
+  - All existing rows shifted down by one to accommodate
+  - Maintains all existing functionality and styling
+- **Added TODO Comments to RegionName**:
+  - `<!-- TODO: Add visual background per region -->`
+  - `<!-- TODO: Add weather or time-of-day changes -->`
+
+#### MainViewModel Region Integration
+- **Enhanced**: `CreateMapViewModel()` method
+  - Checks if `_currentRegion` is set
+  - If region selected: Creates MapViewModel with region-specific constructor
+  - If no region: Uses default constructor (legacy behavior)
+  - Logs "You are now in {region.Name}." when region is active
+- **Region Context Tracking**:
+  - `_currentRegion` field stores currently selected region
+  - Region persists when returning to MapView from other views
+  - Region data automatically loaded into MapViewModel
+
+#### Complete System Flow
+1. Player opens World Map and selects a region
+2. MainViewModel stores selected region in `_currentRegion`
+3. MainViewModel creates MapViewModel with region constructor
+4. MapViewModel loads NPCs, enemies, and quests from region
+5. MapView displays region name in header
+6. NPCs shown are specific to that region
+7. Battle locations are region-specific enemies
+8. Player can interact with region-specific content
+9. When opening shop/quest board/dialogue, region context is preserved
+10. Returning to map maintains current region context
+
+#### Integration Benefits
+- **Dynamic Content**: Map content changes based on selected region
+- **Immersive Experience**: Region name displayed prominently
+- **Context Preservation**: Region persists across view transitions
+- **NPCs Per Region**: Each region can have unique NPCs
+- **Regional Enemies**: Battle locations reflect region-specific threats
+- **Quest Integration**: Foundation for region-specific quest systems
+- **Backward Compatible**: Original constructor still works for default behavior
+
+#### Future Enhancements
+- Add visual backgrounds specific to each region
+- Implement weather effects per region (rain, snow, fog)
+- Add time-of-day changes with visual effects
+- Display region difficulty/level recommendation
+- Add region-specific music themes
+- Implement region unlock system
+- Add travel animations between regions
+- Create region-specific random events
+- Add environmental storytelling elements per region
+
+---
+
+## Previous Update: World Map Integration
+
+### New Features ✨
+
+#### MapView UI World Map Button
+- **Added**: "World Map" button in MapView.xaml
+  - Positioned in Player Info Panel after "Quest Board" button
+  - Command binding: `{Binding OpenWorldMapCommand}`
+  - Styling: Consistent with other action buttons (gold foreground #F9E97A, dark background #222233)
+  - Margin: 8px left spacing to align with existing buttons
+  - Font: Bold weight matching game's theme
+- **Added TODO Comments**:
+  - `<!-- TODO: Replace with clickable travel icon -->`
+  - `<!-- TODO: Add animated map transitions -->`
+- **User Experience**:
+  - Easily accessible from main map screen
+  - Positioned logically next to other navigation buttons
+  - Clear labeling for intuitive interaction
 
 #### MapViewModel World Map Integration
 - **Added**: `OpenWorldMapCommand` - RelayCommand in MapViewModel
@@ -47,8 +144,11 @@
 - **Consistent Pattern**: Follows same event subscription pattern as Shop, Quest Board, and Dialogue systems
 - **Extensible Design**: Ready for region-specific content loading (NPCs, enemies, quests)
 - **Logging Integration**: All world map actions are logged to GlobalLog
+- **Intuitive UI**: World Map button positioned logically in navigation bar
 
 #### Future Enhancements
+- Replace text button with clickable travel icon
+- Add animated map transitions
 - Load region-specific NPCs into MapViewModel based on selected region
 - Filter available enemies based on selected region
 - Display region-specific quests on Quest Board
