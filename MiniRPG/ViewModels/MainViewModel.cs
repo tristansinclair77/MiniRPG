@@ -65,6 +65,19 @@ namespace MiniRPG.ViewModels
             {
                 var loadedPlayer = SaveLoadService.LoadPlayer();
                 CurrentPlayer = loadedPlayer ?? new Player();
+                
+                // If player has a saved region, try to load it
+                if (!string.IsNullOrEmpty(CurrentPlayer.LastRegionName))
+                {
+                    var regions = WorldMapService.GetRegions();
+                    var savedRegion = regions.FirstOrDefault(r => r.Name == CurrentPlayer.LastRegionName);
+                    if (savedRegion != null)
+                    {
+                        _currentRegion = savedRegion;
+                        AddLog($"Resuming adventure in {savedRegion.Name}...");
+                    }
+                }
+                
                 var mapVM = CreateMapViewModel();
                 CurrentViewModel = mapVM;
                 try { AudioService.PlayMapTheme(); } catch { }
@@ -140,6 +153,11 @@ namespace MiniRPG.ViewModels
                 worldMapVM.OnRegionSelected += selectedRegion =>
                 {
                     _currentRegion = selectedRegion;
+                    
+                    // Save the region name to player and trigger auto-save
+                    CurrentPlayer.LastRegionName = selectedRegion.Name;
+                    SaveLoadService.SavePlayer(CurrentPlayer);
+                    
                     AddLog($"Traveling to {selectedRegion.Name}...");
                     // TODO: Add animated fade-out/fade-in transitions between regions
                     // TODO: Add music change and environment effect system

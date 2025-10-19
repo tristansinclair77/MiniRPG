@@ -143,5 +143,6 @@ namespace MiniRPG.Services
 
         // TODO: Add save versioning and item ID mapping later
         // TODO: Extend to save inventory, map progress, and settings later
+        // TODO: Add region-specific checkpoint saves
     }
 }

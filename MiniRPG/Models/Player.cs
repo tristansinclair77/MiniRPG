@@ -11,6 +11,14 @@ namespace MiniRPG.Models
     {
         public string Name { get; set; }
 
+        // Region tracking for save/load
+        private string? _lastRegionName;
+        public string? LastRegionName
+        {
+            get => _lastRegionName;
+            set { _lastRegionName = value; OnPropertyChanged(); }
+        }
+
         // Inventory management
         private int _maxInventoryCapacity = 40;
         public int MaxInventoryCapacity

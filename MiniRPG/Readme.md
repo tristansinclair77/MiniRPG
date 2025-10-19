@@ -1,6 +1,82 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Regional Enemy Selection System
+## Latest Update: Region Save/Load Persistence System
+
+### New Features ✨
+
+#### Player Region Tracking
+- **Added**: `LastRegionName` property to Player.cs
+  - Type: `string?` (nullable string)
+  - Purpose: Tracks the player's current region for save/load persistence
+  - Implements INotifyPropertyChanged for data binding support
+  - Automatically serialized/deserialized with player save data
+
+#### SaveLoadService Region Integration
+- **Extended**: Player save data now includes `LastRegionName` field
+  - Automatically saved whenever `SavePlayer()` is called
+  - Loaded from save file when `LoadPlayer()` is invoked
+  - Compatible with existing JSON serialization system
+- **Added TODO Comment**:
+  - `// TODO: Add region-specific checkpoint saves`
+  - Foundation for future checkpoint system per region
+
+#### MainViewModel Auto-Save on Region Change
+- **Enhanced**: `OnRegionSelected` event handler in MainViewModel
+  - Automatically updates `CurrentPlayer.LastRegionName` when region changes
+  - Triggers `SaveLoadService.SavePlayer()` immediately after region change
+  - Ensures player progress is saved whenever they travel to a new region
+  - No manual save required - seamless auto-save functionality
+
+#### Load Game Region Restoration
+- **Enhanced**: `OnTitleSelectionMade("Continue")` in MainViewModel
+  - Checks if loaded player has a `LastRegionName` value
+  - Queries `WorldMapService.GetRegions()` to find matching region
+  - If region exists: Sets `_currentRegion` and loads player into that region
+  - If region not found or null: Uses default behavior (no region selected)
+  - Logs appropriate message: "Resuming adventure in {region.Name}..."
+
+#### Complete Save/Load Flow
+1. **New Game**: Player starts with `LastRegionName = null` (default behavior)
+2. **Travel to Region**: Player opens world map and selects a region
+3. **Auto-Save**: MainViewModel updates `LastRegionName` and saves player data
+4. **Game Exit**: Player closes game with region progress saved
+5. **Continue Game**: Player loads save file from title screen
+6. **Region Restoration**: 
+   - System reads `LastRegionName` from save data
+   - Finds matching region from WorldMapService
+   - Creates MapViewModel with region-specific content
+7. **Resume Play**: Player continues exactly where they left off in saved region
+
+#### Integration Benefits
+- **Seamless Persistence**: Region context saved automatically on travel
+- **No Manual Save Required**: Auto-saves whenever region changes
+- **Backward Compatible**: Works with existing save/load system
+- **Null-Safe**: Handles missing or invalid region names gracefully
+- **Consistent Experience**: Players always resume where they left off
+- **Foundation for Checkpoints**: Ready for future region-specific checkpoint saves
+
+#### Technical Details
+- **Player.cs**: Added `LastRegionName` string property with property change notification
+- **SaveLoadService.cs**: No changes needed - existing JSON serialization handles new property
+- **MainViewModel.cs**: 
+  - Region change handler updates player property and triggers save
+  - Load game checks for saved region and restores context
+  - Logs region restoration for player feedback
+- **JSON Serialization**: Uses existing camelCase naming policy and null handling
+
+#### Future Enhancements
+- Implement region-specific checkpoint saves (different save slots per region)
+- Add save file metadata showing last region and timestamp
+- Create region-locked saves that prevent loading in wrong region
+- Add autosave indicators when region changes
+- Implement cloud save sync for region progression
+- Add multiple save slots with region preview
+- Create save point markers within regions
+- Add region difficulty scaling based on save progression
+
+---
+
+## Previous Update: Regional Enemy Selection System
 
 ### New Features ✨
 
