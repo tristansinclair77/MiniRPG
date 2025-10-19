@@ -1,6 +1,54 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Passive Skill Persistence and Application
+## Latest Update: Faction System
+
+### Faction.cs (New File)
+- **Created `Faction` class in Models folder**:
+  - Represents factions in the game world with reputation tracking
+  - Full public class implementation for faction management
+- **Added core faction properties**:
+  - `Name`: The faction's display name
+  - `Description`: Description of the faction and its goals
+  - `Reputation`: Integer tracking relationship from -100 (enemy) to +100 (ally)
+  - `ThresholdFriendly`: Default value of 50 for allied status
+  - `ThresholdHostile`: Default value of -50 for hostile status
+- **Constructor**:
+  - Takes `name` and `description` parameters
+  - Initializes Reputation to 0 (neutral starting state)
+  - Thresholds default to standard values (50/-50)
+- **Added `AdjustReputation(int amount)` method**:
+  - Adjusts reputation by specified positive or negative amount
+  - Uses `Math.Clamp()` to ensure reputation stays within -100 to +100 range
+  - Prevents reputation overflow or underflow
+- **Added `GetStanding()` method**:
+  - Returns string representing current faction relationship status
+  - "Allied" when Reputation >= ThresholdFriendly (50 or higher)
+  - "Neutral" when Reputation is between thresholds
+  - "Hostile" when Reputation <= ThresholdHostile (-50 or lower)
+  - Provides easy-to-read status for UI display and dialogue systems
+- **Added TODO comment**:
+  - `// TODO: Add icons, territory ownership, and alliances later`
+  - Placeholder for future faction features
+
+### Technical Details
+- Faction system foundation laid for reputation-based gameplay mechanics
+- Reputation system uses simple integer tracking with clear boundaries
+- Thresholds are configurable per faction if needed (public setters available)
+- Standing calculation provides three-tier relationship system
+- Foundation laid for:
+  - Faction-specific quests and rewards
+  - Territory control and faction influence zones
+  - Faction alliances and rivalries
+  - Faction icons and visual representation
+  - Dynamic prices at faction-controlled shops
+  - Access restrictions based on faction standing
+  - Faction-specific dialogue options and outcomes
+  - Reputation rewards/penalties from quest completion
+  - Faction war and diplomacy systems
+
+---
+
+## Previous Update: Passive Skill Persistence and Application
 
 ### Player.cs Enhancements
 - **Enhanced `UnlockSkill()` method**:

@@ -1,15 +1,23 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Testing checklist:
-1. Gain a level → earn Skill Points.
-2. Open Skill Tree → unlock “Power Strike.”
-3. Start battle → select “Power Strike” → verify extra damage.
-4. Save and reload → skill remains learned.
-5. Ensure passive skills persist and reapply bonuses.
-6. Add TODO placeholders:
-   <!-- TODO: Add class specializations (Warrior, Mage, etc.) -->
-   <!-- TODO: Add skill upgrade tiers -->
-   <!-- TODO: Add skill synergy effects -->
+Create Faction.cs in the Models folder.
+
+Requirements:
+• public class Faction
+   - string Name
+   - string Description
+   - int Reputation       // -100 (enemy) to +100 (ally)
+   - int ThresholdFriendly = 50
+   - int ThresholdHostile = -50
+• Add methods:
+   - AdjustReputation(int amount)
+       * Reputation = Math.Clamp(Reputation + amount, -100, 100)
+   - GetStanding():
+       * Return "Allied" if Reputation >= ThresholdFriendly
+       * Return "Neutral" if between thresholds
+       * Return "Hostile" if Reputation <= ThresholdHostile
+• Add TODO:
+   // Add icons, territory ownership, and alliances later
 
 ---
 
