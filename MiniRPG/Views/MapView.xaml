@@ -20,6 +20,8 @@
     <!-- TODO: Replace with clickable map object -->
     <!-- TODO: Add animated NPC sprites on map -->
     <!-- TODO: Replace with click-based town map interaction -->
+    <!-- TODO: Add animated sun/moon icons -->
+    <!-- TODO: Add day-night background tint -->
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- Region Name row -->
@@ -45,18 +47,30 @@
                 HorizontalAlignment="Center">
             <!-- TODO: Replace with map banner UI -->
             <!-- TODO: Add fast travel list -->
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Current Region: " 
-                           FontSize="18" 
-                           FontWeight="Bold" 
-                           Foreground="White" 
-                           VerticalAlignment="Center" />
-                <TextBlock Text="{Binding RegionName}" 
-                           FontSize="18" 
-                           FontWeight="Bold" 
-                           Foreground="#F9E97A" 
-                           VerticalAlignment="Center"
-                           Margin="4,0,0,0" />
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="Current Region: " 
+                               FontSize="18" 
+                               FontWeight="Bold" 
+                               Foreground="White" 
+                               VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding RegionName}" 
+                               FontSize="18" 
+                               FontWeight="Bold" 
+                               Foreground="#F9E97A" 
+                               VerticalAlignment="Center"
+                               Margin="4,0,0,0" />
+                </StackPanel>
+                <TextBlock HorizontalAlignment="Center" 
+                           Margin="0,4,0,0" 
+                           FontSize="11" 
+                           FontStyle="Italic" 
+                           Foreground="#CCCCCC">
+                    <Run Text="Day " />
+                    <Run Text="{Binding CurrentDay, Mode=OneWay}" />
+                    <Run Text=", " />
+                    <Run Text="{Binding TimeOfDay, Mode=OneWay}" />
+                </TextBlock>
             </StackPanel>
         </Border>
 

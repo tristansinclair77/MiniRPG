@@ -54,6 +54,16 @@ namespace MiniRPG.ViewModels
             set { _regionName = value; OnPropertyChanged(); }
         }
 
+        /// <summary>
+        /// Gets the current day from TimeService for UI binding.
+        /// </summary>
+        public int CurrentDay => TimeService.Day;
+
+        /// <summary>
+        /// Gets the current time of day from TimeService for UI binding.
+        /// </summary>
+        public string TimeOfDay => TimeService.GetTimeOfDay();
+
         private ObservableCollection<string> _localEnemies;
         public ObservableCollection<string> LocalEnemies
         {

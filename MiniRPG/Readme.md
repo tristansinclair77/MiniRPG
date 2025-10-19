@@ -1,6 +1,223 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: TimeService - Time Tracking System
+## Latest Update: Time Display on Map UI
+
+### Changes Made ✨
+
+#### MapView.xaml - Time Information Display Added
+- **Updated**: Region header now displays current day and time of day
+  - **Location**: Region Name Header with Border (Grid.Row="0")
+  - **Previous Layout**: Single horizontal StackPanel with region name
+  - **New Layout**: Vertical StackPanel containing:
+    - Region name (existing)
+    - Time information (new)
+
+- **Added**: Time Display TextBlock
+  - **Text**: "Day {CurrentDay}, {TimeOfDay}"
+  - **Binding**: 
+    - `CurrentDay` - Bound to MapViewModel.CurrentDay property
+    - `TimeOfDay` - Bound to MapViewModel.TimeOfDay property
+  - **Styling**:
+    - FontSize: 11 (small, subtle)
+    - FontStyle: Italic
+    - Foreground: #CCCCCC (light gray)
+    - HorizontalAlignment: Center
+    - Margin: 0,4,0,0 (4px spacing from region name)
+  - **Format**: Uses multiple Run elements for flexible binding
+  - **Purpose**: Display current game time at a glance
+
+- **Added**: TODO Comments for Future Features
+  - `<!-- TODO: Add animated sun/moon icons -->`
+    - Animated icon next to time display
+    - Sun during day (Morning, Afternoon)
+    - Moon during night (Night, Evening)
+    - Smooth transitions between icons
+  - `<!-- TODO: Add day-night background tint -->`
+    - Dynamic background color based on time of day
+    - Night: Darker blue/purple tint
+    - Morning: Bright, warm colors
+    - Afternoon: Full brightness
+    - Evening: Orange/red sunset tint
+  - **Location**: Top of UserControl, with other TODO comments
+
+#### MapViewModel.cs - Time Property Wrappers Added
+- **Added**: CurrentDay Property
+  - **Type**: `int` (read-only)
+  - **Getter**: `=> TimeService.Day`
+  - **Purpose**: Wrap TimeService.Day for UI binding
+  - **Usage**: Displayed in MapView header
+  - **Updates**: Automatically reflects TimeService changes
+
+- **Added**: TimeOfDay Property
+  - **Type**: `string` (read-only)
+  - **Getter**: `=> TimeService.GetTimeOfDay()`
+  - **Purpose**: Wrap TimeService.GetTimeOfDay() for UI binding
+  - **Returns**: "Night", "Morning", "Afternoon", or "Evening"
+  - **Usage**: Displayed in MapView header
+  - **Updates**: Automatically reflects TimeService changes
+
+#### Requirements Fulfilled
+
+All requirements from Instructions.txt have been implemented:
+
+**MapView.xaml:**
+- ✅ TextBlock added near region name
+- ✅ Shows "Day {Binding CurrentDay}, {Binding TimeOfDay}"
+- ✅ Properties bound from MapViewModel
+- ✅ Styled subtly (small italic font under header):
+  - ✅ FontSize: 11 (small)
+  - ✅ FontStyle: Italic
+  - ✅ Positioned under region name
+- ✅ TODO: Add animated sun/moon icons
+- ✅ TODO: Add day-night background tint
+
+**MapViewModel.cs:**
+- ✅ CurrentDay property wrapping TimeService.Day
+- ✅ TimeOfDay property wrapping TimeService.GetTimeOfDay()
+- ✅ Properties accessible for data binding
+
+#### Visual Example
+
+**Before:**┌─────────────────────────────────┐
+│  Current Region: Greenfield Town │
+└─────────────────────────────────┘
+**After:**
+┌─────────────────────────────────┐
+│  Current Region: Greenfield Town │
+│      Day 1, Morning              │
+└─────────────────────────────────┘
+**As Time Changes:**Day 1, Morning   → Day 1, Afternoon → Day 1, Evening
+Day 1, Night     → Day 2, Morning   → Day 3, Afternoon
+#### Integration Flow
+
+**Time Display Updates:**
+1. **Initial Load**: MapView loads, binds to CurrentDay and TimeOfDay
+2. **Display**: Header shows "Day 1, Morning" (default TimeService values)
+3. **Time Advances**: Game actions trigger TimeService.AdvanceHours()
+4. **Property Update**: TimeOfDay getter returns new value from TimeService
+5. **UI Refresh**: Binding system updates TextBlock display
+6. **User Sees**: "Day 2, Evening" (or whatever the new time is)
+
+**Example Time Progression:**
+- **Start**: Day 1, Morning (Hour 8)
+- **Player Rests**: AdvanceHours(8) → Day 1, Afternoon (Hour 16)
+- **Player Explores**: AdvanceHours(6) → Day 1, Evening (Hour 22)
+- **Player Rests Again**: AdvanceHours(8) → Day 2, Morning (Hour 6)
+
+**PropertyChanged Considerations:**
+- CurrentDay and TimeOfDay are read-only properties
+- They return values directly from TimeService
+- If TimeService is updated, the properties will return new values
+- However, bindings won't auto-refresh unless OnPropertyChanged is called
+- **Future Enhancement**: Add OnPropertyChanged notifications when TimeService updates
+  - Option 1: TimeService fires events on time change
+  - Option 2: MapViewModel calls OnPropertyChanged after advancing time
+  - Option 3: Use INotifyPropertyChanged in TimeService
+
+#### Code Examples
+
+**MapView.xaml Time Display:**<TextBlock HorizontalAlignment="Center" 
+           Margin="0,4,0,0" 
+           FontSize="11" 
+           FontStyle="Italic" 
+           Foreground="#CCCCCC">
+    <Run Text="Day " />
+    <Run Text="{Binding CurrentDay, Mode=OneWay}" />
+    <Run Text=", " />
+    <Run Text="{Binding TimeOfDay, Mode=OneWay}" />
+</TextBlock>
+**MapViewModel.cs Properties:**/// <summary>
+/// Gets the current day from TimeService for UI binding.
+/// </summary>
+public int CurrentDay => TimeService.Day;
+
+/// <summary>
+/// Gets the current time of day from TimeService for UI binding.
+/// </summary>
+public string TimeOfDay => TimeService.GetTimeOfDay();
+**Usage in Game Code (Example):**// When player rests at inn
+private void Rest()
+{
+    TimeService.AdvanceHours(8);
+    Player.HP = Player.MaxHP;
+    OnPropertyChanged(nameof(Player));
+    OnPropertyChanged(nameof(CurrentDay));
+    OnPropertyChanged(nameof(TimeOfDay));
+    _globalLog?.Add($"You rest and recover all HP. It is now Day {CurrentDay}, {TimeOfDay}.");
+}
+#### Potential Future Enhancements
+
+Based on the new TODO comments:
+
+**Animated Sun/Moon Icons:**
+- Icon displayed next to time text
+- Image source bound to TimeOfDay:
+  - "Morning" / "Afternoon" → sun.png (bright yellow sun)
+  - "Evening" → sunset.png (orange sun)
+  - "Night" → moon.png (white crescent moon)
+- Rotation animation on icons:
+  - Sun slowly rotates clockwise
+  - Moon gently rocks back and forth
+- Transition animation when time changes:
+  - Sun fades out, moon fades in (day → night)
+  - Moon fades out, sun fades in (night → day)
+- Possible implementation:<Image Width="16" Height="16" 
+       Source="{Binding TimeOfDayIcon}" 
+       Margin="4,0,0,0">
+    <Image.RenderTransform>
+        <RotateTransform x:Name="IconRotation" CenterX="8" CenterY="8" />
+    </Image.RenderTransform>
+    <Image.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard>
+                <Storyboard RepeatBehavior="Forever">
+                    <DoubleAnimation Storyboard.TargetName="IconRotation"
+                                     Storyboard.TargetProperty="Angle"
+                                     From="0" To="360" Duration="0:0:10" />
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Image.Triggers>
+  </Image>
+**Day-Night Background Tint:**
+- Apply color overlay to entire map background
+- Tint color based on TimeOfDay:
+  - "Morning" → Light blue (#E6F3FF, 30% opacity)
+  - "Afternoon" → Transparent (no tint, full brightness)
+  - "Evening" → Orange/red (#FF8C42, 20% opacity)
+  - "Night" → Dark blue/purple (#1A1A3E, 60% opacity)
+- Smooth color transitions:
+  - Fade between tints over 2-3 seconds
+  - Use ColorAnimation on Background property
+- Possible implementation:<Grid.Background>
+    <SolidColorBrush x:Name="DayNightTint" Color="Transparent" />
+  </Grid.Background>private void UpdateDayNightTint()
+{
+    Color targetColor = TimeOfDay switch
+    {
+        "Morning" => Color.FromArgb(76, 230, 243, 255),   // Light blue
+        "Afternoon" => Colors.Transparent,                 // No tint
+        "Evening" => Color.FromArgb(51, 255, 140, 66),  // Orange
+        "Night" => Color.FromArgb(153, 26, 26, 62),       // Dark blue
+        _ => Colors.Transparent
+    };
+    // Animate DayNightTint.Color to targetColor
+  }
+**Additional Visual Enhancements:**
+- **Star Field**: Display twinkling stars during Night
+- **Cloud Movement**: Animated clouds moving across sky
+- **Weather Effects**: Rain particles during rainy weather
+- **Lighting**: Characters/buildings cast shadows based on sun position
+- **Particle Effects**: Fireflies at Evening, snowflakes in Winter Night
+
+#### Files Modified
+- `MiniRPG\Views\MapView.xaml`
+- `MiniRPG\ViewModels\MapViewModel.cs`
+- `MiniRPG\Readme.md`
+
+---
+
+## Previous Update: TimeService - Time Tracking System
 
 ### Changes Made ✨
 
@@ -128,7 +345,7 @@ The TimeService can be integrated into various game systems:
 5. **Shop Hours**:
    - Shops open/close based on hour
    - Disable shop interactions during closed hours
-   - Display "Closed" message if `TimeService.Hour < 8 || TimeService.Hour >= 20`
+   - Display "Closed" message if `TimeService.Hour < 8 || `TimeService.Hour >= 20`
 
 6. **Day/Night Visuals**:
    - Change background tint based on `GetTimeOfDay()`
@@ -157,8 +374,8 @@ Based on the TODO comment:
         14 => "Full Moon",
         21 => "Waning Crescent",
         _ => "Waxing/Waning"
-      };
-  }
+    };
+}
 **Seasons:**
 - 4 seasons: Spring, Summer, Fall, Winter
 - Each season lasts ~30 days
@@ -178,7 +395,7 @@ Based on the TODO comment:
         < 90 => "Fall",
         _ => "Winter"
     };
-  }
+}
 **Weather Events:**
 - Dynamic weather system
 - Weather types: Clear, Cloudy, Rain, Snow, Storm
@@ -206,8 +423,8 @@ private static void UpdateWeather()
         (_, < 0.1) => "Storm",
         (_, < 0.3) => "Cloudy",
         _ => "Clear"
-      };
-  }
+    };
+}
 **Additional Time Features:**
 - **Minute Tracking**: Add `int Minute` property for finer time control
 - **Real-Time Clock**: Optional real-time mode (1 minute = 1 game hour)

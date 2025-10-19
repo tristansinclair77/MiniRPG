@@ -1,25 +1,15 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create TimeService.cs in the Services folder.
+Edit MapView.xaml.
 
 Requirements:
-• Static class TimeService
-• Static properties:
-   - int Day = 1
-   - int Hour = 8   // start morning
-• Static methods:
-   - AdvanceHours(int amount):
-       * Hour += amount
-       * If Hour >= 24:
-           Day++
-           Hour %= 24
-   - GetTimeOfDay():
-       * If Hour < 6 → "Night"
-       * If Hour < 12 → "Morning"
-       * If Hour < 18 → "Afternoon"
-       * Else → "Evening"
+• Add TextBlock near region name showing:
+   "Day {Binding CurrentDay}, {Binding TimeOfDay}"
+• Bind properties from MapViewModel (wrapping TimeService).
+• Style subtly (small italic font under header).
 • Add TODO:
-   // Add moon phases, seasons, and weather events later
+   <!-- TODO: Add animated sun/moon icons -->
+   <!-- TODO: Add day-night background tint -->
 
 ---
 
