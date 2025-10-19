@@ -37,6 +37,29 @@ namespace MiniRPG.Services
             }
         }
 
+        /// <summary>
+        /// Updates background music based on current time of day.
+        /// Should be called when player travels, rests, or enters a region.
+        /// </summary>
+        public static void UpdateMusicForTime()
+        {
+            switch (TimeService.GetTimeOfDay())
+            {
+                case "Morning":
+                    PlayWavIfExists("morning.wav");
+                    break;
+                case "Afternoon":
+                    PlayWavIfExists("daytime.wav");
+                    break;
+                case "Evening":
+                    PlayWavIfExists("dusk.wav");
+                    break;
+                case "Night":
+                    PlayWavIfExists("night.wav");
+                    break;
+            }
+        }
+
         private static void PlayWavIfExists(string fileName)
         {
             try
@@ -54,5 +77,6 @@ namespace MiniRPG.Services
         }
         // TODO: // Replace with cross-fade audio engine later.
         // TODO: // Add smooth crossfade and environmental sound effects later
+        // TODO: Add dynamic volume crossfades and weather ambience later
     }
 }

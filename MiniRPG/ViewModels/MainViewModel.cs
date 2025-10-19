@@ -226,6 +226,10 @@ namespace MiniRPG.ViewModels
                     AddLog($"Traveling to {selectedRegion.Name}...");
                     // TODO: Add animated fade-out/fade-in transitions between regions
                     // TODO: Add music change and environment effect system
+                    
+                    // Update music based on time of day when entering region
+                    try { AudioService.UpdateMusicForTime(); } catch { }
+                    
                     ShowMap();
                 };
                 worldMapVM.OnExitWorldMap += () => ShowMap();
@@ -283,6 +287,10 @@ namespace MiniRPG.ViewModels
                     AddLog($"Traveling to {selectedRegion.Name}...");
                     // TODO: Add animated fade-out/fade-in transitions between regions
                     // TODO: Add music change and environment effect system
+                    
+                    // Update music based on time of day when entering region
+                    try { AudioService.UpdateMusicForTime(); } catch { }
+                    
                     ShowMap();
                 };
                 worldMapVM.OnExitWorldMap += () => ShowMap();
@@ -301,6 +309,10 @@ namespace MiniRPG.ViewModels
                     _currentRegion = targetRegion;
                     CurrentPlayer.LastRegionName = targetRegion.Name;
                     SaveLoadService.SavePlayer(CurrentPlayer);
+                    
+                    // Update music based on time of day when entering region
+                    try { AudioService.UpdateMusicForTime(); } catch { }
+                    
                     AddLog($"Fast traveled to {targetRegion.Name}!");
                     ShowMap();
                 }

@@ -114,6 +114,9 @@ namespace MiniRPG.ViewModels
                 Player.HP = Player.MaxHP;
                 TimeService.AdvanceHours(8);
                 Debug.WriteLine("You rest at the inn and feel refreshed.");
+                
+                // Update music for new time of day after resting
+                try { AudioService.UpdateMusicForTime(); } catch { }
             }
             else
             {

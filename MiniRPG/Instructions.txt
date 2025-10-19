@@ -1,15 +1,17 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit BuildingInteriorView.xaml.
+Enhance AudioService.cs.
 
 Requirements:
-• If Building.Type == "Inn":
-   - Add Button labeled "Stay the Night" bound to StayAtInnCommand.
-   - Place below occupant list.
-• Add note TextBlock: "Cost: 20 Gold"
+• Add method UpdateMusicForTime():
+   - switch(TimeService.GetTimeOfDay()):
+       * "Morning" → play morning.wav
+       * "Afternoon" → play daytime.wav
+       * "Evening" → play dusk.wav
+       * "Night" → play night.wav
+• Call this method each time player travels, rests, or enters region.
 • Add TODO:
-   <!-- TODO: Replace with innkeeper NPC dialogue and fade-out sleep animation -->
-   <!-- TODO: Add sound effect for morning wake-up -->
+   // Add dynamic volume crossfades and weather ambience later
 
 ---
 
