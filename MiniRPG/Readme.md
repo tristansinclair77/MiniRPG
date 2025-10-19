@@ -1,6 +1,127 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: World Map TODO Placeholders for Future Features
+## Latest Update: EncounterService Implementation
+
+### New Features ✨
+
+#### EncounterService Class Added
+- **Added**: `EncounterService.cs` in the Services folder
+- **Class Type**: Static service for managing random encounters and encounter logic
+- **Features**:
+  - Static class following established service patterns (GameService, WorldMapService)
+  - Uses Random instance for encounter chance calculations
+  - Delegates enemy selection to existing GameService regional enemy system
+
+#### ShouldTriggerEncounter Method
+- **Added**: `ShouldTriggerEncounter()` → bool
+  - Static method to determine if a random encounter should occur
+  - **Encounter Chance**: 25% probability (0.25 threshold)
+  - Uses `Random.NextDouble()` for randomized encounter checks
+  - Returns `true` if encounter triggers, `false` otherwise
+  - **Use Cases**:
+    - Random encounters when traveling between regions
+    - Random battles while exploring map locations
+    - Event-driven surprise encounters
+    - Roaming enemy mechanics
+
+#### GetEncounterEnemy Method
+- **Added**: `GetEncounterEnemy(string regionName)` → string
+  - Accepts region name parameter to spawn appropriate enemies
+  - Calls `GameService.GetRandomEnemy(regionName)` for regional enemy selection
+  - Returns enemy name string for encounter initialization
+  - **Integration Benefits**:
+    - Leverages existing regional enemy pools (Slime Plains, Goblin Woods)
+    - Consistent with established GameService enemy system
+    - Region-aware encounters matching environment theme
+    - No duplicate logic - delegates to existing service
+
+#### TODO Comments for Future Features
+- **Added TODO**: `// Add encounter rarity tiers and enemy groups later`
+  - Foundation for encounter difficulty system
+  - Potential for common, rare, legendary encounter types
+  - Enemy group formations (multiple enemies per encounter)
+  - Loot quality scaling based on encounter tier
+- **Added TODO**: `// Add roaming miniboss encounters`
+  - Special rare encounters with powerful enemies
+  - Region-specific miniboss spawns
+  - Higher rewards and unique loot tables
+  - Story-driven boss encounters
+
+#### Integration Points
+- **GameService Dependency**: Uses `GameService.GetRandomEnemy(regionName)` for enemy selection
+  - Maintains consistency with battle system
+  - Respects regional enemy pools (Slime Plains: Slime/Big Slime, Goblin Woods: Goblin/Goblin Chief)
+  - Falls back to default enemies for unknown regions
+- **Random Instance**: Static `Random _random` for encounter probability
+  - 25% chance threshold for encounter triggers
+  - Can be adjusted for different encounter rates per region or difficulty settings
+
+#### Potential Use Cases
+1. **World Map Travel Encounters**:
+   - Check `ShouldTriggerEncounter()` when player selects region
+   - If true, call `GetEncounterEnemy(regionName)` for region-based enemy
+   - Trigger battle before entering selected region
+2. **Map Exploration Encounters**:
+   - Random chance when player moves between locations
+   - Walking/exploring triggers encounter checks
+   - Dynamic battlefield variety beyond "Fight!" button
+3. **Roaming Enemies**:
+   - Periodic checks while player is idle on map
+   - Time-based encounter chance increases
+   - "Enemy approaches!" event notifications
+4. **Special Event Triggers**:
+   - Quest-driven guaranteed encounters
+   - Story events using encounter system
+   - Scripted miniboss appearances
+
+#### Future Enhancements
+- **Encounter Rarity Tiers**:
+  - Common (70%): Standard regional enemies
+  - Uncommon (20%): Stronger variants with better loot
+  - Rare (8%): Elite enemies with bonus stats
+  - Legendary (2%): Region bosses or special encounters
+- **Enemy Group Encounters**:
+  - Multiple enemies in single battle
+  - Group formations (2-3 slimes, goblin patrol, etc.)
+  - Increased difficulty and rewards
+- **Roaming Miniboss System**:
+  - Low probability (<5%) special encounters
+  - Unique named enemies (e.g., "Slime King", "Goblin Warlord")
+  - Region-specific miniboss pools
+  - Guaranteed rare loot drops
+  - Quest integration for hunting specific bosses
+- **Dynamic Encounter Rates**:
+  - Adjust probability based on player level
+  - Region-specific encounter rate modifiers
+  - Lower rates in safe zones (towns)
+  - Higher rates in dangerous areas (deep forests, caves)
+- **Encounter Avoidance**:
+  - Player items or skills to reduce encounter chance
+  - "Stealth Mode" feature
+  - Fast travel reduces encounters
+- **Encounter Context**:
+  - Time of day affects enemy types (nocturnal enemies at night)
+  - Weather-based encounters (rain increases water enemies)
+  - Seasonal variations
+
+#### Technical Details
+- **Namespace**: `MiniRPG.Services`
+- **Inheritance**: Static class, no base class
+- **Dependencies**: 
+  - `System` namespace for Random
+  - `GameService` for enemy selection logic
+- **Thread Safety**: Static Random instance (consider thread safety for future async encounters)
+- **Extensibility**: Easy to add new methods (GetEncounterGroup, GetMiniboss, etc.)
+
+#### Testing Scenarios
+- Verify 25% encounter rate over large sample (call ShouldTriggerEncounter 1000 times)
+- Test GetEncounterEnemy with different region names
+- Confirm fallback behavior for unknown regions
+- Validate integration with existing GameService enemy pools
+
+---
+
+## Previous Update: World Map TODO Placeholders for Future Features
 
 ### New Features ✨
 
