@@ -8,6 +8,9 @@
     <!-- TODO: Add interior background art -->
     <!-- TODO: Add custom music per building type -->
     <!-- TODO: Add clickable NPC sprites -->
+    <!-- TODO: Add inn stay mechanic (rest for gold) -->
+    <!-- TODO: Add visual interiors with pixel furniture -->
+    <!-- TODO: Add multi-room buildings and upstairs/downstairs -->
     <Grid Margin="10" Background="#222233">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

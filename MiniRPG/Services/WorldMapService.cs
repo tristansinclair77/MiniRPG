@@ -18,19 +18,30 @@ namespace MiniRPG.Services
         {
             var regions = new List<Region>();
 
+            // Get all NPCs from DialogueService
+            var allNPCs = DialogueService.GetAllNPCs();
+            var mira = allNPCs.Find(npc => npc.Name == "Mira")!;
+            var shopkeeper = allNPCs.Find(npc => npc.Name == "Shopkeeper")!;
+
             // Greenfield Town - Starting area with NPCs
             var greenfieldTown = new Region("Greenfield Town", "A quiet settlement surrounded by plains.")
             {
                 NPCs = new ObservableCollection<NPC>
                 {
-                    DialogueService.GetAllNPCs().Find(npc => npc.Name == "Mira")!,
-                    DialogueService.GetAllNPCs().Find(npc => npc.Name == "Shopkeeper")!
+                    mira,
+                    shopkeeper
                 },
                 Buildings = new ObservableCollection<Building>
                 {
-                    new Building("General Shop", "A well-stocked shop selling basic supplies and equipment.", "Shop"),
+                    new Building("General Shop", "A well-stocked shop selling basic supplies and equipment.", "Shop")
+                    {
+                        Occupants = new ObservableCollection<NPC> { shopkeeper }
+                    },
                     new Building("Inn", "A cozy inn where travelers can rest and recover.", "Inn"),
                     new Building("Mira's Home", "A cozy cottage where Mira lives.", "House")
+                    {
+                        Occupants = new ObservableCollection<NPC> { mira }
+                    }
                 }
             };
             regions.Add(greenfieldTown);

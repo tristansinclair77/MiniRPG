@@ -1,14 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Update SaveLoadService.cs.
-
-Requirements:
-• Extend Player save with string? LastBuildingName.
-• Save when entering a building.
-• On load:
-   - If LastBuildingName != null, auto-load that building’s interior view.
-• Add TODO:
-   // Add per-building interior coordinates later
+Testing checklist:
+1. Enter “Greenfield Town” region.
+2. Open “Buildings” → select “General Shop” → click “Enter”.
+3. Verify interior loads with NPCs.
+4. Talk to shopkeeper → confirm dialogue or shop UI appears.
+5. Leave building → return to map.
+6. Save and reload → confirm region and building persistence.
+7. Add TODO placeholders:
+   <!-- TODO: Add inn stay mechanic (rest for gold) -->
+   <!-- TODO: Add visual interiors with pixel furniture -->
+   <!-- TODO: Add multi-room buildings and upstairs/downstairs -->
 
 ---
 
