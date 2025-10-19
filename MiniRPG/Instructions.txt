@@ -1,25 +1,25 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create Skill.cs in the Models folder.
+Modify Player.cs.
 
 Requirements:
-• public class Skill
-   - string Name
-   - string Description
-   - int LevelRequirement
-   - int CostSP          // Skill Points required to unlock
-   - int Power           // Damage or bonus magnitude
-   - bool IsPassive
-   - bool IsUnlocked
-   - string EffectType   // e.g., "Attack", "Defense", "Heal", "Buff"
+• Add properties:
+   - int SkillPoints { get; set; }
+   - ObservableCollection<Skill> LearnedSkills { get; set; } = new();
+   - ObservableCollection<Skill> AvailableSkills { get; set; } = new();
 
-• Add method ApplyEffect(Player player, Enemy? target):
-   - If IsPassive → modify player stats (e.g. Attack += Power)
-   - If active → return damage or healing value
+• Add method GainSkillPoints(int amount) => SkillPoints += amount;
+• Add method UnlockSkill(Skill skill):
+   - If SkillPoints >= skill.CostSP && !skill.IsUnlocked:
+       * SkillPoints -= skill.CostSP
+       * skill.IsUnlocked = true
+       * LearnedSkills.Add(skill)
+       * Log "Unlocked skill: {skill.Name}"
+• In level-up logic (inside GainExperience or wherever applicable):
+   - Add 1 SkillPoint per level gained.
 
 • Add TODO:
-   // Add skill animations and icons later
-   // Add skill cooldown timers later
+   // Add skill respec (reset) feature later
 
 ---
 

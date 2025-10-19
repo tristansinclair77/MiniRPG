@@ -1,6 +1,52 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Skill System
+## Latest Update: Player Skill System Integration
+
+### Player.cs Enhancements
+- **Added skill system properties**:
+  - `SkillPoints`: Integer property tracking available skill points for unlocking skills
+  - Implements property change notifications for UI binding
+  - Defaults to 0 on player creation
+  - `LearnedSkills`: ObservableCollection<Skill> storing unlocked skills
+  - `AvailableSkills`: ObservableCollection<Skill> storing skills available to unlock
+  - Both collections initialized as empty and ready for skill management
+- **Added `GainSkillPoints(int amount)` method**:
+  - Simple method to award skill points: `SkillPoints += amount`
+  - Can be called when player levels up or completes special quests
+- **Added `UnlockSkill(Skill skill)` method**:
+  - Checks if player has enough skill points: `SkillPoints >= skill.CostSP`
+  - Verifies skill is not already unlocked: `!skill.IsUnlocked`
+  - If conditions met:
+    - Deducts skill point cost: `SkillPoints -= skill.CostSP`
+    - Marks skill as unlocked: `skill.IsUnlocked = true`
+    - Adds skill to LearnedSkills collection
+    - Logs message: `"Unlocked skill: {skill.Name}"`
+- **Enhanced `GainExperience(int amount)` method**:
+  - Now awards 1 skill point per level gained
+  - Calls `GainSkillPoints(1)` within level-up loop
+  - Ensures players accumulate skill points as they progress
+  - Integrated seamlessly with existing level-up rewards (HP, Attack, Defense)
+- **Added TODO comment**:
+  - // TODO: Add skill respec (reset) feature later
+
+### Technical Details
+- Complete skill point economy now integrated with player progression
+- Players earn 1 skill point per level, providing consistent skill unlocking rate
+- Skill unlock validation prevents spending more points than available
+- LearnedSkills collection can be bound to UI for skill tree display
+- AvailableSkills collection enables dynamic skill offerings (shop, trainer, quest rewards)
+- Foundation laid for:
+  - Skill tree UI with unlock buttons
+  - Skill respec/reset functionality (refund skill points)
+  - Skill trainers and skill books as quest rewards
+  - Level-gated skill availability (using Skill.LevelRequirement)
+  - Passive skill auto-application on unlock
+  - Active skill hotbar integration in battle system
+- System integrates with existing Skill.cs model for complete skill progression
+
+---
+
+## Previous Update: Skill System
 
 ### Skill.cs (New File)
 - **Created `Skill` class in Models folder**:

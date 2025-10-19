@@ -79,6 +79,17 @@ namespace MiniRPG.Models
             set { _gold = value; OnPropertyChanged(); }
         }
 
+        // Skill system
+        private int _skillPoints;
+        public int SkillPoints
+        {
+            get => _skillPoints;
+            set { _skillPoints = value; OnPropertyChanged(); }
+        }
+
+        public ObservableCollection<Skill> LearnedSkills { get; set; } = new();
+        public ObservableCollection<Skill> AvailableSkills { get; set; } = new();
+
         // Base stats (original values before equipment bonuses)
         public int BaseAttack { get; set; }
         public int BaseDefense { get; set; }
@@ -139,6 +150,7 @@ namespace MiniRPG.Models
             Experience = 0;
             ExperienceToNextLevel = 10;
             Gold = 100;
+            SkillPoints = 0;
             // TODO: Future - include inventory, experience, and leveling system
         }
 
@@ -185,10 +197,27 @@ namespace MiniRPG.Models
                 Attack = BaseAttack + (EquippedWeapon?.AttackBonus ?? 0);
                 Defense = BaseDefense + (EquippedArmor?.DefenseBonus ?? 0);
                 HP = MaxHP;
+
+                // Award 1 skill point per level gained
+                GainSkillPoints(1);
+
                 leveledUp = true;
                 // TODO: Later - play level-up animation, add ability points, and save to file
             }
             return leveledUp;
+        }
+
+        public void GainSkillPoints(int amount) => SkillPoints += amount;
+
+        public void UnlockSkill(Skill skill)
+        {
+            if (SkillPoints >= skill.CostSP && !skill.IsUnlocked)
+            {
+                SkillPoints -= skill.CostSP;
+                skill.IsUnlocked = true;
+                LearnedSkills.Add(skill);
+                Debug.WriteLine($"Unlocked skill: {skill.Name}");
+            }
         }
 
         public void AddItem(Item item)
@@ -244,7 +273,7 @@ namespace MiniRPG.Models
             {
                 ActiveQuests.Remove(quest);
                 CompletedQuests.Add(quest);
-                
+
                 // Check if quest expired
                 if (quest.IsExpired())
                 {
@@ -256,12 +285,12 @@ namespace MiniRPG.Models
                     // Award full rewards
                     AddGold(quest.RewardGold);
                     GainExperience(quest.RewardExp);
-                    
+
                     if (quest.RewardItem != null)
                     {
                         AddItem(quest.RewardItem);
                     }
-                    
+
                     // Log reward message
                     Debug.WriteLine($"Quest '{quest.Title}' completed! Rewards: {quest.RewardGold} gold, {quest.RewardExp} experience" +
                         (quest.RewardItem != null ? $", {quest.RewardItem.Name}" : ""));
@@ -289,5 +318,6 @@ namespace MiniRPG.Models
         // TODO: Later - add quest categories (Main, Side, Daily)
         // TODO: Add currency icons and multi-currency support later
         // TODO: // Add unequip logic and visual equipment preview later
+        // TODO: Add skill respec (reset) feature later
     }
 }
