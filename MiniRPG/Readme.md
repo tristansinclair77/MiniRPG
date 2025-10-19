@@ -1,6 +1,55 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: WorldMapView UI Implementation
+## Latest Update: WorldMapViewModel Implementation
+
+### New Features ✨
+
+#### WorldMapViewModel Class Implementation
+- **Added**: `WorldMapViewModel.cs` in the ViewModels folder
+- **Inheritance**: Inherits from `BaseViewModel` for MVVM support
+- **Properties**:
+  - `Regions` - ObservableCollection<Region> containing all available regions
+  - `SelectedRegion` - Region? tracking the currently selected region
+  - `Player` - Player reference for travel validation and state management
+- **Commands**:
+  - `TravelCommand` - RelayCommand that accepts Region parameter for traveling to selected region
+  - `ExitWorldMapCommand` - RelayCommand for closing the world map view
+- **Events**:
+  - `OnRegionSelected` - Event triggered when player travels to a region, passes Region info
+  - `OnExitWorldMap` - Event triggered when player exits the world map
+- **Constructor**:
+  - Accepts `Player player` parameter
+  - Initializes `Regions` collection from `WorldMapService.GetRegions()`
+  - Sets up all commands with proper event handlers
+- **Travel Logic**:
+  - `Travel()` method validates region selection
+  - Logs travel message: "Traveling to {region.Name}..."
+  - Triggers `OnRegionSelected` event with region information
+  - `CanTravel()` method for future travel cost and unlock validation
+- **Integration Points**:
+  - Connects to `WorldMapService` for region data
+  - Event-driven architecture for parent ViewModel integration
+  - Follows established MVVM patterns used in DialogueViewModel and MapViewModel
+- **Future Enhancements**:
+  - Travel cost deduction from player gold
+  - Region unlock system based on player progress
+  - Travel animations and transitions
+  - Random encounter system during travel
+  - Travel time and rest mechanics
+- **Added TODO**: `// Add travel cost, animation, and random encounter system`
+
+#### System Flow
+1. WorldMapViewModel loads all regions from WorldMapService
+2. Player views available regions in WorldMapView
+3. Player clicks a region button, triggering TravelCommand
+4. ViewModel validates travel (future: check costs and unlocks)
+5. OnRegionSelected event fires with region data
+6. Parent ViewModel (MainViewModel) handles region transition
+7. Future: Implement travel animations, encounters, and region-specific content
+
+---
+
+## Previous Update: WorldMapView UI Implementation
 
 ### New Features ✨
 
