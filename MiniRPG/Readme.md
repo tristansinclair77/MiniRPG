@@ -1,6 +1,49 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Time-Based Building Interior NPC Visibility
+## Latest Update: Dynamic Weather System
+
+### EnvironmentService.cs Enhancements
+- **Added `WeatherType` enum**:
+  - Five weather types: Clear, Rain, Storm, Snow, Fog
+  - Used for tracking current weather conditions
+- **Added `Weather` static property**:
+  - Defaults to `WeatherType.Clear`
+  - Public getter with private setter for controlled weather changes
+- **Added `OnWeatherChanged` event**:
+  - Event triggered when weather changes
+  - Passes the new WeatherType as an event argument
+  - Enables UI and gameplay systems to react to weather changes
+- **Added `RandomizeWeather(string regionName)` method**:
+  - Uses Random to pick weather based on region type
+  - **Plains/Town weather probabilities**:
+    - 60% Clear, 25% Rain, 10% Fog, 5% Storm
+  - **Mountain weather probabilities**:
+    - 40% Clear, 40% Snow, 20% Fog
+  - Region type determined by parsing region name (plains, town, mountain, woods, etc.)
+  - Sets Weather property and triggers OnWeatherChanged event when weather changes
+- **Added automatic weather changes**:
+  - Weather randomizes every 6 in-game hours
+  - Integrated into `UpdateLighting()` method
+  - Tracks hours since last weather change
+- **Added helper method `DetermineRegionType(string regionName)`**:
+  - Parses region names to categorize them (Mountain, Town, Plains)
+  - Enables region-appropriate weather patterns
+  - Woods/Forest regions use Plains weather probabilities
+- **Added TODO comments**:
+  - // TODO: Add localized weather (per-region tracking)
+  - // TODO: Add weather-based enemy effects
+
+### Technical Details
+- Weather system is event-driven and integrates with existing time advancement
+- Static Random instance ensures consistent probability distribution
+- Weather changes automatically every 6 hours as time advances (battles, resting, fast travel, inn stays)
+- Foundation laid for future weather-based gameplay mechanics (enemy buffs/debuffs, visual effects)
+- Region-aware weather patterns make the world feel more dynamic and realistic
+- Event architecture allows UI to display weather icons and effects to show weather visuals
+
+---
+
+## Previous Update: Time-Based Building Interior NPC Visibility
 
 ### BuildingInteriorViewModel.cs Enhancements
 - **Added `VisibleOccupants` property**:
