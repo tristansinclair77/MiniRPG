@@ -1,14 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Enhance TimeService.cs.
+Edit MapView.xaml.
 
 Requirements:
-• Subscribe to OnHourChanged event.
-• Every 6 hours (Hour % 6 == 0):
-   - Call EnvironmentService.RandomizeWeather(CurrentRegionName or "Default").
-• Log message: $"The weather changes to {EnvironmentService.Weather}."
+• Add TextBlock near region/time header showing:
+   "Weather: {Binding CurrentWeather}"
+• In MapViewModel, bind to EnvironmentService.Weather (via property CurrentWeather).
+• Change text color depending on weather:
+   - Blue for Rain, White for Snow, Gray for Fog, Yellow for Clear.
 • Add TODO:
-   // Add gradual weather transitions and forecast system
+   <!-- TODO: Add weather icons or animated particle layers -->
+   <!-- TODO: Add ambient rain and snow overlays -->
 
 ---
 

@@ -13,6 +13,7 @@
         <converters:QuestExpirationColorConverter x:Key="QuestExpirationColor" />
         <converters:NPCAvailabilityConverter x:Key="NPCAvailability" />
         <converters:NPCAvailabilityColorConverter x:Key="NPCAvailabilityColor" />
+        <converters:WeatherColorConverter x:Key="WeatherColor" />
     </UserControl.Resources>
     <!-- TODO: Replace text with pixel-art status window -->
     <!-- TODO: Add animated portrait or player sprite here -->
@@ -81,6 +82,19 @@
                     <Run Text=", " />
                     <Run Text="{Binding TimeOfDay, Mode=OneWay}" />
                 </TextBlock>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,0">
+                    <TextBlock Text="Weather: " 
+                               FontSize="11" 
+                               FontStyle="Italic" 
+                               Foreground="#CCCCCC" />
+                    <TextBlock Text="{Binding CurrentWeather, Mode=OneWay}" 
+                               FontSize="11" 
+                               FontStyle="Italic" 
+                               FontWeight="Bold"
+                               Foreground="{Binding CurrentWeather, Converter={StaticResource WeatherColor}}" />
+                </StackPanel>
+                <!-- TODO: Add weather icons or animated particle layers -->
+                <!-- TODO: Add ambient rain and snow overlays -->
             </StackPanel>
         </Border>
 

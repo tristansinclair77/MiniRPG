@@ -1,6 +1,52 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: TimeService Weather Integration
+## Latest Update: Weather Display UI
+
+### MapView.xaml Enhancements
+- **Added weather display to region header**:
+  - New TextBlock showing current weather near the region/time header
+  - Weather text is color-coded based on weather type:
+    - Blue for Rain and Storm
+    - White for Snow
+    - Gray for Fog
+    - Yellow for Clear
+  - Uses data binding to `CurrentWeather` property in MapViewModel
+- **Added TODO comments**:
+  - `<!-- TODO: Add weather icons or animated particle layers -->`
+  - `<!-- TODO: Add ambient rain and snow overlays -->`
+- **Added WeatherColorConverter to resources**:
+  - Registered new converter for use in weather display
+
+### MapViewModel.cs Enhancements
+- **Added `CurrentWeather` property**:
+  - Binds to `EnvironmentService.Weather` for UI display
+  - Provides real-time weather data to the view
+- **Updated `OnWeatherChanged` handler**:
+  - Now calls `OnPropertyChanged(nameof(CurrentWeather))` to notify UI
+  - Ensures weather display updates immediately when weather changes
+  - Continues to log weather changes to GlobalLog
+
+### WeatherColorConverter.cs (New File)
+- **Created new value converter**:
+  - Converts `WeatherType` enum to appropriate color brushes
+  - Implements `IValueConverter` interface
+  - Color mapping:
+    - `WeatherType.Rain` and `WeatherType.Storm` → Blue
+    - `WeatherType.Snow` → White
+    - `WeatherType.Fog` → Gray
+    - `WeatherType.Clear` → Yellow
+  - Default fallback color is White
+
+### Technical Details
+- Weather display integrates seamlessly with existing weather system
+- UI updates automatically when weather changes (every 6 hours or on event)
+- Color-coded weather provides visual feedback at a glance
+- Foundation laid for future weather icons and animated particle effects
+- Event-driven architecture ensures real-time UI updates
+
+---
+
+## Previous Update: TimeService Weather Integration
 
 ### TimeService.cs Enhancements
 - **Added `CurrentRegionName` static property**:

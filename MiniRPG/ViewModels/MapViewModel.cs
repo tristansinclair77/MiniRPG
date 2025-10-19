@@ -65,6 +65,11 @@ namespace MiniRPG.ViewModels
         /// </summary>
         public string TimeOfDay => TimeService.GetTimeOfDay();
 
+        /// <summary>
+        /// Gets the current weather from EnvironmentService for UI binding.
+        /// </summary>
+        public WeatherType CurrentWeather => EnvironmentService.Weather;
+
         private ObservableCollection<string> _localEnemies;
         public ObservableCollection<string> LocalEnemies
         {
@@ -309,6 +314,7 @@ namespace MiniRPG.ViewModels
         private void OnWeatherChanged(object? sender, WeatherType newWeather)
         {
             _globalLog?.Add($"The weather changes to {newWeather}.");
+            OnPropertyChanged(nameof(CurrentWeather));
         }
 
         /// <summary>
