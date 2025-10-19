@@ -1,6 +1,44 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Skill Tree UI
+## Latest Update: Skill Tree Integration with MapViewModel
+
+### MapViewModel.cs Enhancements
+- **Added `OpenSkillTreeCommand`**:
+  - New RelayCommand to trigger opening the Skill Tree
+  - Initialized in both constructors (legacy and region-specific)
+  - Bound to UI for player-triggered skill tree access
+- **Added `OnOpenSkillTree` event**:
+  - Event/callback for opening skill tree
+  - Follows existing pattern of event-driven view switching
+  - Enables MainViewModel to handle view transitions
+- **Added `OpenSkillTree()` method**:
+  - Logs message: "Opening Skill Tree..."
+  - Invokes `OnOpenSkillTree` event to notify MainViewModel
+  - **Added TODO comment**: Add keyboard shortcut or button icon for Skill Tree
+
+### MainViewModel.cs Enhancements
+- **Subscribed to `MapViewModel.OnOpenSkillTree` event**:
+  - Added subscription in `CreateMapViewModel()` method
+  - Creates new `SkillTreeViewModel(CurrentPlayer)` instance
+  - Sets `CurrentViewModel = skillTreeViewModel` to switch to skill tree view
+  - Logs "Opened Skill Tree." to GlobalLog
+- **Subscribed to `SkillTreeViewModel.OnExitSkillTree` event**:
+  - Handles event-based exit from skill tree
+  - Calls `ShowMap()` to return to MapView
+  - Logs "Returned from Skill Tree." to GlobalLog
+
+### Technical Details
+- Skill tree is now fully integrated into the main game flow
+- Player can open skill tree from MapView using `OpenSkillTreeCommand`
+- Event-driven architecture ensures clean view transitions
+- Exit from skill tree handled via `OnExitSkillTree` event
+- Skill tree changes are auto-saved via SkillTreeViewModel
+- Foundation laid for keyboard shortcuts and UI button icons
+- Consistent with existing view switching patterns (shop, quest board, dialogue, etc.)
+
+---
+
+## Previous Update: Skill Tree UI
 
 ### SkillTreeView.xaml (New File)
 - **Created Skill Tree user interface in Views folder**:

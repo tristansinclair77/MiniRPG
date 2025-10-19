@@ -1,25 +1,20 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create SkillTreeViewModel.cs in the ViewModels folder.
+Modify MapViewModel.cs and MainViewModel.cs.
 
-Requirements:
-• Inherit from BaseViewModel.
-• Properties:
-   - Player Player
-   - ObservableCollection<Skill> AllSkills
-   - Skill? SelectedSkill
-• Commands:
-   - UnlockSkillCommand
-   - ExitSkillTreeCommand
-• Constructor(Player player):
-   - Load AllSkills = new(SkillTreeService.GetAllSkills())
-   - Mark Player.AvailableSkills = AllSkills
-• UnlockSkillCommand:
-   - Calls Player.UnlockSkill(SelectedSkill)
-   - Refresh Player.SkillPoints display.
-• ExitSkillTreeCommand triggers OnExitSkillTree event.
-• Add TODO:
-   // Add skill preview popups and animations later
+MapViewModel:
+• Add RelayCommand OpenSkillTreeCommand.
+• When executed → trigger event OnOpenSkillTree.
+
+MainViewModel:
+• Subscribe to OnOpenSkillTree.
+• When triggered:
+   - Set CurrentViewModel = new SkillTreeViewModel(CurrentPlayer)
+   - Log "Opened Skill Tree."
+• Subscribe to ExitSkillTreeCommand to return to MapViewModel.
+
+Add TODO:
+// Add keyboard shortcut or button icon for Skill Tree
 
 ---
 

@@ -134,6 +134,7 @@ namespace MiniRPG.ViewModels
         public ICommand OpenFastTravelCommand { get; }
         public ICommand FastTravelCommand { get; }
         public ICommand EnterBuildingCommand { get; }
+        public ICommand OpenSkillTreeCommand { get; }
         private ObservableCollection<string> _globalLog;
         
         // Store the full region reference to filter NPCs
@@ -181,6 +182,9 @@ namespace MiniRPG.ViewModels
 
         // Event/callback for entering building
         public event Action<Building>? OnEnterBuilding;
+
+        // Event/callback for opening skill tree
+        public event Action? OnOpenSkillTree;
 
         /// <summary>
         /// Constructor for MapViewModel (legacy - uses default data).
@@ -234,6 +238,7 @@ namespace MiniRPG.ViewModels
             OpenFastTravelCommand = new RelayCommand(_ => OpenFastTravel());
             FastTravelCommand = new RelayCommand(param => FastTravel(param as string), _ => !string.IsNullOrEmpty(SelectedFastTravelRegion));
             EnterBuildingCommand = new RelayCommand(param => EnterBuilding(param as Building));
+            OpenSkillTreeCommand = new RelayCommand(_ => OpenSkillTree());
         }
 
         /// <summary>
@@ -302,6 +307,7 @@ namespace MiniRPG.ViewModels
             OpenFastTravelCommand = new RelayCommand(_ => OpenFastTravel());
             FastTravelCommand = new RelayCommand(param => FastTravel(param as string), _ => !string.IsNullOrEmpty(SelectedFastTravelRegion));
             EnterBuildingCommand = new RelayCommand(param => EnterBuilding(param as Building));
+            OpenSkillTreeCommand = new RelayCommand(_ => OpenSkillTree());
             
             // TODO: Add visual background per region
             // TODO: Add weather or time-of-day changes
@@ -652,6 +658,13 @@ namespace MiniRPG.ViewModels
             {
                 OnEnterBuilding?.Invoke(building);
             }
+        }
+
+        private void OpenSkillTree()
+        {
+            _globalLog?.Add("Opening Skill Tree...");
+            OnOpenSkillTree?.Invoke();
+            // TODO: Add keyboard shortcut or button icon for Skill Tree
         }
 
         private async void Rest()

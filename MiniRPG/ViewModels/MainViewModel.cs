@@ -325,6 +325,19 @@ namespace MiniRPG.ViewModels
                 }
             };
             
+            // Subscribe to OnOpenSkillTree events
+            mapVM.OnOpenSkillTree += () =>
+            {
+                var skillTreeVM = new SkillTreeViewModel(CurrentPlayer);
+                skillTreeVM.OnExitSkillTree += () =>
+                {
+                    ShowMap();
+                    AddLog("Returned from Skill Tree.");
+                };
+                CurrentViewModel = skillTreeVM;
+                AddLog("Opened Skill Tree.");
+            };
+            
             return mapVM;
         }
 
