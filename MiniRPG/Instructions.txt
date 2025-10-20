@@ -1,16 +1,17 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create FactionService.cs in the Services folder.
+Modify Region.cs and NPC.cs.
 
-Requirements:
-• Static class FactionService
-• Static method GetAllFactions() returns List<Faction>:
-   - "Greenfield Town" – peaceful farming settlement.
-   - "Adventurer’s Guild" – neutral quest hub.
-   - "Bandit Clan" – antagonistic faction.
-• Add method GetFactionByName(string name).
+Region.cs:
+• Add property string FactionName.
+• Initialize in sample data (e.g., "Greenfield Town" → "Greenfield Town Faction").
+
+NPC.cs:
+• Add property string FactionAffiliation.
+• Default to region’s faction if unspecified.
+• Add property int ReputationImpactOnQuestCompletion = 5.
 • Add TODO:
-   // Add faction alliances, rivalries, and reputation decay over time
+   // Add faction emblems and alignment dialogue filters
 
 ---
 

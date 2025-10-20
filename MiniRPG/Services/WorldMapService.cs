@@ -45,6 +45,7 @@ namespace MiniRPG.Services
             // Greenfield Town - Starting area with NPCs
             var greenfieldTown = new Region("Greenfield Town", "A quiet settlement surrounded by plains.")
             {
+                FactionName = "Greenfield Town Faction",
                 NPCs = new ObservableCollection<NPC>
                 {
                     mira,
@@ -57,11 +58,19 @@ namespace MiniRPG.Services
                     miraHome
                 }
             };
+            
+            // Set NPC faction affiliation to region's faction if unspecified
+            if (string.IsNullOrEmpty(mira.FactionAffiliation))
+                mira.FactionAffiliation = greenfieldTown.FactionName;
+            if (string.IsNullOrEmpty(shopkeeper.FactionAffiliation))
+                shopkeeper.FactionAffiliation = greenfieldTown.FactionName;
+            
             regions.Add(greenfieldTown);
 
             // Slime Plains - Low-level enemy area
             var slimePlains = new Region("Slime Plains", "Open grasslands infested with slimes of all sizes.")
             {
+                FactionName = "Slime Plains Faction",
                 AvailableEnemies = new ObservableCollection<string>
                 {
                     "Slime",
@@ -73,6 +82,7 @@ namespace MiniRPG.Services
             // Goblin Woods - Mid-level enemy area
             var goblinWoods = new Region("Goblin Woods", "A dark forest inhabited by hostile goblin tribes.")
             {
+                FactionName = "Goblin Woods Faction",
                 AvailableEnemies = new ObservableCollection<string>
                 {
                     "Goblin",

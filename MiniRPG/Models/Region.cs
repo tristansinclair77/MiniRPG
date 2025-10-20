@@ -9,6 +9,7 @@ namespace MiniRPG.Models
     {
         public string Name { get; set; }
         public string Description { get; set; }
+        public string FactionName { get; set; }
         public ObservableCollection<NPC> NPCs { get; set; }
         public ObservableCollection<string> AvailableEnemies { get; set; }
         public ObservableCollection<Quest> LocalQuests { get; set; }
@@ -23,6 +24,7 @@ namespace MiniRPG.Models
         {
             Name = name;
             Description = description;
+            FactionName = string.Empty;
             NPCs = new ObservableCollection<NPC>();
             AvailableEnemies = new ObservableCollection<string>();
             LocalQuests = new ObservableCollection<Quest>();

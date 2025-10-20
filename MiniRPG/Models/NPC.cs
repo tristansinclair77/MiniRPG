@@ -28,6 +28,16 @@ namespace MiniRPG.Models
         /// The current location of the NPC (e.g., "Town Square", "Home", "Shop").
         /// </summary>
         public string CurrentLocation { get; set; }
+        
+        /// <summary>
+        /// The faction affiliation of this NPC. Defaults to region's faction if unspecified.
+        /// </summary>
+        public string FactionAffiliation { get; set; }
+        
+        /// <summary>
+        /// The amount of reputation gained with the NPC's faction when completing their quest.
+        /// </summary>
+        public int ReputationImpactOnQuestCompletion { get; set; } = 5;
 
         /// <summary>
         /// Constructor for creating a new NPC with basic information.
@@ -43,6 +53,7 @@ namespace MiniRPG.Models
             DialogueLines = new ObservableCollection<string>();
             OfferedQuest = null;
             CurrentLocation = string.Empty;
+            FactionAffiliation = string.Empty;
         }
         
         /// <summary>
@@ -66,5 +77,6 @@ namespace MiniRPG.Models
 
         // TODO: Add weekly schedules and holiday routines later
         // TODO: Add portrait, voice, and branching dialogue options later
+        // TODO: Add faction emblems and alignment dialogue filters
     }
 }
