@@ -122,6 +122,17 @@ namespace MiniRPG.ViewModels
                         CombatLog.Add("You defeated the enemy!");
                         _globalLog.Add("You defeated the enemy!");
 
+                        // Faction reputation adjustment for defeating enemy
+                        string? enemyFaction = GameService.GetEnemyFaction(CurrentEnemy);
+                        if (!string.IsNullOrEmpty(enemyFaction))
+                        {
+                            int reputationChange = -10; // Decrease reputation for defeating factioned enemies
+                            Player.AdjustFactionReputation(enemyFaction, reputationChange);
+                            var factionMsg = $"Your reputation with {enemyFaction} decreased!";
+                            CombatLog.Add(factionMsg);
+                            _globalLog.Add(factionMsg);
+                        }
+
                         // Quest tracking - check active quests for enemy kill requirements
                         var questsToComplete = new List<Quest>();
                         foreach (var quest in Player.ActiveQuests)
@@ -234,6 +245,17 @@ namespace MiniRPG.ViewModels
             {
                 CombatLog.Add("You defeated the enemy!");
                 _globalLog.Add("You defeated the enemy!");
+
+                // Faction reputation adjustment for defeating enemy
+                string? enemyFaction = GameService.GetEnemyFaction(CurrentEnemy);
+                if (!string.IsNullOrEmpty(enemyFaction))
+                {
+                    int reputationChange = -10; // Decrease reputation for defeating factioned enemies
+                    Player.AdjustFactionReputation(enemyFaction, reputationChange);
+                    var factionMsg = $"Your reputation with {enemyFaction} decreased!";
+                    CombatLog.Add(factionMsg);
+                    _globalLog.Add(factionMsg);
+                }
 
                 // Quest tracking - check active quests for enemy kill requirements
                 var questsToComplete = new List<Quest>();

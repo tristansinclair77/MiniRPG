@@ -12,6 +12,16 @@ namespace MiniRPG.Models
         public int ThresholdHostile { get; set; } = -50;
 
         /// <summary>
+        /// Parameterless constructor for JSON serialization.
+        /// </summary>
+        public Faction()
+        {
+            Name = string.Empty;
+            Description = string.Empty;
+            Reputation = 0;
+        }
+
+        /// <summary>
         /// Constructor for creating a new Faction with basic information.
         /// </summary>
         /// <param name="name">The faction's name</param>

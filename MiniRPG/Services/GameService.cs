@@ -9,7 +9,7 @@ namespace MiniRPG.Services
     /// </summary>
     public static class GameService
     {
-        private static readonly List<string> _enemies = new() { "Slime", "Goblin", "Wolf", "Dwarf" };
+        private static readonly List<string> _enemies = new() { "Slime", "Goblin", "Wolf", "Dwarf", "Bandit" };
         private static readonly Random _random = new();
 
         /// <summary>
@@ -38,6 +38,10 @@ namespace MiniRPG.Services
             {
                 regionalEnemies = new List<string> { "Goblin", "Goblin Chief" };
             }
+            else if (regionName == "Bandit Hideout")
+            {
+                regionalEnemies = new List<string> { "Bandit", "Bandit Leader" };
+            }
             else
             {
                 // Fallback to default enemy list for unknown regions
@@ -48,6 +52,23 @@ namespace MiniRPG.Services
             return regionalEnemies[idx];
             
             // TODO: Add regional difficulty scaling and boss encounters
+        }
+
+        /// <summary>
+        /// Gets the faction affiliation for an enemy type.
+        /// Returns null if the enemy has no faction affiliation.
+        /// </summary>
+        /// <param name="enemyName">The name of the enemy</param>
+        /// <returns>The faction name for the enemy, or null if not affiliated</returns>
+        public static string? GetEnemyFaction(string enemyName)
+        {
+            if (enemyName.Contains("Bandit", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Bandit Clan";
+            }
+            // Add more enemy-to-faction mappings as needed
+            // Slimes and Goblins are not part of any faction
+            return null;
         }
 
         /// <summary>

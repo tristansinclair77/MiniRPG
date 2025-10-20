@@ -95,7 +95,22 @@ namespace MiniRPG.Services
             };
             regions.Add(goblinWoods);
 
+            // Bandit Hideout - Enemy area controlled by Bandit Clan
+            var banditHideout = new Region("Bandit Hideout", "A dangerous outpost controlled by bandits and outlaws.")
+            {
+                FactionName = "Bandit Clan",
+                AvailableEnemies = new ObservableCollection<string>
+                {
+                    "Bandit",
+                    "Bandit Leader"
+                }
+            };
+            regions.Add(banditHideout);
+
             // TODO: Add NPC bedtime dialogues and idle animations
+            // TODO: Add unique faction quests
+            // TODO: Add dynamic faction wars
+            // TODO: Add story-altering reputation thresholds
 
             return regions;
         }
