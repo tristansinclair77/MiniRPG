@@ -99,10 +99,12 @@ namespace MiniRPG.ViewModels
         public ICommand TalkToNPCCommand { get; }
         public ICommand ExitBuildingCommand { get; }
         public ICommand? StayAtInnCommand { get; }
+        public ICommand? OpenCraftingCommand { get; }
 
         // Event callbacks
         public event Action<NPC>? OnTalkToNPC;
         public event Action? OnExitBuilding;
+        public event Action? OnOpenCrafting;
 
         /// <summary>
         /// Constructor for BuildingInteriorViewModel.
@@ -132,6 +134,12 @@ namespace MiniRPG.ViewModels
                 StayAtInnCommand = new RelayCommand(_ => StayAtInn());
             }
             
+            // Add OpenCraftingCommand if this is a Blacksmith or Workshop
+            if (CurrentBuilding.Type == "Blacksmith" || CurrentBuilding.Type == "Workshop")
+            {
+                OpenCraftingCommand = new RelayCommand(_ => OpenCrafting());
+            }
+            
             // Add room-based navigation and building-specific events
             // TODO: Add NPC bedtime dialogues and idle animations
         }
@@ -158,6 +166,11 @@ namespace MiniRPG.ViewModels
             TimeService.OnHourChanged -= OnHourChanged;
             // TODO: Add fade-to-black transition between scenes
             OnExitBuilding?.Invoke();
+        }
+
+        private void OpenCrafting()
+        {
+            OnOpenCrafting?.Invoke();
         }
 
         private async void StayAtInn()

@@ -398,6 +398,19 @@ namespace MiniRPG.ViewModels
                             ShowMap();
                             try { AudioService.PlayMapTheme(); } catch { }
                         };
+                        resubscribedBuildingVM.OnOpenCrafting += () =>
+                        {
+                            // TODO: Add special blacksmith NPC interactions before crafting
+                            var craftingVM = new CraftingViewModel(CurrentPlayer);
+                            craftingVM.OnExitCrafting += () =>
+                            {
+                                // Return to building interior after crafting
+                                CurrentViewModel = CreateBuildingInteriorViewModel(selectedBuilding);
+                                AddLog("Returned from crafting menu.");
+                            };
+                            CurrentViewModel = craftingVM;
+                            AddLog("Entered crafting menu.");
+                        };
                     }
                 };
                 CurrentViewModel = dialogueVM;
@@ -413,6 +426,21 @@ namespace MiniRPG.ViewModels
                 
                 ShowMap();
                 try { AudioService.PlayMapTheme(); } catch { }
+            };
+            
+            // Subscribe to open crafting event
+            buildingVM.OnOpenCrafting += () =>
+            {
+                // TODO: Add special blacksmith NPC interactions before crafting
+                var craftingVM = new CraftingViewModel(CurrentPlayer);
+                craftingVM.OnExitCrafting += () =>
+                {
+                    // Return to building interior after crafting
+                    CurrentViewModel = CreateBuildingInteriorViewModel(selectedBuilding);
+                    AddLog("Returned from crafting menu.");
+                };
+                CurrentViewModel = craftingVM;
+                AddLog("Entered crafting menu.");
             };
             
             return buildingVM;

@@ -1,6 +1,49 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Crafting View Implementation (Updated)
+## Latest Update: Crafting Integration with Blacksmith and Workshop Buildings
+
+### BuildingInteriorViewModel.cs (Modified)
+- **Added `OpenCraftingCommand` property**: `ICommand? OpenCraftingCommand`
+  - Command to open the crafting menu from inside a building
+  - Only initialized for buildings with Type "Blacksmith" or "Workshop"
+- **Added `OnOpenCrafting` event**: `event Action? OnOpenCrafting`
+  - Event triggered when player opens the crafting menu
+  - Invoked by OpenCraftingCommand
+- **Modified constructor**:
+  - Added conditional initialization of `OpenCraftingCommand`
+  - If building type is "Blacksmith" or "Workshop", creates RelayCommand that calls `OpenCrafting()`
+  - Command is null for other building types
+- **Added `OpenCrafting()` method**:
+  - Private method that invokes the `OnOpenCrafting` event
+  - Allows MainViewModel to handle the transition to CraftingViewModel
+
+### MainViewModel.cs (Modified)
+- **Subscribed to `OnOpenCrafting` event** in `CreateBuildingInteriorViewModel()` method
+- When `OnOpenCrafting` is triggered:
+  - Creates new `CraftingViewModel` with `CurrentPlayer`
+  - Sets `CurrentViewModel = craftingVM`
+  - Logs "Entered crafting menu."
+  - Subscribes to `OnExitCrafting` event to return to BuildingInteriorViewModel
+- When `OnExitCrafting` is triggered from crafting menu:
+  - Calls `CreateBuildingInteriorViewModel(selectedBuilding)` to return to building interior
+  - Logs "Returned from crafting menu."
+- **Added TODO comment**: `// TODO: Add special blacksmith NPC interactions before crafting`
+  - Indicates future enhancement for NPC-specific crafting dialogues and bonuses
+- **Note**: Subscription to `OnOpenCrafting` is added in two places:
+  - Main subscription after creating BuildingInteriorViewModel
+  - Re-subscription when returning from NPC dialogue inside building
+
+### Implementation Notes
+- Crafting menu is only accessible from Blacksmith and Workshop building types
+- Player can enter crafting menu directly from building interior
+- After exiting crafting, player returns to the building interior (not to map)
+- System gracefully handles navigation: Building Interior → Crafting → Building Interior → Map
+- Ready for future enhancements: blacksmith NPC bonuses, special crafting recipes per location
+- Follows existing event subscription pattern used for other building interactions
+
+---
+
+## Previous Update: Crafting View Implementation (Updated)
 
 ### CraftingViewModel.cs (Updated)
 - **Updated ViewModel for Crafting & Enhancement interface**

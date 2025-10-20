@@ -1,27 +1,20 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create CraftingViewModel.cs in the ViewModels folder.
+Modify BuildingInteriorViewModel.cs and MainViewModel.cs.
 
-Requirements:
-• Inherit from BaseViewModel.
-• Properties:
-   - Player Player
-   - ObservableCollection<CraftingRecipe> AllRecipes
-   - CraftingRecipe? SelectedRecipe
-• Commands:
-   - CraftCommand
-   - ExitCraftingCommand
-• Constructor(Player player):
-   - Load AllRecipes = new(CraftingService.GetAllRecipes()).
-• CraftCommand:
-   - If SelectedRecipe.CanCraft(Player):
-       * SelectedRecipe.Craft(Player)
-       * SaveLoadService.SavePlayer(Player)
-       * Log success message.
-   - Else Log "Missing materials or gold."
-• ExitCraftingCommand triggers OnExitCrafting event.
+BuildingInteriorViewModel:
+• If CurrentBuilding.Type == "Blacksmith" or "Workshop":
+   - Add RelayCommand OpenCraftingCommand.
+   - Execute → trigger event OnOpenCrafting.
+
+MainViewModel:
+• Subscribe to OnOpenCrafting.
+• When triggered:
+   - Set CurrentViewModel = new CraftingViewModel(CurrentPlayer)
+   - Log "Entered crafting menu."
+• Subscribe to ExitCrafting event → return to BuildingInteriorViewModel.
 • Add TODO:
-   // Add bulk crafting and auto-select available recipes
+   // Add special blacksmith NPC interactions before crafting
 
 ---
 
