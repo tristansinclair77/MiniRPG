@@ -1,17 +1,13 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create CraftingService.cs in the Services folder.
+Modify Item.cs.
 
 Requirements:
-• Static class CraftingService
-• Static method GetAllRecipes() returns List<CraftingRecipe>:
-   - Example:
-       * "Iron Sword": Requires 2x "Iron Ore", 1x "Wood", 50 gold.
-       * "Health Potion": Requires 1x "Herb", 1x "Bottle", 10 gold.
-• Static method GetRecipesByCategory(string category)
-   - Filter by ResultItem.Type (Weapon, Consumable, etc.)
+• Add bool IsMaterial { get; set; }
+• In GetSampleItems(), mark crafting items accordingly:
+   - "Iron Ore", "Wood", "Bottle", "Herb" → IsMaterial = true.
 • Add TODO:
-   // Add recipe discovery system and rarity progression
+   // Add item rarity and material grade (e.g., Fine Iron Ore)
 
 ---
 

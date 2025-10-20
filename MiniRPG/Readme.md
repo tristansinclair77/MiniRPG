@@ -1,6 +1,36 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Crafting System - CraftingService
+## Latest Update: Item Model Enhancement - Material Identification
+
+### Item.cs (Modified)
+- **Added `IsMaterial` property**: `bool IsMaterial { get; set; }`
+  - Identifies whether an item is a crafting material
+  - Used to distinguish crafting materials from other item types
+- **Updated `GetSampleItems()` method**: Added crafting material items
+  - Added **"Iron Ore"** (Material, Value: 10 gold, IsMaterial: true)
+    - Description: "Raw iron ore used in crafting."
+    - Used in Iron Sword recipe (requires 2x)
+  - Added **"Wood"** (Material, Value: 5 gold, IsMaterial: true)
+    - Description: "Sturdy wood for crafting."
+    - Used in Iron Sword recipe (requires 1x)
+  - Added **"Bottle"** (Material, Value: 3 gold, IsMaterial: true)
+    - Description: "An empty bottle for potions."
+    - Used in Health Potion and Mana Potion recipes (requires 1x)
+  - Added **"Herb"** (Material, Value: 8 gold, IsMaterial: true)
+    - Description: "A medicinal herb."
+    - Used in Health Potion recipe (requires 1x)
+- **Added TODO comment**: `// Add item rarity and material grade (e.g., Fine Iron Ore)`
+  - Indicates future enhancement for material quality tiers
+
+### Implementation Notes
+- IsMaterial property enables filtering and UI differentiation for crafting materials
+- All four crafting materials marked correspond to materials used in CraftingService recipes
+- Material values set to be affordable for early-game crafting
+- Ready for expansion with material rarity and quality grades (e.g., Fine/Superior/Legendary Iron Ore)
+
+---
+
+## Previous Update: Crafting System - CraftingService
 
 ### CraftingService.cs (New File)
 - **Created static `CraftingService` class** in Services folder

@@ -34,6 +34,7 @@ namespace MiniRPG.Models
         public string SlotType { get; set; } // "Weapon", "Armor", "Accessory"
         public int AttackBonus { get; set; } = 0;
         public int DefenseBonus { get; set; } = 0;
+        public bool IsMaterial { get; set; }
 
         public Item(string name, string description, string type, int value)
         {
@@ -54,7 +55,10 @@ namespace MiniRPG.Models
             return new List<Item>
             {
                 new Item("Potion", "Restores 10 HP", "Consumable", 25),
-                new Item("Slime Goo", "Sticky residue from a defeated slime.", "Material", 5),
+                new Item("Slime Goo", "Sticky residue from a defeated slime.", "Material", 5)
+                {
+                    IsMaterial = true
+                },
                 new Item("Wooden Sword", "A basic starter weapon.", "Weapon", 0)
                 {
                     IsEquippable = true,
@@ -66,9 +70,26 @@ namespace MiniRPG.Models
                     IsEquippable = true,
                     SlotType = "Armor",
                     DefenseBonus = 1
+                },
+                new Item("Iron Ore", "Raw iron ore used in crafting.", "Material", 10)
+                {
+                    IsMaterial = true
+                },
+                new Item("Wood", "Sturdy wood for crafting.", "Material", 5)
+                {
+                    IsMaterial = true
+                },
+                new Item("Bottle", "An empty bottle for potions.", "Material", 3)
+                {
+                    IsMaterial = true
+                },
+                new Item("Herb", "A medicinal herb.", "Material", 8)
+                {
+                    IsMaterial = true
                 }
             };
         }
         // TODO: // Add rarity, weight, and elemental affinity later
+        // Add item rarity and material grade (e.g., Fine Iron Ore)
     }
 }
