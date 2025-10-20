@@ -1,15 +1,23 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Testing checklist:
-1. Complete a quest in Greenfield Town → reputation increases.
-2. Open Reputation screen → verify change.
-3. Visit shop → prices change if friendly or hostile.
-4. Battle bandits → reputation with Bandit Clan decreases.
-5. Save/reload → reputation values persist.
-6. Add TODO placeholders:
-   <!-- TODO: Add unique faction quests -->
-   <!-- TODO: Add dynamic faction wars -->
-   <!-- TODO: Add story-altering reputation thresholds -->
+Create CraftingRecipe.cs in the Models folder.
+
+Requirements:
+• public class CraftingRecipe
+   - string Name
+   - string Description
+   - Item ResultItem
+   - Dictionary<string, int> RequiredMaterials
+   - int RequiredGold
+• Method bool CanCraft(Player player):
+   - Check if player has enough of each required material and gold.
+• Method Craft(Player player):
+   - If CanCraft():
+       * Remove required materials and gold.
+       * Add ResultItem to player inventory.
+       * Log "Crafted [ResultItem.Name]!"
+• Add TODO:
+   // Add crafting time, rarity tiers, and skill-based bonuses later
 
 ---
 

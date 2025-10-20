@@ -1,6 +1,42 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Faction-Based Shop Pricing and Trading Restrictions
+## Latest Update: Crafting System - CraftingRecipe Model
+
+### CraftingRecipe.cs (New File)
+- **Created new `CraftingRecipe` class** in Models folder
+- Represents a crafting recipe for creating items from materials and gold
+- Properties:
+  - `string Name`: The name of the recipe
+  - `string Description`: Description of what the recipe creates
+  - `Item ResultItem`: The item that is produced when crafting
+  - `Dictionary<string, int> RequiredMaterials`: Dictionary mapping material names to required quantities
+  - `int RequiredGold`: Amount of gold required to craft
+- Constructor:
+  - `CraftingRecipe(string name, string description, Item resultItem, Dictionary<string, int> requiredMaterials, int requiredGold)`
+  - Initializes all properties with provided values
+- **Method `bool CanCraft(Player player)`**:
+  - Checks if player has enough gold
+  - Validates player has each required material in sufficient quantity
+  - Returns true if all requirements are met, false otherwise
+- **Method `void Craft(Player player)`**:
+  - First calls `CanCraft()` to validate requirements
+  - If successful:
+    - Removes all required materials from player inventory
+    - Deducts required gold from player
+    - Adds the result item to player inventory
+    - Logs "Crafted [ResultItem.Name]!" using Debug.WriteLine
+  - If requirements not met, returns without changes
+- **TODO comment added**: `// TODO: Add crafting time, rarity tiers, and skill-based bonuses later`
+
+### Implementation Notes
+- Uses LINQ to count and find materials in player inventory
+- Gracefully handles cases where materials cannot be removed
+- Integrates with existing Player inventory and gold management systems
+- Ready for extension with crafting time, rarity tiers, and skill-based bonuses
+
+---
+
+## Previous Update: Faction-Based Shop Pricing and Trading Restrictions
 
 ### ShopViewModel.cs (Modified)
 - **Added `_currentRegion` field**: Stores the current region for faction-based price calculations
