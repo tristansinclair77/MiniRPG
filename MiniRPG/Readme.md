@@ -1,6 +1,120 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Item Model Enhancement - Material Identification
+## Latest Update: Crafting View Implementation (Updated)
+
+### CraftingViewModel.cs (Updated)
+- **Updated ViewModel for Crafting & Enhancement interface**
+- Inherits from `BaseViewModel`
+- Properties:
+  - `Player Player`: Reference to the player character
+  - `ObservableCollection<CraftingRecipe> AllRecipes`: Collection of all available crafting recipes
+  - `CraftingRecipe? SelectedRecipe`: Currently selected recipe in the UI
+- Commands:
+  - `CraftCommand`: Command to craft the selected recipe
+  - `ExitCraftingCommand`: Command to close the crafting view
+- Constructor:
+  - **Simplified constructor**: Now accepts only `Player player` parameter
+  - Initializes `AllRecipes` with all recipes from `CraftingService.GetAllRecipes()`
+  - Initializes commands
+- Events:
+  - `OnExitCrafting`: Event triggered when exiting the crafting view
+- **Method `CraftItem()` (Updated)**:
+  - Validates that a recipe is selected
+  - If `SelectedRecipe.CanCraft(Player)` returns true:
+    - Calls `SelectedRecipe.Craft(Player)` to perform crafting
+    - Calls `SaveLoadService.SavePlayer(Player)` to auto-save after crafting
+    - Logs success message using Debug.WriteLine
+  - Else:
+    - Logs "Missing materials or gold." using Debug.WriteLine
+  - Updates UI properties after crafting attempt
+- **TODO comment added**:
+  - Add bulk crafting and auto-select available recipes
+
+### Implementation Notes
+- Constructor simplified to remove globalLog dependency
+- Now uses Debug.WriteLine for logging instead of global log
+- Auto-saves player data after successful crafting
+- Integrates with existing SaveLoadService for persistence
+- Ready for future enhancements: bulk crafting, recipe filtering, auto-selection of craftable recipes
+
+---
+
+## Previous Update: Crafting View Implementation
+
+### CraftingViewModel.cs (New File)
+- **Created ViewModel for Crafting & Enhancement interface**
+- Inherits from `BaseViewModel`
+- Properties:
+  - `Player Player`: Reference to the player character
+  - `ObservableCollection<CraftingRecipe> AllRecipes`: Collection of all available crafting recipes
+  - `CraftingRecipe? SelectedRecipe`: Currently selected recipe in the UI
+  - `bool CanCraftSelected`: Computed property that checks if the selected recipe can be crafted with current resources
+- Commands:
+  - `CraftCommand`: Command to craft the selected recipe (enabled only when CanCraftSelected is true)
+  - `ExitCraftingCommand`: Command to close the crafting view
+- Constructor:
+  - Accepts `Player player` and `ObservableCollection<string> globalLog` parameters
+  - Initializes `AllRecipes` with all recipes from `CraftingService.GetAllRecipes()`
+  - Initializes commands with appropriate predicates
+- Events:
+  - `OnExitCrafting`: Event triggered when exiting the crafting view
+- **Method `CraftItem()`**:
+  - Validates that a recipe is selected
+  - Checks if player has required materials and gold
+  - Checks inventory capacity
+  - Calls `SelectedRecipe.Craft(Player)` to perform crafting
+  - Logs success/failure messages to global log
+  - Updates UI properties after crafting
+- **TODO comments added**:
+  - Add crafting progress bar animation
+  - Add recipe category tabs (Weapons, Armor, Potions)
+
+### CraftingView.xaml (New File)
+- **Created Crafting & Enhancement UI screen**
+- Layout structure:
+  - **Header**: "Crafting & Enhancement" title displayed at top
+  - **Two-column layout**:
+    - **Left panel (40%)**: Available Recipes ListBox
+      - Title: "Available Recipes"
+      - Bound to `AllRecipes` collection
+      - Displays recipe name and result item type
+      - Selected item bound to `SelectedRecipe`
+    - **Right panel (60%)**: Selected Recipe Details
+      - Recipe name and description
+      - "Creates:" section showing result item details
+      - "Required Materials:" section with scrollable list
+        - Displays each material name and required quantity
+        - Shows required gold amount
+      - "Your Gold:" display showing player's current gold
+      - "Craft Item" button bound to `CraftCommand`
+        - Enabled/disabled based on CanCraftSelected property
+  - **Exit button** at bottom, centered, bound to `ExitCraftingCommand`
+- Styling:
+  - Background color: #222233 (dark blue-gray)
+  - Panel backgrounds: #292944 and #333344 (darker shades)
+  - Gold text color: #F9E97A (yellow-gold)
+  - Accent text: LightBlue for labels
+  - Consistent with existing view styling (ReputationView, ShopView)
+- **TODO comments added**:
+  - Add crafting progress bar animation
+  - Add recipe category tabs (Weapons, Armor, Potions)
+
+### CraftingView.xaml.cs (New File)
+- **Created code-behind for CraftingView**
+- Standard UserControl initialization
+- Namespace: `MiniRPG`
+
+### Implementation Notes
+- CraftingView integrates seamlessly with existing CraftingService and CraftingRecipe model
+- Uses RelayCommand pattern consistent with other ViewModels in the project
+- Material requirements displayed dynamically using ItemsControl and data binding
+- Craft button automatically enables/disables based on player resources
+- Ready for future enhancements: progress bars, category filtering, recipe discovery
+- Follows MVVM pattern and existing code style conventions
+
+---
+
+## Previous Update: Item Model Enhancement - Material Identification
 
 ### Item.cs (Modified)
 - **Added `IsMaterial` property**: `bool IsMaterial { get; set; }`
