@@ -13,11 +13,22 @@ namespace MiniRPG.Models
         public int RewardGold { get; set; }
         public int RewardExp { get; set; }
         public Item? RewardItem { get; set; }
+        public int ReputationReward { get; set; } = 5;
         
         /// <summary>
         /// The day on which this quest expires (null = no expiry).
         /// </summary>
         public int? ExpireDay { get; set; }
+
+        /// <summary>
+        /// The NPC who gave this quest (optional).
+        /// </summary>
+        public NPC? QuestGiver { get; set; }
+
+        /// <summary>
+        /// The region where this quest was obtained (optional).
+        /// </summary>
+        public Region? Region { get; set; }
 
         /// <summary>
         /// Constructor for creating a new quest with kill requirements.

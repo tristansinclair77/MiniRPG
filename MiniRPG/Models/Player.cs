@@ -343,6 +343,30 @@ namespace MiniRPG.Models
                     // Log reward message
                     Debug.WriteLine($"Quest '{quest.Title}' completed! Rewards: {quest.RewardGold} gold, {quest.RewardExp} experience" +
                         (quest.RewardItem != null ? $", {quest.RewardItem.Name}" : ""));
+
+                    // Adjust faction reputation
+                    string? factionName = null;
+                    int reputationAmount = quest.ReputationReward > 0 ? quest.ReputationReward : 5;
+
+                    // Check if quest giver has a faction
+                    if (quest.QuestGiver != null && !string.IsNullOrEmpty(quest.QuestGiver.FactionAffiliation))
+                    {
+                        factionName = quest.QuestGiver.FactionAffiliation;
+                    }
+                    // Otherwise check if quest region has a faction
+                    else if (quest.Region != null && !string.IsNullOrEmpty(quest.Region.FactionName))
+                    {
+                        factionName = quest.Region.FactionName;
+                    }
+
+                    // If a faction was found, adjust reputation
+                    if (!string.IsNullOrEmpty(factionName))
+                    {
+                        AdjustFactionReputation(factionName, reputationAmount);
+                        Debug.WriteLine($"Your reputation with {factionName} has improved!");
+                    }
+
+                    // TODO: Add branching outcomes for faction-based quests
                 }
             }
         }

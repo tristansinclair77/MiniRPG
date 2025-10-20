@@ -1,17 +1,15 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify Region.cs and NPC.cs.
+Modify Player.CompleteQuest in Player.cs.
 
-Region.cs:
-• Add property string FactionName.
-• Initialize in sample data (e.g., "Greenfield Town" → "Greenfield Town Faction").
-
-NPC.cs:
-• Add property string FactionAffiliation.
-• Default to region’s faction if unspecified.
-• Add property int ReputationImpactOnQuestCompletion = 5.
+Requirements:
+• After rewards:
+   - If quest giver or quest region has a FactionName:
+       * AdjustFactionReputation(FactionName, +quest.ReputationReward or default +5)
+• Add field int ReputationReward = 5 in Quest.cs (default value).
+• Log: $"Your reputation with {FactionName} has improved!"
 • Add TODO:
-   // Add faction emblems and alignment dialogue filters
+   // Add branching outcomes for faction-based quests
 
 ---
 

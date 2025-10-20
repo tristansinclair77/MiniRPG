@@ -65,6 +65,10 @@ namespace MiniRPG.Services
             if (string.IsNullOrEmpty(shopkeeper.FactionAffiliation))
                 shopkeeper.FactionAffiliation = greenfieldTown.FactionName;
             
+            // Set the region on NPC quests
+            if (mira.OfferedQuest != null)
+                mira.OfferedQuest.Region = greenfieldTown;
+            
             regions.Add(greenfieldTown);
 
             // Slime Plains - Low-level enemy area

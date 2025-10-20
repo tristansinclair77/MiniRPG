@@ -30,6 +30,11 @@ namespace MiniRPG.Services
                 },
                 OfferedQuest = new Quest("Slime Hunt", "Defeat 3 Slimes for Mira.", 3, 50, 20)
             };
+            // Set QuestGiver to link quest back to NPC
+            if (mira.OfferedQuest != null)
+            {
+                mira.OfferedQuest.QuestGiver = mira;
+            }
             npcs.Add(mira);
 
             // Shopkeeper - Merchant
