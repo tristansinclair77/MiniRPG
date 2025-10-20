@@ -1,19 +1,12 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify MapViewModel.cs and MainViewModel.cs.
+Edit MapView.xaml.
 
-MapViewModel:
-• Add RelayCommand OpenReputationCommand.
-• When executed → trigger event OnOpenReputation.
-
-MainViewModel:
-• Subscribe to OnOpenReputation.
-• When triggered:
-   - Set CurrentViewModel = new ReputationViewModel(CurrentPlayer)
-   - Log "Viewing reputation and faction standings."
-• Subscribe to ExitReputation event → return to MapViewModel.
+Requirements:
+• Add Button labeled “Reputation” near “Skill Tree” and “Quest Board”.
+• Bind Command to OpenReputationCommand.
 • Add TODO:
-   // Add faction reputation pop-ups on events
+   <!-- TODO: Replace with crest icon buttons later -->
 
 ---
 

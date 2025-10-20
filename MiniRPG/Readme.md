@@ -1,6 +1,20 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Reputation Integration in MapView and MainView
+## Latest Update: Reputation Button Added to MapView
+
+### MapView.xaml (Modified)
+- **Added "Reputation" button** in the top navigation bar, positioned after "Skill Tree" button and before "World Map" button
+- Button properties:
+  - Label: "Reputation"
+  - Command binding: `{Binding OpenReputationCommand}`
+  - Styling: Matches existing button style (Foreground="#F9E97A", Background="#222233", FontWeight="Bold")
+  - Margin: "8,0,0,0"
+- **Added TODO comment**: `<!-- TODO: Replace with crest icon buttons later -->`
+  - Positioned above the Reputation button to indicate future enhancement for icon-based navigation
+
+---
+
+## Previous Update: Reputation Integration in MapView and MainView
 
 ### MapViewModel.cs (Modified)
 - **Added `OpenReputationCommand`**: New RelayCommand to open the Reputation view
