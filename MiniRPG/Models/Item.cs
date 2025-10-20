@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using MiniRPG.Services;
 
 namespace MiniRPG.Models
@@ -35,6 +36,7 @@ namespace MiniRPG.Models
         public int AttackBonus { get; set; } = 0;
         public int DefenseBonus { get; set; } = 0;
         public bool IsMaterial { get; set; }
+        public int EnhancementLevel { get; set; } = 0;
 
         public Item(string name, string description, string type, int value)
         {
@@ -48,6 +50,49 @@ namespace MiniRPG.Models
             {
                 ItemInfoService.AddOrUpdateItemDescription(name, description);
             }
+        }
+
+        /// <summary>
+        /// Enhances this item by consuming materials and gold from the player.
+        /// </summary>
+        /// <param name="player">The player who is enhancing the item</param>
+        /// <param name="cost">The gold cost for enhancement</param>
+        /// <param name="materialName">The name of the material to consume from inventory</param>
+        public void Enhance(Player player, int cost, string materialName)
+        {
+            // Check if player has enough gold
+            if (player.Gold < cost)
+            {
+                System.Diagnostics.Debug.WriteLine($"Not enough gold to enhance {Name}. Need {cost}, have {player.Gold}.");
+                return;
+            }
+
+            // Check if player has the required material
+            var material = player.Inventory.FirstOrDefault(item => item?.Name == materialName && item.IsMaterial);
+            if (material == null)
+            {
+                System.Diagnostics.Debug.WriteLine($"Missing material: {materialName}");
+                return;
+            }
+
+            // Player has enough resources - proceed with enhancement
+            player.SpendGold(cost);
+            player.RemoveItem(material);
+            EnhancementLevel++;
+
+            // Increase AttackBonus or DefenseBonus slightly
+            if (SlotType == "Weapon")
+            {
+                AttackBonus += 2;
+            }
+            else if (SlotType == "Armor")
+            {
+                DefenseBonus += 1;
+            }
+
+            System.Diagnostics.Debug.WriteLine($"Upgraded {Name} to +{EnhancementLevel}!");
+            
+            // TODO: Add enhancement success rate and rarity effects later
         }
 
         public static List<Item> GetSampleItems()

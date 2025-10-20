@@ -1,14 +1,18 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify GameService.GetRandomLoot().
+Modify Item.cs.
 
 Requirements:
-• Expand drop pool to include crafting materials:
-   - "Iron Ore", "Wood", "Herb", "Bottle"
-• Assign rarity rates (e.g., 30% chance for a material).
-• Add log: "You found [Iron Ore]!"
+• Add int EnhancementLevel { get; set; } = 0;
+• Add method Enhance(Player player, int cost, string materialName):
+   - If player has enough materials and gold:
+       * Player.SpendGold(cost);
+       * Consume materialName from inventory.
+       * EnhancementLevel++;
+       * Increase AttackBonus or DefenseBonus slightly.
+       * Log "Upgraded [Name] to +{EnhancementLevel}!"
 • Add TODO:
-   // Add region-specific material pools later
+   // Add enhancement success rate and rarity effects later
 
 ---
 
