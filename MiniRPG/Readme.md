@@ -1,6 +1,39 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Crafting System - CraftingRecipe Model
+## Latest Update: Crafting System - CraftingService
+
+### CraftingService.cs (New File)
+- **Created static `CraftingService` class** in Services folder
+- Provides centralized management of crafting recipes and crafting operations
+- **Static Method `GetAllRecipes()`**: Returns `List<CraftingRecipe>`
+  - Returns all available crafting recipes in the game
+  - Example recipes included:
+    * **"Iron Sword"**: Requires 2x "Iron Ore", 1x "Wood", 50 gold
+      - Result: Iron Sword (Weapon, +5 Attack, Value: 100 gold)
+    * **"Health Potion"**: Requires 1x "Herb", 1x "Bottle", 10 gold
+      - Result: Health Potion (Consumable, Restores 20 HP, Value: 30 gold)
+    * **"Steel Armor"**: Requires 3x "Steel Ingot", 2x "Leather", 100 gold
+      - Result: Steel Armor (Armor, +8 Defense, Value: 200 gold)
+    * **"Mana Potion"**: Requires 1x "Magic Crystal", 1x "Bottle", 15 gold
+      - Result: Mana Potion (Consumable, Restores magical energy, Value: 40 gold)
+    * **"Lucky Charm"**: Requires 5x "Silver Coin", 1x "Four-Leaf Clover", 25 gold
+      - Result: Lucky Charm (Accessory, +2 Defense, Value: 80 gold)
+- **Static Method `GetRecipesByCategory(string category)`**: Returns `List<CraftingRecipe>`
+  - Filters all recipes by the ResultItem's Type property
+  - Supported categories: "Weapon", "Consumable", "Armor", "Accessory"
+  - Uses LINQ to filter recipes where `ResultItem.Type == category`
+- **TODO comment added**: `// TODO: Add recipe discovery system and rarity progression`
+
+### Implementation Notes
+- All recipes are instantiated with proper Item objects including stats for equippable items
+- Recipe materials use a `Dictionary<string, int>` to map material names to required quantities
+- Integrates with existing `CraftingRecipe` model's `CanCraft()` and `Craft()` methods
+- Ready for expansion with recipe discovery system and rarity progression
+- Follows existing service pattern (static class with static methods)
+
+---
+
+## Previous Update: Crafting System - CraftingRecipe Model
 
 ### CraftingRecipe.cs (New File)
 - **Created new `CraftingRecipe` class** in Models folder

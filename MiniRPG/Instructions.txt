@@ -1,23 +1,17 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create CraftingRecipe.cs in the Models folder.
+Create CraftingService.cs in the Services folder.
 
 Requirements:
-• public class CraftingRecipe
-   - string Name
-   - string Description
-   - Item ResultItem
-   - Dictionary<string, int> RequiredMaterials
-   - int RequiredGold
-• Method bool CanCraft(Player player):
-   - Check if player has enough of each required material and gold.
-• Method Craft(Player player):
-   - If CanCraft():
-       * Remove required materials and gold.
-       * Add ResultItem to player inventory.
-       * Log "Crafted [ResultItem.Name]!"
+• Static class CraftingService
+• Static method GetAllRecipes() returns List<CraftingRecipe>:
+   - Example:
+       * "Iron Sword": Requires 2x "Iron Ore", 1x "Wood", 50 gold.
+       * "Health Potion": Requires 1x "Herb", 1x "Bottle", 10 gold.
+• Static method GetRecipesByCategory(string category)
+   - Filter by ResultItem.Type (Weapon, Consumable, etc.)
 • Add TODO:
-   // Add crafting time, rarity tiers, and skill-based bonuses later
+   // Add recipe discovery system and rarity progression
 
 ---
 
