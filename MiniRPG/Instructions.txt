@@ -1,15 +1,19 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify Player.CompleteQuest in Player.cs.
+Create ReputationViewModel.cs in the ViewModels folder.
 
 Requirements:
-• After rewards:
-   - If quest giver or quest region has a FactionName:
-       * AdjustFactionReputation(FactionName, +quest.ReputationReward or default +5)
-• Add field int ReputationReward = 5 in Quest.cs (default value).
-• Log: $"Your reputation with {FactionName} has improved!"
+• Inherit from BaseViewModel.
+• Properties:
+   - Player Player
+   - ObservableCollection<Faction> Factions
+• Commands:
+   - ExitReputationCommand
+• Constructor(Player player):
+   - Initialize Factions = new(Player.Factions.Values)
+• ExitReputationCommand triggers OnExitReputation event.
 • Add TODO:
-   // Add branching outcomes for faction-based quests
+   // Add sorting and filtering by friendliness later
 
 ---
 
