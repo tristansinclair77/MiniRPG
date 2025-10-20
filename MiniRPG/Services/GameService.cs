@@ -83,7 +83,8 @@ namespace MiniRPG.Services
         /// Returns a random loot item based on drop rates:
         /// 20% chance: Weapon (Wooden Sword)
         /// 20% chance: Armor (Leather Armor)
-        /// 60% chance: Consumable or Material (Potion, Slime Goo)
+        /// 30% chance: Crafting Material (Iron Ore, Wood, Herb, Bottle)
+        /// 30% chance: Consumable (Potion, Slime Goo)
         /// </summary>
         public static Item? GetRandomLoot()
         {
@@ -129,14 +130,52 @@ namespace MiniRPG.Services
                     };
                 }
             }
-            else if (roll < 1.0) // 60% chance for consumable/material (0.4 to 1.0)
+            else if (roll < 0.7) // 30% chance for crafting material (0.4 to 0.7)
+            {
+                // Randomly select a crafting material
+                double materialRoll = _random.NextDouble();
+                Item material;
+                
+                if (materialRoll < 0.25) // 25% chance for Iron Ore
+                {
+                    material = new Item("Iron Ore", "Raw iron ore used in crafting.", "Material", 10)
+                    {
+                        IsMaterial = true
+                    };
+                }
+                else if (materialRoll < 0.5) // 25% chance for Wood
+                {
+                    material = new Item("Wood", "Sturdy wood for crafting.", "Material", 5)
+                    {
+                        IsMaterial = true
+                    };
+                }
+                else if (materialRoll < 0.75) // 25% chance for Herb
+                {
+                    material = new Item("Herb", "A medicinal herb.", "Material", 8)
+                    {
+                        IsMaterial = true
+                    };
+                }
+                else // 25% chance for Bottle
+                {
+                    material = new Item("Bottle", "An empty bottle for potions.", "Material", 3)
+                    {
+                        IsMaterial = true
+                    };
+                }
+                
+                // Log: "You found [Material Name]!"
+                return material;
+            }
+            else if (roll < 1.0) // 30% chance for consumable/material (0.7 to 1.0)
             {
                 // Randomly choose between consumable and material
-                if (_random.NextDouble() < 0.7) // 70% of the 60% = ~42% overall chance for potion
+                if (_random.NextDouble() < 0.7) // 70% of the 30% = ~21% overall chance for potion
                 {
                     return new Item("Potion", "Restores 10 HP", "Consumable", 25);
                 }
-                else // 30% of the 60% = ~18% overall chance for slime goo
+                else // 30% of the 30% = ~9% overall chance for slime goo
                 {
                     return new Item("Slime Goo", "Sticky residue from a defeated slime.", "Material", 5);
                 }
@@ -144,6 +183,7 @@ namespace MiniRPG.Services
             
             // This should never happen with the current logic, but return null as fallback
             return null;
+            // TODO: Add region-specific material pools later
             // TODO: Later - tie loot tables to enemy type and area difficulty
         }
 

@@ -1,20 +1,14 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify BuildingInteriorViewModel.cs and MainViewModel.cs.
+Modify GameService.GetRandomLoot().
 
-BuildingInteriorViewModel:
-• If CurrentBuilding.Type == "Blacksmith" or "Workshop":
-   - Add RelayCommand OpenCraftingCommand.
-   - Execute → trigger event OnOpenCrafting.
-
-MainViewModel:
-• Subscribe to OnOpenCrafting.
-• When triggered:
-   - Set CurrentViewModel = new CraftingViewModel(CurrentPlayer)
-   - Log "Entered crafting menu."
-• Subscribe to ExitCrafting event → return to BuildingInteriorViewModel.
+Requirements:
+• Expand drop pool to include crafting materials:
+   - "Iron Ore", "Wood", "Herb", "Bottle"
+• Assign rarity rates (e.g., 30% chance for a material).
+• Add log: "You found [Iron Ore]!"
 • Add TODO:
-   // Add special blacksmith NPC interactions before crafting
+   // Add region-specific material pools later
 
 ---
 
