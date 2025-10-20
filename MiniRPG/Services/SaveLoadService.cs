@@ -44,7 +44,9 @@ namespace MiniRPG.Services
             WriteIndented = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             IncludeFields = true, // Include backing fields for INotifyPropertyChanged properties
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            // Ensure proper serialization of all properties including EnhancementLevel
+            PropertyNameCaseInsensitive = true
         };
 
         public static void SavePlayer(Player player, string filePath = "player_save.json")
@@ -79,6 +81,30 @@ namespace MiniRPG.Services
                 Debug.WriteLine($"Equipped items - Weapon: {player.EquippedWeapon?.Name ?? "None"}, " +
                               $"Armor: {player.EquippedArmor?.Name ?? "None"}, " +
                               $"Accessory: {player.EquippedAccessory?.Name ?? "None"}");
+                
+                // Log enhancement levels for equipped items
+                if (player.EquippedWeapon != null)
+                    Debug.WriteLine($"  Weapon Enhancement: +{player.EquippedWeapon.EnhancementLevel}");
+                if (player.EquippedArmor != null)
+                    Debug.WriteLine($"  Armor Enhancement: +{player.EquippedArmor.EnhancementLevel}");
+                if (player.EquippedAccessory != null)
+                    Debug.WriteLine($"  Accessory Enhancement: +{player.EquippedAccessory.EnhancementLevel}");
+                
+                // Log inventory details including materials quantities
+                var materials = player.Inventory.Where(item => item?.IsMaterial == true).GroupBy(item => item.Name);
+                Debug.WriteLine($"Inventory saved: {player.Inventory.Count} items total");
+                foreach (var materialGroup in materials)
+                {
+                    Debug.WriteLine($"  Material: {materialGroup.Key} x{materialGroup.Count()}");
+                }
+                
+                // Log crafted/dynamically added items with enhancement levels
+                var craftedItems = player.Inventory.Where(item => item != null && item.EnhancementLevel > 0);
+                foreach (var item in craftedItems)
+                {
+                    Debug.WriteLine($"  Enhanced item: {item.Name} +{item.EnhancementLevel}");
+                }
+                
                 Debug.WriteLine($"Unlocked regions saved: {string.Join(", ", saveData.UnlockedRegions)}");
                 Debug.WriteLine($"Time saved - Day {saveData.Day}, Hour {saveData.Hour}");
                 Debug.WriteLine($"Environment saved - Weather: {saveData.Weather}, Season: {saveData.Season}");
@@ -136,6 +162,9 @@ namespace MiniRPG.Services
                 {
                     // New format with unlocked regions, time, and skill data
                     player = saveData.Player;
+                    
+                    // Validate deserialization doesn't duplicate entries in inventory
+                    ValidateAndDeduplicateInventory(player);
                     
                     // Rehydrate FastTravelService.UnlockedRegions from JSON
                     FastTravelService.UnlockedRegions.Clear();
@@ -195,6 +224,21 @@ namespace MiniRPG.Services
                     // Apply all passive skill bonuses after loading
                     player.ApplyPassiveSkills();
                     
+                    // Log loaded inventory details
+                    var materials = player.Inventory.Where(item => item?.IsMaterial == true).GroupBy(item => item.Name);
+                    Debug.WriteLine($"Inventory loaded: {player.Inventory.Count} items total");
+                    foreach (var materialGroup in materials)
+                    {
+                        Debug.WriteLine($"  Material: {materialGroup.Key} x{materialGroup.Count()}");
+                    }
+                    
+                    // Log enhancement levels for loaded items
+                    var enhancedItems = player.Inventory.Where(item => item != null && item.EnhancementLevel > 0);
+                    foreach (var item in enhancedItems)
+                    {
+                        Debug.WriteLine($"  Enhanced item loaded: {item.Name} +{item.EnhancementLevel}");
+                    }
+                    
                     Debug.WriteLine($"Loaded unlocked regions: {string.Join(", ", saveData.UnlockedRegions)}");
                     Debug.WriteLine($"Time loaded - Day {TimeService.Day}, Hour {TimeService.Hour} ({TimeService.GetTimeOfDay()})");
                     Debug.WriteLine($"Environment loaded - Weather: {EnvironmentService.Weather}, Season: {EnvironmentService.CurrentSeason}");
@@ -206,6 +250,13 @@ namespace MiniRPG.Services
                 {
                     // Legacy format - just Player object
                     player = JsonSerializer.Deserialize<Player>(json, _jsonOptions);
+                    
+                    if (player != null)
+                    {
+                        // Validate deserialization doesn't duplicate entries in inventory
+                        ValidateAndDeduplicateInventory(player);
+                    }
+                    
                     Debug.WriteLine("Loaded from legacy save format (no unlocked regions, time data, or skill data)");
                     // Keep default time values (Day 1, Hour 8)
                     EnvironmentService.UpdateLighting();
@@ -213,7 +264,7 @@ namespace MiniRPG.Services
                 
                 if (player != null)
                 {
-                    // Ensure stats are recalculated after loading to account for equipment bonuses
+                    // Ensure stats are recalculated after loading to account for equipment bonuses including enhancement levels
                     player.Attack = player.BaseAttack + (player.EquippedWeapon?.AttackBonus ?? 0);
                     player.Defense = player.BaseDefense + (player.EquippedArmor?.DefenseBonus ?? 0);
                     
@@ -221,6 +272,15 @@ namespace MiniRPG.Services
                     Debug.WriteLine($"Loaded equipped items - Weapon: {player.EquippedWeapon?.Name ?? "None"}, " +
                                   $"Armor: {player.EquippedArmor?.Name ?? "None"}, " +
                                   $"Accessory: {player.EquippedAccessory?.Name ?? "None"}");
+                    
+                    // Log enhancement levels for equipped items
+                    if (player.EquippedWeapon != null)
+                        Debug.WriteLine($"  Weapon Enhancement: +{player.EquippedWeapon.EnhancementLevel}");
+                    if (player.EquippedArmor != null)
+                        Debug.WriteLine($"  Armor Enhancement: +{player.EquippedArmor.EnhancementLevel}");
+                    if (player.EquippedAccessory != null)
+                        Debug.WriteLine($"  Accessory Enhancement: +{player.EquippedAccessory.EnhancementLevel}");
+                    
                     Debug.WriteLine($"Stats after load - Attack: {player.Attack}, Defense: {player.Defense}");
                 }
                 
@@ -255,6 +315,9 @@ namespace MiniRPG.Services
                         if (backupSaveData?.Player != null)
                         {
                             backupPlayer = backupSaveData.Player;
+                            
+                            // Validate deserialization doesn't duplicate entries in inventory
+                            ValidateAndDeduplicateInventory(backupPlayer);
                             
                             // Rehydrate FastTravelService.UnlockedRegions from backup
                             FastTravelService.UnlockedRegions.Clear();
@@ -316,12 +379,19 @@ namespace MiniRPG.Services
                         {
                             // Legacy format backup
                             backupPlayer = JsonSerializer.Deserialize<Player>(backupJson, _jsonOptions);
+                            
+                            if (backupPlayer != null)
+                            {
+                                // Validate deserialization doesn't duplicate entries in inventory
+                                ValidateAndDeduplicateInventory(backupPlayer);
+                            }
+                            
                             EnvironmentService.UpdateLighting();
                         }
                         
                         if (backupPlayer != null)
                         {
-                            // Recalculate stats for backup player too
+                            // Recalculate stats for backup player too including enhancement bonuses
                             backupPlayer.Attack = backupPlayer.BaseAttack + (backupPlayer.EquippedWeapon?.AttackBonus ?? 0);
                             backupPlayer.Defense = backupPlayer.BaseDefense + (backupPlayer.EquippedArmor?.DefenseBonus ?? 0);
                             Debug.WriteLine("Successfully loaded from backup");
@@ -336,6 +406,55 @@ namespace MiniRPG.Services
                 }
                 
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Validates inventory and removes duplicate entries based on item instance comparison.
+        /// This ensures deserialization doesn't create duplicate item references.
+        /// </summary>
+        private static void ValidateAndDeduplicateInventory(Player player)
+        {
+            if (player.Inventory == null || player.Inventory.Count == 0)
+                return;
+            
+            // Track unique items by comparing all properties
+            var uniqueItems = new List<Item?>();
+            var duplicatesRemoved = 0;
+            
+            foreach (var item in player.Inventory)
+            {
+                if (item == null)
+                    continue;
+                
+                // Check if an identical item already exists in uniqueItems
+                // Items are considered duplicates if they have the same name, type, and enhancement level
+                bool isDuplicate = uniqueItems.Any(existing => 
+                    existing != null && 
+                    existing.Name == item.Name && 
+                    existing.Type == item.Type &&
+                    existing.EnhancementLevel == item.EnhancementLevel &&
+                    existing.AttackBonus == item.AttackBonus &&
+                    existing.DefenseBonus == item.DefenseBonus);
+                
+                if (!isDuplicate)
+                {
+                    uniqueItems.Add(item);
+                }
+                else
+                {
+                    duplicatesRemoved++;
+                }
+            }
+            
+            if (duplicatesRemoved > 0)
+            {
+                player.Inventory.Clear();
+                foreach (var item in uniqueItems)
+                {
+                    player.Inventory.Add(item);
+                }
+                Debug.WriteLine($"Removed {duplicatesRemoved} duplicate item(s) from inventory during deserialization");
             }
         }
 
@@ -378,6 +497,7 @@ namespace MiniRPG.Services
             }
         }
 
+        // TODO: Add crafting history log and achievement tracking
         // TODO: Add save versioning and item ID mapping later
         // TODO: Extend to save inventory, map progress, and settings later
         // TODO: Add region-specific checkpoint saves

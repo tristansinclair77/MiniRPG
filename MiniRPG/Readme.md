@@ -1,6 +1,31 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Crafting & Enhancement UI System
+## Latest Update: SaveLoadService Enhanced Serialization
+
+### SaveLoadService.cs (Modified)
+- **Enhanced Serialization**:
+  - Added `PropertyNameCaseInsensitive = true` to JsonSerializerOptions to ensure robust property matching
+  - Serialization now explicitly logs `Item.EnhancementLevel` for all equipped items (Weapon, Armor, Accessory)
+  - Player.Inventory materials quantities are tracked and logged during save operations
+  - Crafted items added dynamically with enhancement levels are properly serialized and logged
+  - Enhanced debug logging shows material quantities (e.g., "Iron Ore x3") and enhanced items (e.g., "Steel Sword +2")
+  
+- **Enhanced Deserialization**:
+  - Added `ValidateAndDeduplicateInventory()` method to prevent duplicate entries during load
+  - Validation compares items by Name, Type, EnhancementLevel, AttackBonus, and DefenseBonus
+  - Duplicate items are automatically removed and logged during deserialization
+  - Works for both main save file and backup file loading paths
+  - Enhanced debug logging shows loaded materials quantities and enhancement levels
+  
+- **Stats Recalculation**:
+  - Stats are recalculated after loading to include equipment bonuses with enhancement levels
+  - Comments updated to clarify that enhancement bonuses are included in stat calculations
+  
+- **New TODO Added**:// TODO: Add crafting history log and achievement tracking  This TODO indicates future feature to track crafting activities and player achievements
+
+---
+
+## Previous Update: Crafting & Enhancement UI System
 
 ### CraftingView.xaml (Modified)
 - **Restructured with TabControl**: Split the view into two tabs - "Crafting" and "Enhancement"

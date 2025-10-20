@@ -1,17 +1,15 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Extend CraftingView.xaml and CraftingViewModel.cs.
+Modify SaveLoadService.cs.
 
 Requirements:
-• Add new tab/Expander titled “Enhancement”.
-• List all Player.EquippedWeapon and EquippedArmor.
-• Add Button “Enhance Item” bound to EnhanceItemCommand.
-• Command logic:
-   - Calls item.Enhance(Player, cost: 100, materialName: "Iron Ore").
-   - Save after success.
+• Ensure serialization includes:
+   - Item.EnhancementLevel
+   - Player.Inventory materials quantities
+   - Crafted items added dynamically
+• Validate deserialization doesn’t duplicate entries.
 • Add TODO:
-   <!-- TODO: Add animation, visual glow for upgraded items -->
-   <!-- TODO: Add enhancement fail chance for higher tiers -->
+   // Add crafting history log and achievement tracking
 
 ---
 
