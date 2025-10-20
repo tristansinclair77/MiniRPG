@@ -135,6 +135,7 @@ namespace MiniRPG.ViewModels
         public ICommand FastTravelCommand { get; }
         public ICommand EnterBuildingCommand { get; }
         public ICommand OpenSkillTreeCommand { get; }
+        public ICommand OpenReputationCommand { get; }
         private ObservableCollection<string> _globalLog;
         
         // Store the full region reference to filter NPCs
@@ -185,6 +186,9 @@ namespace MiniRPG.ViewModels
 
         // Event/callback for opening skill tree
         public event Action? OnOpenSkillTree;
+
+        // Event/callback for opening reputation
+        public event Action? OnOpenReputation;
 
         /// <summary>
         /// Constructor for MapViewModel (legacy - uses default data).
@@ -239,6 +243,7 @@ namespace MiniRPG.ViewModels
             FastTravelCommand = new RelayCommand(param => FastTravel(param as string), _ => !string.IsNullOrEmpty(SelectedFastTravelRegion));
             EnterBuildingCommand = new RelayCommand(param => EnterBuilding(param as Building));
             OpenSkillTreeCommand = new RelayCommand(_ => OpenSkillTree());
+            OpenReputationCommand = new RelayCommand(_ => OpenReputation());
         }
 
         /// <summary>
@@ -308,6 +313,7 @@ namespace MiniRPG.ViewModels
             FastTravelCommand = new RelayCommand(param => FastTravel(param as string), _ => !string.IsNullOrEmpty(SelectedFastTravelRegion));
             EnterBuildingCommand = new RelayCommand(param => EnterBuilding(param as Building));
             OpenSkillTreeCommand = new RelayCommand(_ => OpenSkillTree());
+            OpenReputationCommand = new RelayCommand(_ => OpenReputation());
             
             // TODO: Add visual background per region
             // TODO: Add weather or time-of-day changes
@@ -665,6 +671,12 @@ namespace MiniRPG.ViewModels
             _globalLog?.Add("Opening Skill Tree...");
             OnOpenSkillTree?.Invoke();
             // TODO: Add keyboard shortcut or button icon for Skill Tree
+        }
+
+        private void OpenReputation()
+        {
+            _globalLog?.Add("Viewing reputation and faction standings...");
+            OnOpenReputation?.Invoke();
         }
 
         private async void Rest()

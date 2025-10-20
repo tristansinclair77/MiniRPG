@@ -1,6 +1,31 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Reputation View Implementation
+## Latest Update: Reputation Integration in MapView and MainView
+
+### MapViewModel.cs (Modified)
+- **Added `OpenReputationCommand`**: New RelayCommand to open the Reputation view
+- **Added `OnOpenReputation` event**: Event triggered when opening the Reputation view
+- **Added `OpenReputation()` method**: Private method that logs "Viewing reputation and faction standings..." and invokes `OnOpenReputation` event
+- Changes made in both constructors:
+  - Legacy constructor: Added `OpenReputationCommand` initialization
+  - Region-based constructor: Added `OpenReputationCommand` initialization
+- Command initialization: `OpenReputationCommand = new RelayCommand(_ => OpenReputation());`
+
+### MainViewModel.cs (Modified)
+- **Subscribed to `OnOpenReputation` event** in `CreateMapViewModel()` method
+- When `OnOpenReputation` is triggered:
+  - Creates new `ReputationViewModel` with `CurrentPlayer`
+  - Sets `CurrentViewModel = reputationVM`
+  - Logs "Viewing reputation and faction standings."
+  - Subscribes to `OnExitReputation` event to return to MapViewModel
+- When `OnExitReputation` is triggered:
+  - Calls `ShowMap()` to return to map view
+  - Logs "Returned from Reputation view."
+- **Added TODO comment**: `// TODO: Add faction reputation pop-ups on events`
+
+---
+
+## Previous Update: Reputation View Implementation
 
 ### ReputationViewModel.cs (New File)
 - **Created ViewModel for Reputation & Factions interface**

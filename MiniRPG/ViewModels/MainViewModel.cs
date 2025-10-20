@@ -338,6 +338,21 @@ namespace MiniRPG.ViewModels
                 AddLog("Opened Skill Tree.");
             };
             
+            // Subscribe to OnOpenReputation events
+            mapVM.OnOpenReputation += () =>
+            {
+                var reputationVM = new ReputationViewModel(CurrentPlayer);
+                reputationVM.OnExitReputation += () =>
+                {
+                    ShowMap();
+                    AddLog("Returned from Reputation view.");
+                };
+                CurrentViewModel = reputationVM;
+                AddLog("Viewing reputation and faction standings.");
+            };
+            
+            // TODO: Add faction reputation pop-ups on events
+            
             return mapVM;
         }
 

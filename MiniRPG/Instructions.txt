@@ -1,19 +1,19 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Create ReputationViewModel.cs in the ViewModels folder.
+Modify MapViewModel.cs and MainViewModel.cs.
 
-Requirements:
-• Inherit from BaseViewModel.
-• Properties:
-   - Player Player
-   - ObservableCollection<Faction> Factions
-• Commands:
-   - ExitReputationCommand
-• Constructor(Player player):
-   - Initialize Factions = new(Player.Factions.Values)
-• ExitReputationCommand triggers OnExitReputation event.
+MapViewModel:
+• Add RelayCommand OpenReputationCommand.
+• When executed → trigger event OnOpenReputation.
+
+MainViewModel:
+• Subscribe to OnOpenReputation.
+• When triggered:
+   - Set CurrentViewModel = new ReputationViewModel(CurrentPlayer)
+   - Log "Viewing reputation and faction standings."
+• Subscribe to ExitReputation event → return to MapViewModel.
 • Add TODO:
-   // Add sorting and filtering by friendliness later
+   // Add faction reputation pop-ups on events
 
 ---
 
