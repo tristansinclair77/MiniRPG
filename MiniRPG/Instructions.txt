@@ -1,18 +1,17 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify Item.cs.
+Extend CraftingView.xaml and CraftingViewModel.cs.
 
 Requirements:
-• Add int EnhancementLevel { get; set; } = 0;
-• Add method Enhance(Player player, int cost, string materialName):
-   - If player has enough materials and gold:
-       * Player.SpendGold(cost);
-       * Consume materialName from inventory.
-       * EnhancementLevel++;
-       * Increase AttackBonus or DefenseBonus slightly.
-       * Log "Upgraded [Name] to +{EnhancementLevel}!"
+• Add new tab/Expander titled “Enhancement”.
+• List all Player.EquippedWeapon and EquippedArmor.
+• Add Button “Enhance Item” bound to EnhanceItemCommand.
+• Command logic:
+   - Calls item.Enhance(Player, cost: 100, materialName: "Iron Ore").
+   - Save after success.
 • Add TODO:
-   // Add enhancement success rate and rarity effects later
+   <!-- TODO: Add animation, visual glow for upgraded items -->
+   <!-- TODO: Add enhancement fail chance for higher tiers -->
 
 ---
 

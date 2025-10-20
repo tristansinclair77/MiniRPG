@@ -28,6 +28,7 @@ namespace MiniRPG.ViewModels
 
         public ICommand CraftCommand { get; set; }
         public ICommand ExitCraftingCommand { get; set; }
+        public ICommand EnhanceItemCommand { get; set; }
 
         // Event for when the player wants to exit the crafting view
         public event System.Action? OnExitCrafting;
@@ -39,6 +40,7 @@ namespace MiniRPG.ViewModels
 
             CraftCommand = new RelayCommand(_ => CraftItem());
             ExitCraftingCommand = new RelayCommand(_ => OnExitCrafting?.Invoke());
+            EnhanceItemCommand = new RelayCommand(param => EnhanceItem(param as Item));
 
             // TODO: Add bulk crafting and auto-select available recipes
         }
@@ -64,6 +66,26 @@ namespace MiniRPG.ViewModels
             // Update UI to reflect changes
             OnPropertyChanged(nameof(SelectedRecipe));
             OnPropertyChanged(nameof(Player));
+        }
+
+        private void EnhanceItem(Item? item)
+        {
+            if (item == null)
+            {
+                System.Diagnostics.Debug.WriteLine("No item to enhance.");
+                return;
+            }
+
+            // Call item.Enhance(Player, cost: 100, materialName: "Iron Ore")
+            item.Enhance(Player, cost: 100, materialName: "Iron Ore");
+
+            // Save after success
+            SaveLoadService.SavePlayer(Player);
+
+            // Update UI to reflect changes
+            OnPropertyChanged(nameof(Player));
+            OnPropertyChanged(nameof(Player.EquippedWeapon));
+            OnPropertyChanged(nameof(Player.EquippedArmor));
         }
     }
 }

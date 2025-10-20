@@ -18,136 +18,266 @@
         <TextBlock Grid.Row="0" Text="Crafting &amp; Enhancement" FontSize="24" FontWeight="Bold" 
                    Foreground="#F9E97A" HorizontalAlignment="Center" Margin="0,0,0,10" />
 
-        <!-- Main Content Area -->
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="3*" />
-            </Grid.ColumnDefinitions>
-
-            <!-- Left: Available Recipes -->
-            <Border Grid.Column="0" Background="#292944" Padding="8" Margin="0,0,5,0">
+        <!-- Main Content Area with TabControl -->
+        <TabControl Grid.Row="1" Background="#222233" BorderThickness="0">
+            <!-- Crafting Tab -->
+            <TabItem Header="Crafting" Foreground="White" FontSize="14" FontWeight="Bold">
                 <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Row="0" Text="Available Recipes" FontSize="16" FontWeight="Bold" 
-                               Foreground="#F9E97A" Margin="0,0,0,5" />
+                    <!-- Left: Available Recipes -->
+                    <Border Grid.Column="0" Background="#292944" Padding="8" Margin="0,0,5,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
 
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                        <ListBox ItemsSource="{Binding AllRecipes}" 
-                                 SelectedItem="{Binding SelectedRecipe}"
-                                 Background="#222233" 
-                                 Foreground="White"
-                                 BorderThickness="0">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Padding="8" Margin="3" Background="#333344" BorderBrush="#555566" BorderThickness="1">
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="Bold" 
-                                                       Foreground="#F9E97A" />
-                                            <TextBlock Text="{Binding ResultItem.Type}" FontSize="11" 
-                                                       Foreground="LightGray" Margin="0,2,0,0" />
+                            <TextBlock Grid.Row="0" Text="Available Recipes" FontSize="16" FontWeight="Bold" 
+                                       Foreground="#F9E97A" Margin="0,0,0,5" />
+
+                            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                <ListBox ItemsSource="{Binding AllRecipes}" 
+                                         SelectedItem="{Binding SelectedRecipe}"
+                                         Background="#222233" 
+                                         Foreground="White"
+                                         BorderThickness="0">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Padding="8" Margin="3" Background="#333344" BorderBrush="#555566" BorderThickness="1">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="Bold" 
+                                                               Foreground="#F9E97A" />
+                                                    <TextBlock Text="{Binding ResultItem.Type}" FontSize="11" 
+                                                               Foreground="LightGray" Margin="0,2,0,0" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+
+                    <!-- Right: Recipe Details -->
+                    <Border Grid.Column="1" Background="#292944" Padding="8" Margin="5,0,0,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <!-- Recipe Name -->
+                            <TextBlock Grid.Row="0" 
+                                       Text="{Binding SelectedRecipe.Name, TargetNullValue='Select a Recipe'}" 
+                                       FontSize="18" FontWeight="Bold" 
+                                       Foreground="#F9E97A" Margin="0,0,0,10" />
+
+                            <!-- Recipe Description -->
+                            <TextBlock Grid.Row="1" 
+                                       Text="{Binding SelectedRecipe.Description}" 
+                                       FontSize="13" 
+                                       Foreground="White" 
+                                       TextWrapping="Wrap"
+                                       Margin="0,0,0,10" />
+
+                            <!-- Result Item Details -->
+                            <StackPanel Grid.Row="2" Margin="0,0,0,10">
+                                <TextBlock Text="Creates:" FontSize="12" FontWeight="Bold" Foreground="LightBlue" />
+                                <StackPanel Orientation="Horizontal" Margin="5,2,0,0">
+                                    <TextBlock Text="{Binding SelectedRecipe.ResultItem.Name}" Foreground="White" />
+                                    <TextBlock Text=" - " Foreground="Gray" Margin="5,0" />
+                                    <TextBlock Text="{Binding SelectedRecipe.ResultItem.Description}" 
+                                               Foreground="LightGray" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <!-- Required Materials -->
+                            <Border Grid.Row="3" Background="#333344" Padding="8" Margin="0,0,0,10">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                    <StackPanel>
+                                        <TextBlock Text="Required Materials:" FontSize="12" FontWeight="Bold" 
+                                                   Foreground="LightBlue" Margin="0,0,0,5" />
+
+                                        <ItemsControl ItemsSource="{Binding SelectedRecipe.RequiredMaterials}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" Margin="5,2,0,0">
+                                                        <TextBlock Text="{Binding Key}" Foreground="White" />
+                                                        <TextBlock Text=" x " Foreground="Gray" Margin="5,0" />
+                                                        <TextBlock Text="{Binding Value}" Foreground="LightBlue" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <Separator Margin="0,10" Background="#555566" />
+
+                                        <StackPanel Orientation="Horizontal" Margin="5,2,0,0">
+                                            <TextBlock Text="Required Gold: " Foreground="White" FontWeight="Bold" />
+                                            <TextBlock Text="{Binding SelectedRecipe.RequiredGold}" Foreground="#F9E97A" />
                                         </StackPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </ScrollViewer>
-                </Grid>
-            </Border>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Border>
 
-            <!-- Right: Recipe Details -->
-            <Border Grid.Column="1" Background="#292944" Padding="8" Margin="5,0,0,0">
-                <Grid>
+                            <!-- Player Gold Display -->
+                            <Border Grid.Row="4" Background="#444455" Padding="8" Margin="0,0,0,10">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <TextBlock Text="Your Gold: " Foreground="White" FontSize="14" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding Player.Gold}" Foreground="#F9E97A" FontSize="14" FontWeight="Bold" />
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Craft Button -->
+                            <Button Grid.Row="5" 
+                                    Content="Craft Item" 
+                                    Command="{Binding CraftCommand}"
+                                    Padding="12,6" 
+                                    Foreground="#F9E97A" 
+                                    Background="#222233" 
+                                    FontWeight="Bold"
+                                    FontSize="14"
+                                    HorizontalAlignment="Center"
+                                    Width="150">
+                            </Button>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- Enhancement Tab -->
+            <TabItem Header="Enhancement" Foreground="White" FontSize="14" FontWeight="Bold">
+                <!-- TODO: Add animation, visual glow for upgraded items -->
+                <!-- TODO: Add enhancement fail chance for higher tiers -->
+                <Grid Margin="10">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <!-- Recipe Name -->
+                    <!-- Enhancement Description -->
                     <TextBlock Grid.Row="0" 
-                               Text="{Binding SelectedRecipe.Name, TargetNullValue='Select a Recipe'}" 
-                               FontSize="18" FontWeight="Bold" 
-                               Foreground="#F9E97A" Margin="0,0,0,10" />
-
-                    <!-- Recipe Description -->
-                    <TextBlock Grid.Row="1" 
-                               Text="{Binding SelectedRecipe.Description}" 
+                               Text="Enhance your equipped items to increase their power. Each enhancement requires 100 Gold and Iron Ore."
                                FontSize="13" 
-                               Foreground="White" 
+                               Foreground="LightGray" 
                                TextWrapping="Wrap"
                                Margin="0,0,0,10" />
 
-                    <!-- Result Item Details -->
-                    <StackPanel Grid.Row="2" Margin="0,0,0,10">
-                        <TextBlock Text="Creates:" FontSize="12" FontWeight="Bold" Foreground="LightBlue" />
-                        <StackPanel Orientation="Horizontal" Margin="5,2,0,0">
-                            <TextBlock Text="{Binding SelectedRecipe.ResultItem.Name}" Foreground="White" />
-                            <TextBlock Text=" - " Foreground="Gray" Margin="5,0" />
-                            <TextBlock Text="{Binding SelectedRecipe.ResultItem.Description}" 
-                                       Foreground="LightGray" TextWrapping="Wrap" />
-                        </StackPanel>
-                    </StackPanel>
-
-                    <!-- Required Materials -->
-                    <Border Grid.Row="3" Background="#333344" Padding="8" Margin="0,0,0,10">
+                    <!-- Equipped Items List -->
+                    <Border Grid.Row="1" Background="#292944" Padding="8" Margin="0,0,0,10">
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <StackPanel>
-                                <TextBlock Text="Required Materials:" FontSize="12" FontWeight="Bold" 
-                                           Foreground="LightBlue" Margin="0,0,0,5" />
+                                <TextBlock Text="Equipped Items:" FontSize="16" FontWeight="Bold" 
+                                           Foreground="#F9E97A" Margin="0,0,0,10" />
 
-                                <ItemsControl ItemsSource="{Binding SelectedRecipe.RequiredMaterials}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal" Margin="5,2,0,0">
-                                                <TextBlock Text="{Binding Key}" Foreground="White" />
-                                                <TextBlock Text=" x " Foreground="Gray" Margin="5,0" />
-                                                <TextBlock Text="{Binding Value}" Foreground="LightBlue" />
+                                <!-- Equipped Weapon -->
+                                <Border Background="#333344" Padding="10" Margin="0,0,0,8" BorderBrush="#555566" BorderThickness="1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="Weapon Slot" FontSize="12" Foreground="LightBlue" FontWeight="Bold" />
+                                            <TextBlock Text="{Binding Player.EquippedWeapon.Name, TargetNullValue='(None)'}" 
+                                                       FontSize="14" Foreground="White" Margin="0,3,0,0" />
+                                            <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                                                <TextBlock Text="Attack: " Foreground="LightGray" FontSize="11" />
+                                                <TextBlock Text="{Binding Player.EquippedWeapon.AttackBonus, TargetNullValue='0'}" 
+                                                           Foreground="#F9E97A" FontSize="11" />
+                                                <TextBlock Text="  |  Enhancement: +" Foreground="LightGray" FontSize="11" Margin="10,0,0,0" />
+                                                <TextBlock Text="{Binding Player.EquippedWeapon.EnhancementLevel, TargetNullValue='0'}" 
+                                                           Foreground="LightGreen" FontSize="11" />
                                             </StackPanel>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
+                                        </StackPanel>
 
-                                <Separator Margin="0,10" Background="#555566" />
+                                        <Button Grid.Column="1" 
+                                                Content="Enhance" 
+                                                Command="{Binding EnhanceItemCommand}"
+                                                CommandParameter="{Binding Player.EquippedWeapon}"
+                                                IsEnabled="{Binding Player.EquippedWeapon, Converter={StaticResource NullToBooleanConverter}}"
+                                                Padding="10,5" 
+                                                Foreground="White" 
+                                                Background="#4A4A6A" 
+                                                FontWeight="Bold"
+                                                VerticalAlignment="Center"
+                                                Margin="10,0,0,0">
+                                        </Button>
+                                    </Grid>
+                                </Border>
 
-                                <StackPanel Orientation="Horizontal" Margin="5,2,0,0">
-                                    <TextBlock Text="Required Gold: " Foreground="White" FontWeight="Bold" />
-                                    <TextBlock Text="{Binding SelectedRecipe.RequiredGold}" Foreground="#F9E97A" />
-                                </StackPanel>
+                                <!-- Equipped Armor -->
+                                <Border Background="#333344" Padding="10" Margin="0,0,0,8" BorderBrush="#555566" BorderThickness="1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="Armor Slot" FontSize="12" Foreground="LightBlue" FontWeight="Bold" />
+                                            <TextBlock Text="{Binding Player.EquippedArmor.Name, TargetNullValue='(None)'}" 
+                                                       FontSize="14" Foreground="White" Margin="0,3,0,0" />
+                                            <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                                                <TextBlock Text="Defense: " Foreground="LightGray" FontSize="11" />
+                                                <TextBlock Text="{Binding Player.EquippedArmor.DefenseBonus, TargetNullValue='0'}" 
+                                                           Foreground="#F9E97A" FontSize="11" />
+                                                <TextBlock Text="  |  Enhancement: +" Foreground="LightGray" FontSize="11" Margin="10,0,0,0" />
+                                                <TextBlock Text="{Binding Player.EquippedArmor.EnhancementLevel, TargetNullValue='0'}" 
+                                                           Foreground="LightGreen" FontSize="11" />
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                        <Button Grid.Column="1" 
+                                                Content="Enhance" 
+                                                Command="{Binding EnhanceItemCommand}"
+                                                CommandParameter="{Binding Player.EquippedArmor}"
+                                                IsEnabled="{Binding Player.EquippedArmor, Converter={StaticResource NullToBooleanConverter}}"
+                                                Padding="10,5" 
+                                                Foreground="White" 
+                                                Background="#4A4A6A" 
+                                                FontWeight="Bold"
+                                                VerticalAlignment="Center"
+                                                Margin="10,0,0,0">
+                                        </Button>
+                                    </Grid>
+                                </Border>
                             </StackPanel>
                         </ScrollViewer>
                     </Border>
 
+                    <!-- Enhancement Cost Info -->
+                    <Border Grid.Row="2" Background="#444455" Padding="8" Margin="0,0,0,10">
+                        <StackPanel>
+                            <TextBlock Text="Enhancement Cost:" FontSize="12" FontWeight="Bold" Foreground="LightBlue" />
+                            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                <TextBlock Text="100 Gold" Foreground="#F9E97A" FontSize="13" FontWeight="Bold" />
+                                <TextBlock Text="  +  1 Iron Ore" Foreground="White" FontSize="13" Margin="10,0,0,0" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
                     <!-- Player Gold Display -->
-                    <Border Grid.Row="4" Background="#444455" Padding="8" Margin="0,0,0,10">
+                    <Border Grid.Row="3" Background="#444455" Padding="8">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <TextBlock Text="Your Gold: " Foreground="White" FontSize="14" FontWeight="Bold" />
                             <TextBlock Text="{Binding Player.Gold}" Foreground="#F9E97A" FontSize="14" FontWeight="Bold" />
                         </StackPanel>
                     </Border>
-
-                    <!-- Craft Button -->
-                    <Button Grid.Row="5" 
-                            Content="Craft Item" 
-                            Command="{Binding CraftCommand}"
-                            Padding="12,6" 
-                            Foreground="#F9E97A" 
-                            Background="#222233" 
-                            FontWeight="Bold"
-                            FontSize="14"
-                            HorizontalAlignment="Center"
-                            Width="150">
-                    </Button>
                 </Grid>
-            </Border>
-        </Grid>
+            </TabItem>
+        </TabControl>
 
         <!-- Exit Button -->
         <Button Grid.Row="2" 
