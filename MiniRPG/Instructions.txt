@@ -1,12 +1,18 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Edit MapView.xaml.
+Modify ShopViewModel.cs.
 
 Requirements:
-• Add Button labeled “Reputation” near “Skill Tree” and “Quest Board”.
-• Bind Command to OpenReputationCommand.
+• On initialization:
+   - var faction = Player.GetFaction(CurrentRegion.FactionName);
+   - float modifier = faction.Reputation >= 50 ? 0.9f :
+                      faction.Reputation <= -50 ? 1.2f : 1.0f;
+   - Adjust displayed BuyPrice and SellPrice by modifier.
+• If faction.Reputation < -50:
+   - Disable BuyCommand (refuse to sell).
+   - Log "They refuse to do business with you."
 • Add TODO:
-   <!-- TODO: Replace with crest icon buttons later -->
+   // Add special item discounts for Allied factions
 
 ---
 

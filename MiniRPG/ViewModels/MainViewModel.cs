@@ -140,7 +140,7 @@ namespace MiniRPG.ViewModels
             // Subscribe to shop events
             mapVM.OnOpenShop += () =>
             {
-                var shopVM = new ShopViewModel(CurrentPlayer, GlobalLog);
+                var shopVM = new ShopViewModel(CurrentPlayer, GlobalLog, _currentRegion);
                 shopVM.ExitShopCommand = new RelayCommand(_ => ShowMap());
                 CurrentViewModel = shopVM;
                 AddLog("You enter the shop.");

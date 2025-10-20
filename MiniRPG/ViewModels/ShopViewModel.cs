@@ -10,6 +10,7 @@ namespace MiniRPG.ViewModels
     public class ShopViewModel : BaseViewModel
     {
         private readonly ObservableCollection<string> _globalLog;
+        private readonly Region? _currentRegion;
 
         public ObservableCollection<ShopItem> ShopInventory { get; set; }
         
@@ -65,10 +66,11 @@ namespace MiniRPG.ViewModels
         // Event for when the player wants to exit the shop
         public event System.Action? OnExitShop;
 
-        public ShopViewModel(Player player, ObservableCollection<string> globalLog)
+        public ShopViewModel(Player player, ObservableCollection<string> globalLog, Region? currentRegion = null)
         {
             Player = player;
             _globalLog = globalLog;
+            _currentRegion = currentRegion;
             
             // Initialize ShopInventory with sample items
             ShopInventory = new ObservableCollection<ShopItem>
@@ -88,14 +90,78 @@ namespace MiniRPG.ViewModels
                 }, 40, 20)
             };
 
+            // Apply faction-based price adjustments
+            ApplyFactionPriceModifiers();
+
             // Initialize commands
-            BuyCommand = new RelayCommand(ExecuteBuy);
+            BuyCommand = new RelayCommand(ExecuteBuy, CanBuy);
             SellCommand = new RelayCommand(ExecuteSell);
             ExitShopCommand = new RelayCommand(_ => OnExitShop?.Invoke());
         }
 
+        /// <summary>
+        /// Applies faction reputation-based price modifiers to all shop items.
+        /// </summary>
+        private void ApplyFactionPriceModifiers()
+        {
+            if (_currentRegion == null || string.IsNullOrEmpty(_currentRegion.FactionName))
+                return;
+
+            var faction = Player.GetFaction(_currentRegion.FactionName);
+            float modifier = faction.Reputation >= 50 ? 0.9f :
+                             faction.Reputation <= -50 ? 1.2f : 1.0f;
+
+            // Adjust prices for all items in shop
+            foreach (var shopItem in ShopInventory)
+            {
+                shopItem.BuyPrice = (int)(shopItem.BuyPrice * modifier);
+                shopItem.SellPrice = (int)(shopItem.SellPrice * modifier);
+            }
+
+            // Log price adjustments for player awareness
+            if (modifier < 1.0f)
+            {
+                _globalLog.Add($"The shopkeeper offers you a discount due to your good reputation!");
+            }
+            else if (modifier > 1.0f)
+            {
+                _globalLog.Add($"The shopkeeper charges extra due to your poor reputation.");
+            }
+
+            // TODO: Add special item discounts for Allied factions
+        }
+
+        /// <summary>
+        /// Determines if the player can buy from this shop based on faction reputation.
+        /// </summary>
+        private bool CanBuy(object? parameter)
+        {
+            if (_currentRegion == null || string.IsNullOrEmpty(_currentRegion.FactionName))
+                return true;
+
+            var faction = Player.GetFaction(_currentRegion.FactionName);
+            
+            if (faction.Reputation < -50)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         private void ExecuteBuy(object? parameter)
         {
+            // Check if trading is allowed
+            if (_currentRegion != null && !string.IsNullOrEmpty(_currentRegion.FactionName))
+            {
+                var faction = Player.GetFaction(_currentRegion.FactionName);
+                if (faction.Reputation < -50)
+                {
+                    _globalLog.Add("They refuse to do business with you.");
+                    return;
+                }
+            }
+
             if (SelectedItem == null) return;
 
             // Check inventory capacity

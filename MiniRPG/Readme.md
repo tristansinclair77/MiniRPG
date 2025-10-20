@@ -1,6 +1,43 @@
 ﻿# MiniRPG - Change Log
 
-## Latest Update: Reputation Button Added to MapView
+## Latest Update: Faction-Based Shop Pricing and Trading Restrictions
+
+### ShopViewModel.cs (Modified)
+- **Added `_currentRegion` field**: Stores the current region for faction-based price calculations
+- **Modified constructor**: Now accepts optional `Region? currentRegion` parameter
+  - Constructor signature: `ShopViewModel(Player player, ObservableCollection<string> globalLog, Region? currentRegion = null)`
+- **Added `ApplyFactionPriceModifiers()` method**: Applies reputation-based price adjustments on initialization
+  - Gets faction from current region's FactionName
+  - Calculates price modifier based on reputation:
+    - Reputation >= 50: 0.9x modifier (10% discount)
+    - Reputation <= -50: 1.2x modifier (20% price increase)
+    - Otherwise: 1.0x modifier (no change)
+  - Adjusts both BuyPrice and SellPrice for all items in shop inventory
+  - Logs price adjustment messages to inform player
+- **Added `CanBuy(object? parameter)` method**: Determines if player can purchase from shop
+  - Returns false if faction reputation < -50
+  - Used as canExecute predicate for BuyCommand
+- **Modified `ExecuteBuy()` method**: Added reputation check at start
+  - If faction reputation < -50, logs "They refuse to do business with you." and returns
+  - Prevents purchase when shop refuses to trade
+- **Updated `BuyCommand` initialization**: Now uses `CanBuy` predicate to disable button when reputation is too low
+  - Command initialization: `BuyCommand = new RelayCommand(ExecuteBuy, CanBuy);`
+- **Added TODO comment**: `// TODO: Add special item discounts for Allied factions`
+
+### MainViewModel.cs (Modified)
+- **Updated `OnOpenShop` event handler** in `CreateMapViewModel()` method
+  - Changed ShopViewModel instantiation from `new ShopViewModel(CurrentPlayer, GlobalLog)` to `new ShopViewModel(CurrentPlayer, GlobalLog, _currentRegion)`
+  - Now passes the current region to enable faction-based pricing
+
+### Implementation Notes
+- Price modifiers are applied to all items in shop inventory during initialization
+- Shop will refuse to sell (BuyCommand disabled) when player's reputation with region's faction is below -50
+- Price adjustments work retroactively - existing shop items have their prices modified based on current reputation
+- System gracefully handles cases where no region or faction is available (defaults to normal prices)
+
+---
+
+## Previous Update: Reputation Button Added to MapView
 
 ### MapView.xaml (Modified)
 - **Added "Reputation" button** in the top navigation bar, positioned after "Skill Tree" button and before "World Map" button
