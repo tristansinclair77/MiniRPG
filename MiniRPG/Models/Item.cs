@@ -93,6 +93,7 @@ namespace MiniRPG.Models
             System.Diagnostics.Debug.WriteLine($"Upgraded {Name} to +{EnhancementLevel}!");
             
             // TODO: Add enhancement success rate and rarity effects later
+            // TODO: Add legendary upgrade paths
         }
 
         public static List<Item> GetSampleItems()

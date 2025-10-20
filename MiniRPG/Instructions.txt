@@ -1,15 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify SaveLoadService.cs.
-
-Requirements:
-• Ensure serialization includes:
-   - Item.EnhancementLevel
-   - Player.Inventory materials quantities
-   - Crafted items added dynamically
-• Validate deserialization doesn’t duplicate entries.
-• Add TODO:
-   // Add crafting history log and achievement tracking
+Testing checklist:
+1. Win battles → gather materials.
+2. Visit blacksmith → open Crafting menu.
+3. Craft weapon or potion → verify inventory updates.
+4. Enhance weapon → attack/defense values increase.
+5. Save and reload → crafted and enhanced items persist.
+6. Check insufficient materials case logs correctly.
+7. Add TODO placeholders:
+   <!-- TODO: Add unique recipes from quests -->
+   <!-- TODO: Add legendary upgrade paths -->
+   <!-- TODO: Add crafting minigame (timing-based success) -->
 
 ---
 

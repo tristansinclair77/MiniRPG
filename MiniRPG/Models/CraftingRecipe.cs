@@ -91,5 +91,6 @@ namespace MiniRPG.Models
         }
 
         // TODO: Add crafting time, rarity tiers, and skill-based bonuses later
+        // TODO: Add crafting minigame (timing-based success)
     }
 }

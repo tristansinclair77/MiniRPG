@@ -7,6 +7,9 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <!-- TODO: Add crafting progress bar animation -->
     <!-- TODO: Add recipe category tabs (Weapons, Armor, Potions) -->
+    <!-- TODO: Add unique recipes from quests -->
+    <!-- TODO: Add legendary upgrade paths -->
+    <!-- TODO: Add crafting minigame (timing-based success) -->
     <Grid Margin="10" Background="#222233">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

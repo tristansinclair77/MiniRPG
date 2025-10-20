@@ -108,6 +108,8 @@ namespace MiniRPG.Services
             ));
 
             // TODO: Add recipe discovery system and rarity progression
+            // TODO: Add unique recipes from quests
+            // TODO: Add legendary upgrade paths
 
             return recipes;
         }

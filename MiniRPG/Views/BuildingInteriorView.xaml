@@ -22,6 +22,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Building Name Header -->
@@ -160,8 +161,33 @@
             </Border>
         </Expander>
 
-        <!-- Leave Building Button -->
+        <!-- Crafting Button (only visible for Blacksmith/Workshop) -->
         <Button Grid.Row="3" 
+                Content="Open Crafting Menu" 
+                Command="{Binding OpenCraftingCommand}"
+                Visibility="{Binding OpenCraftingCommand, Converter={StaticResource NullToVisibilityConverter}}"
+                Padding="16,10"
+                Foreground="#F9E97A" 
+                Background="#446688" 
+                FontWeight="Bold"
+                FontSize="16"
+                HorizontalAlignment="Center"
+                MinWidth="220"
+                Margin="0,0,0,15">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="#446688" />
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#557799" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+
+        <!-- Leave Building Button -->
+        <Button Grid.Row="4" 
                 Content="Leave Building" 
                 Command="{Binding ExitBuildingCommand}"
                 Padding="16,10"
@@ -184,7 +210,7 @@
         </Button>
 
         <!-- Sleeping Overlay (displayed during inn rest) -->
-        <Border Grid.RowSpan="4" 
+        <Border Grid.RowSpan="5" 
                 Background="#000000"
                 Visibility="{Binding IsSleeping, Converter={StaticResource BoolToVis}}"
                 Panel.ZIndex="1000">
