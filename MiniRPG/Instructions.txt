@@ -1,19 +1,16 @@
 ﻿You are GitHub Copilot inside Visual Studio 2022.
 
-Modify Player.cs.
+Create FactionService.cs in the Services folder.
 
 Requirements:
-• Add property:
-   - Dictionary<string, Faction> Factions { get; set; } = new();
-• Add methods:
-   - GetFaction(string name):
-       * Return Factions[name] if exists, else create with default Reputation = 0.
-   - AdjustFactionReputation(string name, int amount):
-       * var faction = GetFaction(name);
-       * faction.AdjustReputation(amount);
-       * Log $"Faction {name} reputation changed to {faction.Reputation}."
+• Static class FactionService
+• Static method GetAllFactions() returns List<Faction>:
+   - "Greenfield Town" – peaceful farming settlement.
+   - "Adventurer’s Guild" – neutral quest hub.
+   - "Bandit Clan" – antagonistic faction.
+• Add method GetFactionByName(string name).
 • Add TODO:
-   // Add global faction relationships (guilds, towns, bandits)
+   // Add faction alliances, rivalries, and reputation decay over time
 
 ---
 
